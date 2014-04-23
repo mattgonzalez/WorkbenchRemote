@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="deL17w" name="Socket" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.Socket" includeBinaryInAppConfig="1"
+              jucerVersion="3.1.0">
+  <MAINGROUP id="JLallp" name="Socket">
+    <GROUP id="{6D0D113B-AC35-DBA2-4B32-A595F73D6710}" name="Source">
+      <FILE id="NJ3mTi" name="Client.cpp" compile="1" resource="0" file="Source/Client.cpp"/>
+      <FILE id="sHVtjd" name="Client.h" compile="0" resource="0" file="Source/Client.h"/>
+      <FILE id="wjmmBJ" name="SocketComponent.cpp" compile="1" resource="0"
+            file="Source/SocketComponent.cpp"/>
+      <FILE id="ykhRe3" name="SocketComponent.h" compile="0" resource="0"
+            file="Source/SocketComponent.h"/>
+      <FILE id="rkGhqU" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="jbheME" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="wbGivG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2012 targetFolder="Builds/VisualStudio2012">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="Socket"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="2" targetName="Socket"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_events" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_core" path="c:/juce/modules"/>
+      </MODULEPATHS>
+    </VS2012>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
