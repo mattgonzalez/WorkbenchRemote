@@ -43,6 +43,8 @@ private:
 	ScopedPointer<TextEditor> portEditor;
 	ScopedPointer<Label> label;
 	ScopedPointer<TextButton> connectButton;
+	ScopedPointer<TextButton> disconnectButton;
+
 	TextButton listenButton;
 };
 

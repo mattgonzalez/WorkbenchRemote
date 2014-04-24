@@ -46,6 +46,10 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_):
 	connectButton->setButtonText (TRANS("Connect"));
 	connectButton->addListener (this);
 
+	addAndMakeVisible (disconnectButton = new TextButton ("disconnectButton"));
+	disconnectButton->setButtonText (TRANS("Disconnect"));
+	disconnectButton->addListener (this);
+
 	setSize (600, 400);
 }
 
@@ -55,6 +59,7 @@ MainContentComponent::~MainContentComponent()
 	portEditor = nullptr;
 	label = nullptr;
 	connectButton = nullptr;
+	disconnectButton = nullptr;
 }
 
 void MainContentComponent::paint (Graphics& g)
@@ -73,6 +78,7 @@ void MainContentComponent::resized()
 	portEditor->setBounds (96, 80, 150, 24);
 	label->setBounds (24, 40, 88, 24);
 	connectButton->setBounds (264, 40, 104, 24);
+	disconnectButton->setBounds (264, 80, 104, 24);
 }
 
 void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
@@ -110,5 +116,11 @@ void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
 		//client->disconnect();
 		return;
 		//[/UserButtonCode_connectButton]
+	}
+
+	if (buttonThatWasClicked == disconnectButton)
+	{
+		DBG("disconnected");
+		client->disconnect();
 	}
 }
