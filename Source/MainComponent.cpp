@@ -11,7 +11,8 @@
 const char *test ="{\"menu\": {	\"id\": \"file\",	\"value\": \"File\",	\"popup\": {	\"menuitem\": [{\"value\": \"New\", \"onclick\": \"CreateNewDoc()\"},{\"value\": \"Open\", \"onclick\": \"OpenDoc()\"},{\"value\": \"Close\", \"onclick\": \"CloseDoc()\"}	]}}}";
 
 //==============================================================================
-MainContentComponent::MainContentComponent()
+MainContentComponent::MainContentComponent(WorkbenchClient* client_):
+	client(client_)
 {
 	//addAndMakeVisible(&socketComponent);
 
@@ -23,6 +24,15 @@ MainContentComponent::MainContentComponent()
 	addressEditor->setCaretVisible (true);
 	addressEditor->setPopupMenuEnabled (true);
 	addressEditor->setText ("127.0.0.1");
+	
+	addAndMakeVisible (portEditor = new TextEditor ("portEditor"));
+	portEditor->setMultiLine (false);
+	portEditor->setReturnKeyStartsNewLine (false);
+	portEditor->setReadOnly (false);
+	portEditor->setScrollbarsShown (true);
+	portEditor->setCaretVisible (true);
+	portEditor->setPopupMenuEnabled (true);
+	portEditor->setText ("5678");
 
 	addAndMakeVisible (label = new Label ("new label",
 		TRANS("Address")));
@@ -42,6 +52,7 @@ MainContentComponent::MainContentComponent()
 MainContentComponent::~MainContentComponent()
 {
 	addressEditor = nullptr;
+	portEditor = nullptr;
 	label = nullptr;
 	connectButton = nullptr;
 }
@@ -59,14 +70,13 @@ void MainContentComponent::resized()
     // update their positions.
 
 	addressEditor->setBounds (96, 40, 150, 24);
+	portEditor->setBounds (96, 80, 150, 24);
 	label->setBounds (24, 40, 88, 24);
 	connectButton->setBounds (264, 40, 104, 24);
 }
 
 void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
 {
-	int port = 5678;
-
 	if (buttonThatWasClicked == connectButton)
 	{
 		//[UserButtonCode_connectButton] -- add your button handler code here..
@@ -86,7 +96,7 @@ void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
 		DBG("read " << read << "  ready " << ready);
 #endif
 
-		bool connected = client->connectToSocket("192.168.1.145",port,1000);
+		bool connected = client->connectToSocket(addressEditor->getText(), portEditor->getText().getIntValue() ,1000);
 		DBG("connect " << (int)connected);
 
 		MemoryBlock block(8);
@@ -97,6 +107,7 @@ void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
 		}
 		bool sent = client->sendMessage(block);
 		DBG("sent " << (int)sent);
+		//client->disconnect();
 		return;
 		//[/UserButtonCode_connectButton]
 	}

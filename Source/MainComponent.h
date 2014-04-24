@@ -10,7 +10,7 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Client.h"
+#include "WorkbenchClient.h"
 
 
 //==============================================================================
@@ -22,7 +22,7 @@ class MainContentComponent   : public Component, public ButtonListener
 {
 public:
     //==============================================================================
-    MainContentComponent();
+    MainContentComponent(WorkbenchClient * client_);
     ~MainContentComponent();
 
     void paint (Graphics&);
@@ -37,9 +37,10 @@ private:
 	StreamingSocket socket;
 	StreamingSocket listenSocket;
 
-	Client* client;
+	WorkbenchClient* client;
 
 	ScopedPointer<TextEditor> addressEditor;
+	ScopedPointer<TextEditor> portEditor;
 	ScopedPointer<Label> label;
 	ScopedPointer<TextButton> connectButton;
 	TextButton listenButton;

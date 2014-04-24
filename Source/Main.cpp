@@ -27,8 +27,8 @@ public:
     void initialise (const String& commandLine) override
     {
         // This method is where you should put your application's initialisation code..
-
-        mainWindow = new MainWindow();
+		client = new WorkbenchClient();
+        mainWindow = new MainWindow(client);
     }
 
     void shutdown() override
@@ -36,6 +36,7 @@ public:
         // Add your application's shutdown code here..
 
         mainWindow = nullptr; // (deletes our window)
+		client = nullptr;
     }
 
     //==============================================================================
@@ -61,11 +62,11 @@ public:
     class MainWindow    : public DocumentWindow
     {
     public:
-        MainWindow()  : DocumentWindow ("MainWindow",
+        MainWindow(WorkbenchClient* client)  : DocumentWindow ("MainWindow",
                                         Colours::lightgrey,
                                         DocumentWindow::allButtons)
         {
-            setContentOwned (new MainContentComponent(), true);
+            setContentOwned (new MainContentComponent(client), true);
 
             centreWithSize (getWidth(), getHeight());
             setVisible (true);
@@ -91,6 +92,7 @@ public:
     };
 
 private:
+	ScopedPointer<WorkbenchClient> client;
     ScopedPointer<MainWindow> mainWindow;
 };
 

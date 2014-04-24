@@ -2,11 +2,11 @@
 
 #include "JuceHeader.h"
 
-class Client : public InterprocessConnection
+class WorkbenchClient : public InterprocessConnection
 {
 public:
-	Client();
-	~Client();
+	WorkbenchClient();
+	~WorkbenchClient();
 
 	virtual void connectionMade();
 
@@ -15,6 +15,6 @@ public:
 	virtual void messageReceived( const MemoryBlock& message );
 
 protected:
-	JUCE_LEAK_DETECTOR(Client)
+	JUCE_LEAK_DETECTOR(WorkbenchClient)
 };
 
