@@ -1038,6 +1038,9 @@
     <ClCompile Include="..\..\Source\WorkbenchClient.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Settings.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\MainComponent.h">
@@ -2040,6 +2043,9 @@
       <Filter>Juce Library Code</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\WorkbenchClient.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Settings.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
   </ItemGroup>

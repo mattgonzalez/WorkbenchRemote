@@ -8,13 +8,19 @@ public:
 	WorkbenchClient();
 	~WorkbenchClient();
 
-	virtual void connectionMade();
+	Result getSystemInfo();
+	Result getTalkerStreams();
 
-	virtual void connectionLost();
-
-	virtual void messageReceived( const MemoryBlock& message );
+	ChangeBroadcaster broadcaster;
 
 protected:
+	Atomic<int> sequence;
+
+	virtual void connectionMade();
+	virtual void connectionLost();
+	virtual void messageReceived( const MemoryBlock& message );
+	Result getProperty (Identifier const ID);
+
 	JUCE_LEAK_DETECTOR(WorkbenchClient)
 };
 

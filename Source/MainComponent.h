@@ -11,6 +11,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "WorkbenchClient.h"
+#include "Settings.h"
 
 
 //==============================================================================
@@ -18,11 +19,11 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainContentComponent   : public Component, public ButtonListener
+class MainContentComponent   : public Component, public ButtonListener, public ChangeListener, public TextEditor::Listener
 {
 public:
     //==============================================================================
-    MainContentComponent(WorkbenchClient * client_);
+    MainContentComponent(WorkbenchClient * client_, Settings *settings_);
     ~MainContentComponent();
 
     void paint (Graphics&);
@@ -34,16 +35,30 @@ private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 
-	StreamingSocket socket;
-	StreamingSocket listenSocket;
+	virtual void changeListenerCallback( ChangeBroadcaster* source );
+
+	virtual void textEditorTextChanged( TextEditor& );
+
+	virtual void textEditorReturnKeyPressed( TextEditor& );
+
+	virtual void textEditorEscapeKeyPressed( TextEditor& );
+
+	virtual void textEditorFocusLost( TextEditor& );
+	void updateAddress();
+	void updatePort();
 
 	WorkbenchClient* client;
+	Settings *settings;
 
 	ScopedPointer<TextEditor> addressEditor;
 	ScopedPointer<TextEditor> portEditor;
-	ScopedPointer<Label> label;
+	ScopedPointer<Label> addressLabel;
+	ScopedPointer<Label> portLabel;
 	ScopedPointer<TextButton> connectButton;
-	TextButton listenButton;
+	ScopedPointer<TextButton> disconnectButton;
+	ScopedPointer<TextButton> infoButton;
+	ScopedPointer<TextButton> getTalkersButton;
+	TextEditor readout;
 };
 
 

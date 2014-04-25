@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
+#include "Settings.h"
 
 
 //==============================================================================
@@ -24,11 +25,14 @@ public:
     bool moreThanOneInstanceAllowed() override       { return true; }
 
     //==============================================================================
-    void initialise (const String& commandLine) override
+    void initialise (const String& /*commandLine*/) override
     {
         // This method is where you should put your application's initialisation code..
+
+		settings = new Settings();
+
 		client = new WorkbenchClient();
-        mainWindow = new MainWindow(client);
+        mainWindow = new MainWindow(client, settings);
     }
 
     void shutdown() override
@@ -37,6 +41,7 @@ public:
 
         mainWindow = nullptr; // (deletes our window)
 		client = nullptr;
+		settings = nullptr;
     }
 
     //==============================================================================
@@ -47,7 +52,7 @@ public:
         quit();
     }
 
-    void anotherInstanceStarted (const String& commandLine) override
+    void anotherInstanceStarted (const String& /*commandLine*/) override
     {
         // When another instance of the app is launched while this one is running,
         // this method is invoked, and the commandLine parameter tells you what
@@ -62,14 +67,17 @@ public:
     class MainWindow    : public DocumentWindow
     {
     public:
-        MainWindow(WorkbenchClient* client)  : DocumentWindow ("MainWindow",
+        MainWindow(WorkbenchClient* client, Settings *settings)  : DocumentWindow ("Workbench Remote",
                                         Colours::lightgrey,
                                         DocumentWindow::allButtons)
         {
-            setContentOwned (new MainContentComponent(client), true);
+			setUsingNativeTitleBar(true);
+
+            setContentOwned (new MainContentComponent(client, settings), true);
 
             centreWithSize (getWidth(), getHeight());
             setVisible (true);
+			setLookAndFeel(&lookAndFeelV3);
         }
 
         void closeButtonPressed()
@@ -89,11 +97,14 @@ public:
 
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
+		LookAndFeel_V3 lookAndFeelV3;
     };
 
 private:
 	ScopedPointer<WorkbenchClient> client;
     ScopedPointer<MainWindow> mainWindow;
+	ScopedPointer<Settings> settings;
+
 };
 
 //==============================================================================
