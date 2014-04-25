@@ -3,11 +3,14 @@
 namespace Identifiers
 {
 	Identifier const GetCommand("GetCommand");
+	Identifier const SetCommand("SetCommand");
 	Identifier const Property("Property");
 	Identifier const System("System");
-	Identifier const Talkers("Talkers");
+	Identifier const GetTalkersInfo("GetTalkersInfo");
+	Identifier const SetTalkerInfo("SetTalkerInfo");
 	Identifier const Listeners("Listeners");
 	Identifier const Version("Version");
+	Identifier const StreamID("StreamID");
 	Identifier const Sequence("Sequence");
 };
 
@@ -53,7 +56,7 @@ Result WorkbenchClient::getTalkerStreams()
 {
 	DBG("WorkbenchClient::getTalkerStreams");
 
-	return getProperty(Identifiers::Talkers);
+	return getProperty(Identifiers::GetTalkersInfo);
 }
 
 Result WorkbenchClient::getProperty( Identifier const ID )
@@ -70,4 +73,22 @@ Result WorkbenchClient::getProperty( Identifier const ID )
 	sendMessage(stream.getMemoryBlock());
 
 	return Result::ok();
+}
+
+void WorkbenchClient::setTalkerStream( String streamID )
+{
+	DBG("WorkbenchClient::setTalkerStream");
+
+	DynamicObject messageObject;
+	DynamicObject::Ptr commandObject(new DynamicObject());
+	DynamicObject::Ptr propertyObject(new DynamicObject());
+	propertyObject->setProperty(Identifiers::StreamID, streamID);
+	commandObject->setProperty(Identifiers::Property, var(propertyObject));
+	messageObject.setProperty(Identifiers::SetCommand, var(commandObject));
+	messageObject.setProperty(Identifiers::Sequence, ++sequence);
+
+	MemoryOutputStream stream;
+	messageObject.writeAsJSON(stream, 0, true);
+	DBG(stream.toString());
+	sendMessage(stream.getMemoryBlock());
 }

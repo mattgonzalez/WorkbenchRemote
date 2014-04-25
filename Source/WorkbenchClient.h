@@ -10,6 +10,7 @@ public:
 
 	Result getSystemInfo();
 	Result getTalkerStreams();
+	void setTalkerStream(String streamID);
 
 	ChangeBroadcaster broadcaster;
 
@@ -20,7 +21,6 @@ protected:
 	virtual void connectionLost();
 	virtual void messageReceived( const MemoryBlock& message );
 	Result getProperty (Identifier const ID);
-
 	JUCE_LEAK_DETECTOR(WorkbenchClient)
 };
 

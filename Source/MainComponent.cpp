@@ -29,6 +29,7 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, Settings *s
 	addressEditor->setColour(TextEditor::outlineColourId, Colours::black);
 	addressEditor->setColour(TextEditor::highlightColourId,  Colours::orange);
 	addressEditor->setColour(TextEditor::focusedOutlineColourId,  Colours::orange);
+	addressEditor->setInputRestrictions(15, "0123456789.");
 	addressEditor->addListener(this);
 	
 	addAndMakeVisible (portEditor = new TextEditor ("portEditor"));
@@ -42,7 +43,22 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, Settings *s
 	portEditor->setColour(TextEditor::outlineColourId, Colours::black);
 	portEditor->setColour(TextEditor::highlightColourId,  Colours::orange);
 	portEditor->setColour(TextEditor::focusedOutlineColourId,  Colours::orange);
+	portEditor->setInputRestrictions(5, "0123456789");
 	portEditor->addListener(this);
+
+	addAndMakeVisible (streamIDEditor = new TextEditor ("streamIDEditor"));
+	streamIDEditor->setMultiLine (false);
+	streamIDEditor->setReturnKeyStartsNewLine (false);
+	streamIDEditor->setReadOnly (false);
+	streamIDEditor->setScrollbarsShown (true);
+	streamIDEditor->setCaretVisible (true);
+	streamIDEditor->setPopupMenuEnabled (true);
+	streamIDEditor->setText ("0");
+	streamIDEditor->setColour(TextEditor::outlineColourId, Colours::black);
+	streamIDEditor->setColour(TextEditor::highlightColourId,  Colours::orange);
+	streamIDEditor->setColour(TextEditor::focusedOutlineColourId,  Colours::orange);
+	streamIDEditor->setInputRestrictions(16, "0123456789ABCDEFabcdef");
+	streamIDEditor->addListener(this);
 
 	addressEditor->setText(settings->getAddress().toString());
 	portEditor->setText(String(settings->getPort()));
@@ -64,6 +80,14 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, Settings *s
 	portLabel->setColour (TextEditor::textColourId, Colours::black);
 	portLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+	addAndMakeVisible (streamIDLabel = new Label ("streamID label", 
+		TRANS("Stream ID")));
+	streamIDLabel->setFont (Font (15.00f, Font::plain));
+	streamIDLabel->setJustificationType (Justification::centredLeft);
+	streamIDLabel->setEditable (false, false, false);
+	streamIDLabel->setColour (TextEditor::textColourId, Colours::black);
+	streamIDLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 	addAndMakeVisible (connectButton = new TextButton ("connectButton"));
 	connectButton->setButtonText (TRANS("Connect"));
 	connectButton->addListener (this);
@@ -83,6 +107,11 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, Settings *s
 	getTalkersButton->addListener (this);
 	getTalkersButton->setEnabled(false);
 
+	addAndMakeVisible(setTalkerButton = new TextButton ("Set Talker Info"));
+	setTalkerButton->setButtonText( TRANS("Set Talker Info"));
+	setTalkerButton->addListener(this);
+	setTalkerButton->setEnabled(false);
+
 	client->broadcaster.addChangeListener(this);
 
 	setSize (600, 400);
@@ -92,12 +121,15 @@ MainContentComponent::~MainContentComponent()
 {
 	addressEditor = nullptr;
 	portEditor = nullptr;
+	streamIDEditor = nullptr;
 	addressLabel = nullptr;
 	portLabel = nullptr;
+	streamIDLabel = nullptr;
 	connectButton = nullptr;
 	disconnectButton = nullptr;
 	infoButton = nullptr;
 	getTalkersButton = nullptr;
+	setTalkerButton = nullptr;
 	client->broadcaster.removeChangeListener(this);
 }
 
@@ -115,8 +147,12 @@ void MainContentComponent::resized()
 
 	addressEditor->setBounds (96, 40, 150, 24);
 	portEditor->setBounds (96, 80, 150, 24);
+	streamIDEditor->setBounds (96, 170, 150, 24);
+
 	addressLabel->setBounds (24, 40, 88, 24);
 	portLabel->setBounds (24, 80, 88, 24);
+	streamIDLabel->setBounds (24, 170, 88, 24);
+
 	connectButton->setBounds (264, 40, 104, 24);
 	juce::Rectangle<int> r(connectButton->getBounds());
 	disconnectButton->setBounds(r.translated( r.getWidth() + 5, 0));
@@ -124,6 +160,8 @@ void MainContentComponent::resized()
 	infoButton->setBounds(96, 130, 104, 24);
 	r = infoButton->getBounds();
 	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
+	r = getTalkersButton->getBounds();
+	setTalkerButton->setBounds(r.translated( r.getWidth() + 5, 0));
 }
 
 void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
@@ -137,6 +175,13 @@ void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
 	if (buttonThatWasClicked == getTalkersButton)
 	{
 		client->getTalkerStreams();
+		return;
+	}
+
+	if (buttonThatWasClicked == setTalkerButton)
+	{
+		String streamID(streamIDEditor->getText());
+		client->setTalkerStream(streamID);
 		return;
 	}
 
@@ -190,6 +235,7 @@ void MainContentComponent::changeListenerCallback( ChangeBroadcaster* /*source*/
 	connectButton->setEnabled(!connected);
 	infoButton->setEnabled(connected);
 	getTalkersButton->setEnabled(connected);
+	setTalkerButton->setEnabled(connected);
 	disconnectButton->setEnabled(connected);
 }
 

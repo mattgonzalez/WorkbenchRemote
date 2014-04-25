@@ -52,12 +52,15 @@ private:
 
 	ScopedPointer<TextEditor> addressEditor;
 	ScopedPointer<TextEditor> portEditor;
+	ScopedPointer<TextEditor> streamIDEditor;
 	ScopedPointer<Label> addressLabel;
 	ScopedPointer<Label> portLabel;
+	ScopedPointer<Label> streamIDLabel;
 	ScopedPointer<TextButton> connectButton;
 	ScopedPointer<TextButton> disconnectButton;
 	ScopedPointer<TextButton> infoButton;
 	ScopedPointer<TextButton> getTalkersButton;
+	ScopedPointer<TextButton> setTalkerButton;
 	TextEditor readout;
 };
 
