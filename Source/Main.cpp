@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "base.h"
 #include "MainComponent.h"
 #include "Settings.h"
 
@@ -30,8 +30,12 @@ public:
         // This method is where you should put your application's initialisation code..
 
 		settings = new Settings();
-
-		client = new WorkbenchClient();
+		client = new WorkbenchClient(settings);
+		
+		lookAndFeelV3 = new LookAndFeel_V3;
+		lookAndFeelV3->setColour(TextEditor::outlineColourId, Colours::lightgrey);
+		LookAndFeel::setDefaultLookAndFeel(lookAndFeelV3);
+		
         mainWindow = new MainWindow(client, settings);
     }
 
@@ -40,6 +44,7 @@ public:
         // Add your application's shutdown code here..
 
         mainWindow = nullptr; // (deletes our window)
+		lookAndFeelV3 = nullptr;
 		client = nullptr;
 		settings = nullptr;
     }
@@ -77,7 +82,9 @@ public:
 
             centreWithSize (getWidth(), getHeight());
             setVisible (true);
-			setLookAndFeel(&lookAndFeelV3);
+
+			setResizable(true,false);
+			setResizeLimits(850, 700, INT_MAX, INT_MAX);
         }
 
         void closeButtonPressed()
@@ -97,13 +104,13 @@ public:
 
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
-		LookAndFeel_V3 lookAndFeelV3;
     };
 
 private:
-	ScopedPointer<WorkbenchClient> client;
-    ScopedPointer<MainWindow> mainWindow;
 	ScopedPointer<Settings> settings;
+	ScopedPointer<WorkbenchClient> client;
+	ScopedPointer<LookAndFeel_V3> lookAndFeelV3;
+    ScopedPointer<MainWindow> mainWindow;
 
 };
 

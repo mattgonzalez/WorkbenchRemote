@@ -67,7 +67,8 @@
       <ProgramDataBaseFileName>$(IntDir)\</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -131,7 +132,12 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\AddressUtilities.cpp" />
+    <ClCompile Include="..\..\Source\FaultInjection.cpp" />
+    <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp" />
+    <ClCompile Include="..\..\Source\Identifiers.cpp" />
     <ClCompile Include="..\..\Source\Settings.cpp" />
+    <ClCompile Include="..\..\Source\StaticStreamViewport.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchClient.cpp" />
     <ClCompile Include="..\..\Source\MainComponent.cpp" />
     <ClCompile Include="..\..\Source\Main.cpp" />
@@ -953,7 +959,13 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_gui_extra.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\AddressUtilities.h" />
+    <ClInclude Include="..\..\Source\base.h" />
+    <ClInclude Include="..\..\Source\FaultInjection.h" />
+    <ClInclude Include="..\..\Source\FaultInjectionCallout.h" />
+    <ClInclude Include="..\..\Source\Identifiers.h" />
     <ClInclude Include="..\..\Source\Settings.h" />
+    <ClInclude Include="..\..\Source\StaticStreamViewport.h" />
     <ClInclude Include="..\..\Source\WorkbenchClient.h" />
     <ClInclude Include="..\..\Source\MainComponent.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_CharacterFunctions.h" />

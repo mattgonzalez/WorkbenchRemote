@@ -1041,6 +1041,21 @@
     <ClCompile Include="..\..\Source\Settings.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\StaticStreamViewport.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\FaultInjection.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Identifiers.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\AddressUtilities.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\MainComponent.h">
@@ -2046,6 +2061,24 @@
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Settings.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\FaultInjectionCallout.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\StaticStreamViewport.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\FaultInjection.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Identifiers.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\base.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AddressUtilities.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
   </ItemGroup>

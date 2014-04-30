@@ -2,25 +2,38 @@
 
 #include "JuceHeader.h"
 
+class Settings;
+
 class WorkbenchClient : public InterprocessConnection
 {
 public:
-	WorkbenchClient();
+	WorkbenchClient(Settings* settings_);
 	~WorkbenchClient();
 
 	Result getSystemInfo();
 	Result getTalkerStreams();
-	void setTalkerStream(String streamID);
+	void setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
 
-	ChangeBroadcaster broadcaster;
+	ChangeBroadcaster changeBroadcaster;
+	ActionBroadcaster stringBroadcaster;
 
 protected:
-	Atomic<int> sequence;
+	CriticalSection lock;
+	int commandSequence;
+
+	Settings* settings;
 
 	virtual void connectionMade();
 	virtual void connectionLost();
 	virtual void messageReceived( const MemoryBlock& message );
-	Result getProperty (Identifier const ID);
+
+	void handleGetResponse( DynamicObject * messageObject );
+	void handleGetSystemResponse( DynamicObject * systemPropertyObject );
+	void handleGetTalkersResponse( var talkersPropertyVar );
+
+	Result getProperty (Identifier const ID, var const parameter);
+
+
 	JUCE_LEAK_DETECTOR(WorkbenchClient)
 };
 

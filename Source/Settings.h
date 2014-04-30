@@ -13,6 +13,10 @@ public:
 
 	int getPort();
 	ScopedPointer<PropertiesFile> propfile;
-protected:
-private:
+
+	void initializeStreams(int numTalkers,int numListeners);
+	void removeStreams();
+
+	CriticalSection lock;
+	ValueTree tree;
 };
