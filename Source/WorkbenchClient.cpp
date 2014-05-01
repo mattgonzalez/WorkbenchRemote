@@ -1,3 +1,12 @@
+/*
+==============================================================================
+
+Copyright (C) 2014 Echo Digital Audio Corporation.
+
+==============================================================================
+*/
+
+#include "base.h"
 #include "WorkbenchClient.h"
 #include "Settings.h"
 #include "Identifiers.h"
@@ -8,6 +17,7 @@ const String HexChars("0123456789abcdef");
 const String OK("OK");
 
 WorkbenchClient::WorkbenchClient(Settings* settings_):
+	InterprocessConnection(true, 'KROW'),
 	settings(settings_),
 	commandSequence(0)
 {

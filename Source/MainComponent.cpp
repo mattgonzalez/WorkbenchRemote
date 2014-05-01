@@ -1,15 +1,14 @@
 /*
-  ==============================================================================
+==============================================================================
 
-    This file was auto-generated!
+Copyright (C) 2014 Echo Digital Audio Corporation.
 
-  ==============================================================================
+==============================================================================
 */
 
 #include "MainComponent.h"
 #include "Identifiers.h"
 
-//==============================================================================
 MainContentComponent::MainContentComponent(WorkbenchClient* client_, Settings *settings_):
 	client(client_),
 	settings(settings_),
@@ -129,9 +128,6 @@ void MainContentComponent::resized()
 	portLabel->setBounds (addressEditor->getRight() + 5, 20, /*JUCE_LIVE_CONSTANT*/(40), 24);
 	portEditor->setBounds (portLabel->getRight() + 5, 20, /*JUCE_LIVE_CONSTANT*/(50), 24);
 
-// 	streamIDLabel->setBounds (24, 170, 88, 24);
-// 	streamIDEditor->setBounds (96, 170, 150, 24);
-
 	connectButton->setBounds (portEditor->getRight() + 20, 20, 104, 24);
 	juce::Rectangle<int> r(connectButton->getBounds());
 	disconnectButton->setBounds(r.translated( r.getWidth() + 5, 0));
@@ -163,49 +159,11 @@ void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
 		client->getTalkerStreams();
 		return;
 	}
-#if 0
 
-	if (buttonThatWasClicked == setTalkerButton)
-	{
-		String streamID(streamIDEditor->getText());
-		client->setTalkerStream(streamID);
-		return;
-	}
-#endif
 	if (buttonThatWasClicked == connectButton)
 	{
-		//[UserButtonCode_connectButton] -- add your button handler code here..
-
-		//bool start = listenSocket.createListener(123456);
-#if 0
-		listenSocket.bindToPort(123456);
-		bool connected = socket.connect( addressEditor->getText(), 123456);
-		DBG("connect " << (int)connected);
-
-		zerostruct(in);
-
-		int written = socket.write(out,sizeof(out));
-		int ready = listenSocket.waitUntilReady(true, 1000);
-		int read = listenSocket.read(in, sizeof(in), false);
-		DBG("read " << read << "  ready " << ready);
-
-
-		bool connected = client->connectToSocket(addressEditor->getText(), portEditor->getText().getIntValue() ,1000);
-		DBG("connect " << (int)connected);
-
-		MemoryBlock block(8);
-		uint8 *data = (uint8*)block.getData();
-		for (size_t i = 0; i < block.getSize(); i++)
-		{
-			data[i] = (uint8)i;
-		}
-		bool sent = client->sendMessage(block);
-		DBG("sent " << (int)sent);
-		//client->disconnect();
-#endif
 		client->connectToSocket(addressEditor->getText(), portEditor->getText().getIntValue() ,1000);
 		return;
-		//[/UserButtonCode_connectButton]
 	}
 
 	if (buttonThatWasClicked == disconnectButton)

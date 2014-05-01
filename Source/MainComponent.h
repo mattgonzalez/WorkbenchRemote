@@ -1,9 +1,9 @@
 /*
-  ==============================================================================
+==============================================================================
 
-    This file was auto-generated!
+Copyright (C) 2014 Echo Digital Audio Corporation.
 
-  ==============================================================================
+==============================================================================
 */
 
 #ifndef MAINCOMPONENT_H_INCLUDED
@@ -15,11 +15,6 @@
 #include "StaticStreamViewport.h"
 
 
-//==============================================================================
-/*
-    This component lives inside our window, and this is where you should put all
-    your controls and content.
-*/
 class MainContentComponent   : public Component, 
 	public ButtonListener, 
 	public ChangeListener, 

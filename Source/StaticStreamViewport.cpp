@@ -1,3 +1,11 @@
+/*
+==============================================================================
+
+Copyright (C) 2014 Echo Digital Audio Corporation.
+
+==============================================================================
+*/
+
 #include "base.h"
 #include "StaticStreamViewport.h"
 #include "FaultInjectionCallout.h"
@@ -60,20 +68,6 @@ void StaticStreamViewport::ContentComponent::resized()
 	positionStaticStreamComponents();
 }
 
-void StaticStreamViewport::ContentComponent::changeListenerCallback( ChangeBroadcaster* /*source*/ )
-{
-#if 0
-	int count = controller->entityManager.getStaticEntity()->getConnectedStreamsCount();
-	bool crsEnabled = count == 0;
-
-	for (int i = 0; i < streamBoxes.size(); i++)
-	{
-		bool stopEnabled = streamBoxes[i]->stopButton.isEnabled();
-		streamBoxes[i]->startButton.setEnabled(!stopEnabled && gmLocked);
-		streamBoxes[i]->clockReferenceButton.setEnabled(crsEnabled);
-	}
-#endif
-}
 
 void StaticStreamViewport::ContentComponent::paint( Graphics& g )
 {
@@ -169,8 +163,6 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	clockReferenceButton.addListener(this);
 
 	tree.addListener(this);
-	
-	injectionCheck();
 }
 
 StaticStreamViewport::StaticStreamComponent::~StaticStreamComponent()
@@ -280,18 +272,16 @@ void StaticStreamViewport::StaticStreamComponent::textEditorReturnKeyPressed( Te
 
 void StaticStreamViewport::StaticStreamComponent::textEditorEscapeKeyPressed( TextEditor& editor)
 {
-#if 0
 	if (&multicastAddressEditor == &editor)
 	{
-		multicastAddressEditor.setText( stream->multicastAddress.toString(), dontSendNotification);
+		multicastAddressEditor.setText( Int64ToMACAddress(tree[Identifiers::DestinationAddress]).toString(), dontSendNotification);
 		return;
 	}
 	if (&streamIdEditor == &editor)
 	{
-		streamIdEditor.setText( String::toHexString((int64)stream->streamID), dontSendNotification);
+		streamIdEditor.setText( String::toHexString((int64)tree[Identifiers::StreamID]), dontSendNotification);
 		return;
 	}
-#endif
 }
 
 void StaticStreamViewport::StaticStreamComponent::textEditorFocusLost( TextEditor& editor)
@@ -384,7 +374,6 @@ void StaticStreamViewport::StaticStreamComponent::enableControls( bool started )
 	channelsCombo.setEnabled(!started);
 	startButton.setEnabled(!started);
 	stopButton.setEnabled(started);
-	//clockReferenceButton.setEnabled(!started);
 
 	setChannelsVisible();
 
@@ -440,8 +429,6 @@ void StaticStreamViewport::StaticStreamComponent::valueTreePropertyChanged( Valu
 		setChannelsVisible();
 		return;
 	}
-
-	injectionCheck();
 }
 
 void StaticStreamViewport::StaticStreamComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
@@ -459,21 +446,6 @@ void StaticStreamViewport::StaticStreamComponent::valueTreeChildOrderChanged( Va
 void StaticStreamViewport::StaticStreamComponent::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged )
 {
 }
-
-void StaticStreamViewport::StaticStreamComponent::injectionCheck()
-{
-#if 0
-	bool red = false;
-
-	for (int i = 0; i < faultInjectionTree.getNumChildren(); i++)
-	{
-		ValueTree child(faultInjectionTree.getChild(i));
-		red |= (bool)child.getProperty(Identifiers::Enabled) && ((double)child.getProperty(Identifiers::Percent) > 0.0);
-	}
-	injectionEnabled = red;
-#endif
-}
-
 
 StaticStreamViewport::StaticStreamComponent::MetricsButton::MetricsButton() : Button("Metrics Button")
 {

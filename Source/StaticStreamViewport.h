@@ -1,3 +1,11 @@
+/*
+==============================================================================
+
+Copyright (C) 2014 Echo Digital Audio Corporation.
+
+==============================================================================
+*/
+
 #pragma once
 
 class WorkbenchClient;
@@ -11,7 +19,7 @@ public:
 protected:
 
 	class StaticStreamComponent;
-	class ContentComponent : public Component, public ChangeListener
+	class ContentComponent : public Component
 	{
 	public:
 		ContentComponent(ValueTree tree_, CriticalSection &lock_, WorkbenchClient* client_);
@@ -20,16 +28,11 @@ protected:
 		OwnedArray<StaticStreamComponent> streamBoxes;
 
 		virtual void resized();
-
-		virtual void changeListenerCallback( ChangeBroadcaster* source );
-
 		virtual void paint( Graphics& g );
 		void positionStaticStreamComponents();
 
 		ValueTree tree;
 		CriticalSection &lock;
-
-	private:
 	};
 
 	ScopedPointer<ContentComponent> content;
@@ -82,7 +85,6 @@ protected:
 	protected:
 		void userInputMulticastAddress();
 		void userInputStreamID();
-		void injectionCheck();
 		void enableControls(bool started);
 		void setChannelsVisible();
 

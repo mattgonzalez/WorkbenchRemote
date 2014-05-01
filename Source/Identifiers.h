@@ -1,8 +1,7 @@
 /*
 ==============================================================================
 
-Copyright (C) 2013 Echo Digital Audio Corporation.
-This source code is considered to be proprietary and confidential information.
+Copyright (C) 2014 Echo Digital Audio Corporation.
 
 ==============================================================================
 */

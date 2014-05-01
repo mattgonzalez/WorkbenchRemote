@@ -1,5 +1,17 @@
+/*
+==============================================================================
+
+Copyright (C) 2014 Echo Digital Audio Corporation.
+
+==============================================================================
+*/
+
 #include "base.h"
 #include "FaultInjection.h"
+
+//
+// Not yet implemented
+//
 
 namespace Identifiers
 {

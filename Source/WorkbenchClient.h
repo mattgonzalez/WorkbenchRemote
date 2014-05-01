@@ -1,6 +1,12 @@
-#pragma once
+/*
+==============================================================================
 
-#include "JuceHeader.h"
+Copyright (C) 2014 Echo Digital Audio Corporation.
+
+==============================================================================
+*/
+
+#pragma once
 
 class Settings;
 

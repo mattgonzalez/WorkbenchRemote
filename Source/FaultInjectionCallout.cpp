@@ -1,4 +1,16 @@
 #if 0
+
+/*
+==============================================================================
+
+Copyright (C) 2014 Echo Digital Audio Corporation.
+
+==============================================================================
+*/
+
+//
+// Not yet implemented
+//
 #include "base.h"
 #include "FaultInjectionCallout.h"
 #include "FaultInjection.h"
