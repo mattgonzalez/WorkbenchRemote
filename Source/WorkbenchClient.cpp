@@ -16,37 +16,100 @@ const String Send("Send");
 const String HexChars("0123456789abcdef");
 const String OK("OK");
 
+/*
+
+This class uses the JUCE InterprocessConnection class to send and receive data
+over a socket.  The actual data sent over the socket consists of a four byte magic number, 
+followed by a four byte little-endian message length count in bytes, followed by the JSON string.
+
+For example, to transmit this 45 byte JSON string:
+
+{"GetCommand": {"System": {}}, "Sequence": 1}
+
+the following bytes are sent over the socket:
+
+574f524b			Magic number 'WORK'
+2d000000			Byte count (32 bits, endian swapped)
+7b22476574436f6d	{"GetCom
+6d616e64223a207b	mand": {
+2253797374656d22	"System"
+3a207b7d7d2c2022	: {}}, "
+53657175656e6365	Sequence
+223a20317d			": 1}
+
+Strings are sent without a zero terminator.
+
+*/
+
+//============================================================================
+//
+// Constructor and destructor
+//
+//============================================================================
+
+//
+// The 'KROW' value is the magic number written to the start of the packet
+// that has to match at both ends of the connection
+//
 WorkbenchClient::WorkbenchClient(Settings* settings_):
 	InterprocessConnection(true, 'KROW'),
 	settings(settings_),
 	commandSequence(0)
 {
-	DBG("WorkbenchClient::WorkbenchClient() ");
+	//DBG("WorkbenchClient::WorkbenchClient()");
 }
 
 WorkbenchClient::~WorkbenchClient()
 {
-	DBG("WorkbenchClient::~WorkbenchClient() ");
+	//DBG("WorkbenchClient::~WorkbenchClient()");
 }
 
+
+//============================================================================
+//
+// Callbacks
+//
+//============================================================================
+
+//---------------------------------------------------------------------------
+//
+// Callback indicating that the socket successfully connected
+//
 void WorkbenchClient::connectionMade()
 {
 	DBG("WorkbenchClient::connectionMade");
+
+	// Generate a change notification indicating that the state of the socket has changed
 	changeBroadcaster.sendChangeMessage();
 }
 
+//---------------------------------------------------------------------------
+//
+// Callback indicating that the socket has disconnected
+//
 void WorkbenchClient::connectionLost()
 {
 	DBG("WorkbenchClient::connectionLost");
+
+	// Remove all the stream information from the settings tree
 	settings->removeStreams();
+
+	// Generate a change notification indicating that the state of the socket has changed
 	changeBroadcaster.sendChangeMessage();
 }
 
+//---------------------------------------------------------------------------
+//
+// Callback indicating that the socket has received a message
+//
 void WorkbenchClient::messageReceived( const MemoryBlock& message )
 {
 	ScopedLock locker(lock);
-	DBG("WorkbenchClient::messageReceived  bytes:" << (int)message.getSize());
 
+	DBG("WorkbenchClient::messageReceived  bytes:" << (int)message.getSize());
+	
+	// The MemoryBlock parameter is just the JSON string without the magic number or byte count
+	// Parse the MemoryBlock as a JSON String
 	var messageVar;
 	Result parseResult(JSON::parse(message.toString(), messageVar));
 	if (parseResult.failed())
@@ -55,8 +118,10 @@ void WorkbenchClient::messageReceived( const MemoryBlock& message )
 		return;
 	}
 
+	// Send the JSON string to the user interface
 	stringBroadcaster.sendActionMessage(Receive + message.toString());
 
+	// Start reading properties from the JSON data
 	DynamicObject * messageObject = messageVar.getDynamicObject();
 	if (nullptr == messageObject)
 	{
@@ -64,11 +129,14 @@ void WorkbenchClient::messageReceived( const MemoryBlock& message )
 		return;
 	}
 
+	// Each message must have a sequence number
 	if (false == messageObject->hasProperty(Identifiers::Sequence))
 	{
 		DBG ("Message has no sequence number");
 		return;
 	}
+
+	// The received sequence number should match the transmitted sequence number
 	int responseSequence = messageObject->getProperty(Identifiers::Sequence);
 	int expectedSequence = commandSequence - 1;
 	if (responseSequence != expectedSequence)
@@ -77,12 +145,14 @@ void WorkbenchClient::messageReceived( const MemoryBlock& message )
 		return;
 	}
 
+	// The received message should have a Status string
 	if (false == messageObject->hasProperty(Identifiers::Status))
 	{
 		DBG ("Missing status");
 		return;
 	}
 
+	// The Status string should be "OK"
 	String status(messageObject->getProperty(Identifiers::Status).toString());
 	if (status != OK)
 	{
@@ -90,6 +160,7 @@ void WorkbenchClient::messageReceived( const MemoryBlock& message )
 		return;
 	}
 
+	// See if this is a GetResponse message
 	if (messageObject->hasProperty(Identifiers::GetResponse))
 	{
 		handleGetResponse(messageObject);
@@ -97,16 +168,20 @@ void WorkbenchClient::messageReceived( const MemoryBlock& message )
 	}
 }
 
+
+//============================================================================
+//
+// Commands sent to Workbench
+//
+//============================================================================
+
 Result WorkbenchClient::getSystemInfo()
 {
-	DBG("WorkbenchClient::getSystemInfo");
-
 	return getProperty(Identifiers::System, new DynamicObject());
 }
 
 Result WorkbenchClient::getTalkerStreams()
 {
-	DBG("WorkbenchClient::getTalkerStreams");
 	ScopedLock locker(settings->lock);
 	var arrayVar;
 	ValueTree talkersTree(settings->tree.getChildWithName(Identifiers::Talkers));
@@ -120,6 +195,23 @@ Result WorkbenchClient::getTalkerStreams()
 	return getProperty(Identifiers::Talkers, arrayVar);
 }
 
+Result WorkbenchClient::setStreamProperty( Identifier const type, int const streamIndex, Identifier const &ID, var const parameter )
+{
+	DynamicObject messageObject;
+	DynamicObject::Ptr commandObject(new DynamicObject());
+	var arrayVar;
+	DynamicObject::Ptr streamObject(new DynamicObject());
+
+	streamObject->setProperty(Identifiers::Index, streamIndex);
+	streamObject->setProperty(ID, parameter);
+	arrayVar.append(var(streamObject));
+	commandObject->setProperty(type, arrayVar);
+	messageObject.setProperty(Identifiers::SetCommand, var(commandObject));
+	messageObject.setProperty(Identifiers::Sequence, commandSequence++);
+
+	return sendJSONToSocket(messageObject);
+}
+
 Result WorkbenchClient::getProperty( Identifier const ID, var const parameter )
 {
 	DynamicObject messageObject;
@@ -128,15 +220,33 @@ Result WorkbenchClient::getProperty( Identifier const ID, var const parameter )
 	messageObject.setProperty(Identifiers::GetCommand, var(commandObject));
 	messageObject.setProperty(Identifiers::Sequence, commandSequence++);
 
-	MemoryOutputStream stream;
-	messageObject.writeAsJSON(stream, 0, true);
-	DBG(stream.toString());
-	sendMessage(stream.getMemoryBlock());
-	stringBroadcaster.sendActionMessage(Send + stream.toString());
-
-	return Result::ok();
+	return sendJSONToSocket(messageObject);
 }
 
+
+Result WorkbenchClient::sendJSONToSocket( DynamicObject &messageObject )
+{
+	// Convert the DynamicObject to a JSON string
+	MemoryOutputStream stream;
+	messageObject.writeAsJSON(stream, 0, true);
+
+	// Update the user interface
+	stringBroadcaster.sendActionMessage(Send + stream.toString());
+
+	// Transmit the JSON string.  The sendMessage function
+	// will prepend the data with the magic number and byte count.
+	bool success = sendMessage(stream.getMemoryBlock());
+	if (success)
+		return Result::ok();
+
+	return Result::fail("InterprocessConnection::sendMessage failed");
+}
+
+//============================================================================
+//
+// Handle responses from Workbench
+//
+//============================================================================
 
 void WorkbenchClient::handleGetResponse( DynamicObject * messageObject )
 {
@@ -248,22 +358,3 @@ void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
 	}
 }
 
-void WorkbenchClient::setStreamProperty( Identifier const type, int const streamIndex, Identifier const &ID, var const parameter )
-{
-	DynamicObject messageObject;
-	DynamicObject::Ptr commandObject(new DynamicObject());
-	var arrayVar;
-	DynamicObject::Ptr streamObject(new DynamicObject());
-
-	streamObject->setProperty(Identifiers::Index, streamIndex);
-	streamObject->setProperty(ID, parameter);
-	arrayVar.append(var(streamObject));
-	commandObject->setProperty(type, arrayVar);
-	messageObject.setProperty(Identifiers::SetCommand, var(commandObject));
-	messageObject.setProperty(Identifiers::Sequence, commandSequence++);
-
-	MemoryOutputStream stream;
-	messageObject.writeAsJSON(stream, 0, true);
-	sendMessage(stream.getMemoryBlock());
-	stringBroadcaster.sendActionMessage(Send + stream.toString());
-}

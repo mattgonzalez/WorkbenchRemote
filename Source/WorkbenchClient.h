@@ -18,7 +18,7 @@ public:
 
 	Result getSystemInfo();
 	Result getTalkerStreams();
-	void setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
+	Result setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
 
 	ChangeBroadcaster changeBroadcaster;
 	ActionBroadcaster stringBroadcaster;
@@ -38,6 +38,8 @@ protected:
 	void handleGetTalkersResponse( var talkersPropertyVar );
 
 	Result getProperty (Identifier const ID, var const parameter);
+
+	Result sendJSONToSocket( DynamicObject &messageObject );
 
 
 	JUCE_LEAK_DETECTOR(WorkbenchClient)
