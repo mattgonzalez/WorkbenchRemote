@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="deL17w" name="WorkbenchRemote" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.Socket" includeBinaryInAppConfig="1"
+              jucerVersion="3.1.0">
+  <MAINGROUP id="JLallp" name="WorkbenchRemote">
+    <GROUP id="{6D0D113B-AC35-DBA2-4B32-A595F73D6710}" name="Source">
+      <FILE id="cIh3cW" name="AddressUtilities.cpp" compile="1" resource="0"
+            file="Source/AddressUtilities.cpp"/>
+      <FILE id="tnbsuh" name="AddressUtilities.h" compile="0" resource="0"
+            file="Source/AddressUtilities.h"/>
+      <FILE id="ptdN47" name="base.h" compile="0" resource="0" file="Source/base.h"/>
+      <FILE id="mxNgmO" name="FaultInjection.cpp" compile="1" resource="0"
+            file="Source/FaultInjection.cpp"/>
+      <FILE id="mnSo8b" name="FaultInjection.h" compile="0" resource="0"
+            file="Source/FaultInjection.h"/>
+      <FILE id="YT3tHY" name="FaultInjectionCallout.cpp" compile="1" resource="0"
+            file="Source/FaultInjectionCallout.cpp"/>
+      <FILE id="xwXq2K" name="FaultInjectionCallout.h" compile="0" resource="0"
+            file="Source/FaultInjectionCallout.h"/>
+      <FILE id="QnYDwx" name="Identifiers.cpp" compile="1" resource="0" file="Source/Identifiers.cpp"/>
+      <FILE id="KMmR6v" name="Identifiers.h" compile="0" resource="0" file="Source/Identifiers.h"/>
+      <FILE id="wbGivG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="rkGhqU" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="jbheME" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="gSbd8s" name="Settings.cpp" compile="1" resource="0" file="Source/Settings.cpp"/>
+      <FILE id="wL4ZnF" name="Settings.h" compile="0" resource="0" file="Source/Settings.h"/>
+      <FILE id="LzzUFx" name="StaticStreamViewport.cpp" compile="1" resource="0"
+            file="Source/StaticStreamViewport.cpp"/>
+      <FILE id="KBvfcW" name="StaticStreamViewport.h" compile="0" resource="0"
+            file="Source/StaticStreamViewport.h"/>
+      <FILE id="VJKLOk" name="WorkbenchClient.cpp" compile="1" resource="0"
+            file="Source/WorkbenchClient.cpp"/>
+      <FILE id="cR63H1" name="WorkbenchClient.h" compile="0" resource="0"
+            file="Source/WorkbenchClient.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2010 targetFolder="Builds/VisualStudio2010">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="WorkbenchRemote"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="2" targetName="WorkbenchRemote"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_events" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_core" path="c:/juce/modules"/>
+      </MODULEPATHS>
+    </VS2010>
+    <VS2012 targetFolder="Builds/VisualStudio2012">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="Socket"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="2" targetName="Socket"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_events" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_core" path="c:/juce/modules"/>
+      </MODULEPATHS>
+    </VS2012>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>

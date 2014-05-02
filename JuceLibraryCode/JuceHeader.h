@@ -29,7 +29,7 @@
 
 namespace ProjectInfo
 {
-    const char* const  projectName    = "Socket";
+    const char* const  projectName    = "WorkbenchRemote";
     const char* const  versionString  = "1.0.0";
     const int          versionNumber  = 0x10000;
 }
