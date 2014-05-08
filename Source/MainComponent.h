@@ -11,6 +11,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 
 #include "base.h"
 #include "WorkbenchClient.h"
+#include "AudioPatchbayClient.h"
 #include "Settings.h"
 #include "StaticStreamViewport.h"
 
@@ -25,7 +26,7 @@ class MainContentComponent   : public Component,
 {
 public:
     //==============================================================================
-    MainContentComponent(WorkbenchClient * client_, Settings *settings_);
+    MainContentComponent(WorkbenchClient * client_, AudioPatchbayClient* patchbyClient_, Settings *settings_);
     ~MainContentComponent();
 
     void paint (Graphics&);
@@ -58,6 +59,7 @@ private:
 	virtual void handleAsyncUpdate();
 	
 	WorkbenchClient* client;
+	AudioPatchbayClient* patchbayClient;
 	Settings *settings;
 
 	ScopedPointer<TextEditor> addressEditor;
@@ -65,7 +67,9 @@ private:
 	ScopedPointer<Label> addressLabel;
 	ScopedPointer<Label> portLabel;
 	ScopedPointer<TextButton> connectButton;
+	ScopedPointer<TextButton> connectPatchbayButton;
 	ScopedPointer<TextButton> disconnectButton;
+	ScopedPointer<TextButton> disconnectPatchbayButton;
 	ScopedPointer<TextButton> infoButton;
 	ScopedPointer<TextButton> getTalkersButton;
 	ScopedPointer<TextButton> setTalkerButton;

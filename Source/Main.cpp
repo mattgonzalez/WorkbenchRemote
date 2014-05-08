@@ -27,12 +27,12 @@ public:
     {
 		settings = new Settings();
 		client = new WorkbenchClient(settings);
-		
+		patchbayClient = new AudioPatchbayClient(settings);
 		lookAndFeelV3 = new LookAndFeel_V3;
 		lookAndFeelV3->setColour(TextEditor::outlineColourId, Colours::lightgrey);
 		LookAndFeel::setDefaultLookAndFeel(lookAndFeelV3);
 		
-        mainWindow = new MainWindow(client, settings);
+        mainWindow = new MainWindow(client, patchbayClient, settings);
     }
 
     void shutdown() override
@@ -40,6 +40,7 @@ public:
         mainWindow = nullptr;
 		lookAndFeelV3 = nullptr;
 		client = nullptr;
+		patchbayClient = nullptr;
 		settings = nullptr;
     }
 
@@ -58,13 +59,13 @@ public:
     class MainWindow    : public DocumentWindow
     {
     public:
-        MainWindow(WorkbenchClient* client, Settings *settings)  : DocumentWindow ("Workbench Remote",
+        MainWindow(WorkbenchClient* client, AudioPatchbayClient* patchbayClient, Settings *settings)  : DocumentWindow ("Workbench Remote",
                                         Colours::lightgrey,
                                         DocumentWindow::allButtons)
         {
 			setUsingNativeTitleBar(true);
 
-            setContentOwned (new MainContentComponent(client, settings), true);
+            setContentOwned (new MainContentComponent(client, patchbayClient, settings), true);
 
             centreWithSize (getWidth(), getHeight());
             setVisible (true);
@@ -85,6 +86,7 @@ public:
 private:
 	ScopedPointer<Settings> settings;
 	ScopedPointer<WorkbenchClient> client;
+	ScopedPointer<AudioPatchbayClient> patchbayClient;
 	ScopedPointer<LookAndFeel_V3> lookAndFeelV3;
     ScopedPointer<MainWindow> mainWindow;
 

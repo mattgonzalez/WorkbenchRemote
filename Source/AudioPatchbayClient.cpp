@@ -15,7 +15,7 @@ For example, to transmit this 45 byte JSON string:
 
 the following bytes are sent over the socket:
 
-574f524b			Magic number 'BNCH'
+48434e42			Magic number 'BNCH'
 2d000000			Byte count (32 bits, endian swapped)
 7b22476574436f6d	{"GetCom
 6d616e64223a207b	mand": {
@@ -35,7 +35,7 @@ Strings are sent without a zero terminator.
 //============================================================================
 
 //
-// The 'KROW' value is the magic number written to the start of the packet
+// The 'HCNB' value is the magic number written to the start of the packet
 // that has to match at both ends of the connection
 //
 AudioPatchbayClient::AudioPatchbayClient(Settings* settings_):
@@ -68,11 +68,15 @@ Result AudioPatchbayClient::setStreamProperty( Identifier const type, int const 
 
 void AudioPatchbayClient::connectionMade()
 {
-
+	DBG("AudioPatchbayClient::connectionMade");
+	changeBroadcaster.sendChangeMessage();
 }
 
 void AudioPatchbayClient::connectionLost()
 {
+	DBG("AudioPatchbayClinet::connectionLost");
+
+	changeBroadcaster.sendChangeMessage();
 
 }
 

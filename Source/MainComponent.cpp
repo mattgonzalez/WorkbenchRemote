@@ -9,8 +9,9 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "MainComponent.h"
 #include "Identifiers.h"
 
-MainContentComponent::MainContentComponent(WorkbenchClient* client_, Settings *settings_):
+MainContentComponent::MainContentComponent(WorkbenchClient* client_, AudioPatchbayClient* patchbayClient_, Settings *settings_):
 	client(client_),
+	patchbayClient(patchbayClient_),
 	settings(settings_),
 	talkerStreamsTab(nullptr),
 	listenerStreamsTab(nullptr)
@@ -63,10 +64,19 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, Settings *s
 	connectButton->setButtonText (TRANS("Connect"));
 	connectButton->addListener (this);
 
+	addAndMakeVisible (connectPatchbayButton = new TextButton ("connectPatchbayButton"));
+	connectPatchbayButton->setButtonText (TRANS("ConnectPatchbay"));
+	connectPatchbayButton->addListener (this);
+
 	addAndMakeVisible (disconnectButton = new TextButton ("disconnectButton"));
 	disconnectButton->setButtonText (TRANS("Disconnect"));
 	disconnectButton->addListener (this);
 	disconnectButton->setEnabled(false);
+
+	addAndMakeVisible (disconnectPatchbayButton = new TextButton ("disconnectPatchbayButton"));
+	disconnectPatchbayButton->setButtonText (TRANS("DisconnectPatchbay"));
+	disconnectPatchbayButton->addListener (this);
+	disconnectPatchbayButton->setEnabled(false);
 
 	addAndMakeVisible (infoButton = new TextButton ("Get System Info"));
 	infoButton->setButtonText (TRANS("Get System Info"));
@@ -92,7 +102,7 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, Settings *s
 
 	client->changeBroadcaster.addChangeListener(this);
 	client->stringBroadcaster.addActionListener(this);
-
+	patchbayClient->changeBroadcaster.addChangeListener(this);
 	settings->tree.addListener(this);
 
 	setSize (600, 400);
@@ -106,12 +116,15 @@ MainContentComponent::~MainContentComponent()
 	addressLabel = nullptr;
 	portLabel = nullptr;
 	connectButton = nullptr;
+	connectPatchbayButton = nullptr;
 	disconnectButton = nullptr;
+	disconnectPatchbayButton = nullptr;
 	infoButton = nullptr;
 	getTalkersButton = nullptr;
 	setTalkerButton = nullptr;
 	client->stringBroadcaster.removeActionListener(this);
 	client->changeBroadcaster.removeChangeListener(this);
+	patchbayClient->changeBroadcaster.removeChangeListener(this);
 	settings->tree.removeListener(this);
 }
 
@@ -123,14 +136,18 @@ void MainContentComponent::paint (Graphics& g)
 
 void MainContentComponent::resized()
 {
-	addressLabel->setBounds (10, 20, /*JUCE_LIVE_CONSTANT*/(60), 24);
-	addressEditor->setBounds (addressLabel->getRight() + 5, 20, /*JUCE_LIVE_CONSTANT*/(110), 24);
-	portLabel->setBounds (addressEditor->getRight() + 5, 20, /*JUCE_LIVE_CONSTANT*/(40), 24);
-	portEditor->setBounds (portLabel->getRight() + 5, 20, /*JUCE_LIVE_CONSTANT*/(50), 24);
+	addressLabel->setBounds (10, 20, 60, 24);
+	addressEditor->setBounds (addressLabel->getRight() + 5, 20, 110, 24);
+	portLabel->setBounds (addressEditor->getRight() + 5, 20, 40, 24);
+	portEditor->setBounds (portLabel->getRight() + 5, 20, 50, 24);
 
 	connectButton->setBounds (portEditor->getRight() + 20, 20, 104, 24);
 	juce::Rectangle<int> r(connectButton->getBounds());
 	disconnectButton->setBounds(r.translated( r.getWidth() + 5, 0));
+	r = disconnectButton->getBounds();
+	connectPatchbayButton->setBounds(r.translated( r.getWidth() + 5, 0));
+	r = connectPatchbayButton->getBounds();
+	disconnectPatchbayButton->setBounds(r.translated( r.getWidth() + 5, 0));
 
 	int y = addressLabel->getBottom() + 10;
 	infoButton->setBounds(96, y, 104, 24);
@@ -166,9 +183,21 @@ void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
 		return;
 	}
 
+	if (buttonThatWasClicked == connectPatchbayButton)
+	{
+		patchbayClient->connectToSocket(addressEditor->getText(), portEditor->getText().getIntValue(), 1000);
+		return;
+	}
+
 	if (buttonThatWasClicked == disconnectButton)
 	{
 		client->disconnect();
+		return;
+	}
+
+	if (buttonThatWasClicked == disconnectPatchbayButton)
+	{
+		patchbayClient->disconnect();
 		return;
 	}
 }
@@ -288,9 +317,11 @@ void MainContentComponent::valueTreeParentChanged( ValueTree& treeWhoseParentHas
 void MainContentComponent::enableControls()
 {
 	bool connected = client->isConnected();
-
+	bool patchbayConnected = patchbayClient->isConnected();
 	connectButton->setEnabled(!connected);
+	connectPatchbayButton->setEnabled(!patchbayConnected);
 	disconnectButton->setEnabled(connected);
+	disconnectPatchbayButton->setEnabled(patchbayConnected);
 	infoButton->setEnabled(connected);
 
 	ScopedLock locker(settings->lock);
