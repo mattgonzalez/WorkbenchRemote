@@ -195,6 +195,22 @@ Result WorkbenchClient::getTalkerStreams()
 	return getProperty(Identifiers::Talkers, arrayVar);
 }
 
+
+Result WorkbenchClient::getListenerStreams()
+{
+	ScopedLock locker(settings->lock);
+	var arrayVar;
+	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
+	for (int i = 0; i < listenersTree.getNumChildren(); ++i)
+	{
+		DynamicObject::Ptr indexObject(new DynamicObject());
+		indexObject->setProperty(Identifiers::Index, i);
+		arrayVar.append(var(indexObject));
+	}
+
+	return getProperty(Identifiers::Listeners, arrayVar);
+}
+
 Result WorkbenchClient::setStreamProperty( Identifier const type, int const streamIndex, Identifier const &ID, var const parameter )
 {
 	DynamicObject messageObject;
@@ -285,6 +301,18 @@ void WorkbenchClient::handleGetResponse( DynamicObject * messageObject )
 		handleGetTalkersResponse(talkersPropertyVar);
 		return;
 	}
+
+	if (propertyObject->hasProperty(Identifiers::Listeners))
+	{
+		var listenersPropertyVar(propertyObject->getProperty(Identifiers::Listeners));
+		if (false == listenersPropertyVar.isArray())
+		{
+			DBG("Could not parse get listeners response");
+			return;
+		}
+		handleGetListenersResponse(listenersPropertyVar);
+		return;
+	}
 }
 
 void WorkbenchClient::handleGetSystemResponse( DynamicObject * systemPropertyObject )
@@ -358,3 +386,65 @@ void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
 	}
 }
 
+void WorkbenchClient::handleGetListenersResponse( var listenersPropertyVar )
+{
+	ScopedLock locker(settings->lock);
+	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
+
+	for (int responseIndex = 0; responseIndex < listenersPropertyVar.size(); ++responseIndex)
+	{
+		//
+		// Get the stream index from the response...
+		//
+		var const &v(listenersPropertyVar[responseIndex]);
+		DynamicObject::Ptr const d(v.getDynamicObject());
+
+		if (nullptr == d || false == d->hasProperty(Identifiers::Index))
+		{
+			DBG("Invalid response for get listeners");
+			continue;
+		}
+
+		int streamIndex = d->getProperty(Identifiers::Index);
+		//DBG(streamIndex);
+
+		//
+		// Get the values for the stream from the response and put them into the tree
+		//
+		ValueTree streamTree(listenersTree.getChild(streamIndex));
+		if (false == streamTree.isValid())
+		{
+			DBG("Invalid stream index for get listeners");
+			continue;
+		}
+
+		if (d->hasProperty(Identifiers::Name))
+		{
+			streamTree.setProperty(Identifiers::Name, d->getProperty(Identifiers::Name), nullptr);
+		}
+
+		if (d->hasProperty(Identifiers::StreamID))
+		{
+			int64 streamID = d->getProperty(Identifiers::StreamID).toString().getHexValue64();
+			streamTree.setProperty(Identifiers::StreamID, streamID, nullptr);
+		}
+
+		if (d->hasProperty(Identifiers::DestinationAddress))
+		{
+			String addressString(d->getProperty(Identifiers::DestinationAddress).toString());
+			addressString = addressString.toLowerCase();
+			addressString.retainCharacters(HexChars);
+			streamTree.setProperty(Identifiers::DestinationAddress, addressString.getHexValue64(), nullptr);
+		}
+
+		if (d->hasProperty(Identifiers::Subtype))
+		{
+			streamTree.setProperty(Identifiers::Subtype, (int) d->getProperty(Identifiers::Subtype), nullptr);
+		}
+
+		if (d->hasProperty(Identifiers::ChannelCount))
+		{
+			streamTree.setProperty(Identifiers::ChannelCount, (int) d->getProperty(Identifiers::ChannelCount), nullptr);
+		}
+	}
+}

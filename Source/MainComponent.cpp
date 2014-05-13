@@ -93,6 +93,16 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, AudioPatchb
 	setTalkerButton->addListener(this);
 	setTalkerButton->setEnabled(false);
 
+	addAndMakeVisible (getListenersButton = new TextButton ("Get Listener Info"));
+	getListenersButton->setButtonText (TRANS("Get Listener Info"));
+	getListenersButton->addListener (this);
+	getListenersButton->setEnabled(false);
+
+	addAndMakeVisible(setListenerButton = new TextButton ("Set Listener Info"));
+	setListenerButton->setButtonText( TRANS("Set Listener Info"));
+	setListenerButton->addListener(this);
+	setListenerButton->setEnabled(false);
+
 	readout.setReadOnly(true);
 	readout.setMultiLine(true);
 	addAndMakeVisible(&readout);
@@ -122,6 +132,8 @@ MainContentComponent::~MainContentComponent()
 	infoButton = nullptr;
 	getTalkersButton = nullptr;
 	setTalkerButton = nullptr;
+	getListenersButton = nullptr;
+	setListenerButton = nullptr;
 	client->stringBroadcaster.removeActionListener(this);
 	client->changeBroadcaster.removeChangeListener(this);
 	patchbayClient->changeBroadcaster.removeChangeListener(this);
@@ -155,6 +167,10 @@ void MainContentComponent::resized()
 	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
 	r = getTalkersButton->getBounds();
 	setTalkerButton->setBounds(r.translated( r.getWidth() + 5, 0));
+	r = setTalkerButton->getBounds();
+	getListenersButton->setBounds(r.translated(r.getWidth() + 5, 0));
+	r = getListenersButton->getBounds();
+	setListenerButton->setBounds(r.translated(r.getWidth() + 5, 0));
 
 	y = infoButton->getBottom() + 10;
 	int w = getWidth()/2 - 20;
@@ -174,6 +190,18 @@ void MainContentComponent::buttonClicked (Button* buttonThatWasClicked)
 	if (buttonThatWasClicked == getTalkersButton)
 	{
 		client->getTalkerStreams();
+		return;
+	}
+
+	if (buttonThatWasClicked == getListenersButton)
+	{
+		client->getListenerStreams();
+		return;
+	}
+
+	if (buttonThatWasClicked == setListenerButton)
+	{
+
 		return;
 	}
 
@@ -326,8 +354,12 @@ void MainContentComponent::enableControls()
 
 	ScopedLock locker(settings->lock);
 	ValueTree talkersTree(settings->tree.getChildWithName(Identifiers::Talkers));
+	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
+
 	getTalkersButton->setEnabled(talkersTree.isValid());
 	setTalkerButton->setEnabled(talkersTree.isValid());
+	getListenersButton->setEnabled(listenersTree.isValid());
+	setListenerButton->setEnabled(listenersTree.isValid());
 }
 
 void MainContentComponent::handleAsyncUpdate()
@@ -353,5 +385,20 @@ void MainContentComponent::updateStreamControls()
 	{
 		tabs->removeTab(TALKERS_TAB);
 		talkerStreamsTab = nullptr;
+	}
+
+	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
+	if (listenersTree.getNumChildren() != 0)
+	{
+		if (nullptr == listenerStreamsTab)
+		{
+			listenerStreamsTab = new StaticStreamViewport(listenersTree, settings->lock, client);
+			tabs->addTab("Listeners", Colours:: white, listenerStreamsTab, true, LISTENERS_TAB);
+		}
+	}
+	else
+	{
+		tabs->removeTab(LISTENERS_TAB);
+		listenerStreamsTab = nullptr;
 	}
 }

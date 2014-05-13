@@ -18,6 +18,7 @@ public:
 
 	Result getSystemInfo();
 	Result getTalkerStreams();
+	Result getListenerStreams();
 	Result setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
 
 	ChangeBroadcaster changeBroadcaster;
@@ -36,6 +37,7 @@ protected:
 	void handleGetResponse( DynamicObject * messageObject );
 	void handleGetSystemResponse( DynamicObject * systemPropertyObject );
 	void handleGetTalkersResponse( var talkersPropertyVar );
+	void handleGetListenersResponse( var listenersPropertyVar );
 
 	Result getProperty (Identifier const ID, var const parameter);
 

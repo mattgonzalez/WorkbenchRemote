@@ -73,6 +73,9 @@ private:
 	ScopedPointer<TextButton> infoButton;
 	ScopedPointer<TextButton> getTalkersButton;
 	ScopedPointer<TextButton> setTalkerButton;
+	ScopedPointer<TextButton> getListenersButton;
+	ScopedPointer<TextButton> setListenerButton;
+
 	TextEditor readout;
 	ScopedPointer<TabbedComponent> tabs;
 	StaticStreamViewport *talkerStreamsTab;
