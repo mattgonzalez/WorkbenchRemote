@@ -14,7 +14,7 @@ typedef enum
 {
 	AVTP_SUBTYPE_618836 = 0,
 	AVTP_SUBTYPE_AUDIO = 2,
-	AVTP_SUBTYPE_CRS = 0x7d,
+	AVTP_SUBTYPE_CRS = 5, // 0x7d,  // 5 for D6, 0x7d, for D5
 	AVTP_SUBTYPE_EXPERIMENTAL = 0x7f
 } StreamSubType;
 

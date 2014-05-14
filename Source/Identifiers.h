@@ -35,7 +35,8 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( Version )\
 						IDENTIFIER( Sequence )\
 						IDENTIFIER( Status ) \
-						IDENTIFIER( Index )
+						IDENTIFIER( Index ) \
+						IDENTIFIER( Active )
 
 
 namespace Identifiers

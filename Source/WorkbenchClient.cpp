@@ -383,6 +383,11 @@ void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
 		{
 			streamTree.setProperty(Identifiers::ChannelCount, (int) d->getProperty(Identifiers::ChannelCount), nullptr);
 		}
+
+		if (d->hasProperty(Identifiers::Active))
+		{
+			streamTree.setProperty(Identifiers::Active, d->getProperty(Identifiers::Active), nullptr);
+		}
 	}
 }
 
@@ -445,6 +450,11 @@ void WorkbenchClient::handleGetListenersResponse( var listenersPropertyVar )
 		if (d->hasProperty(Identifiers::ChannelCount))
 		{
 			streamTree.setProperty(Identifiers::ChannelCount, (int) d->getProperty(Identifiers::ChannelCount), nullptr);
+		}
+
+		if (d->hasProperty(Identifiers::Active))
+		{
+			streamTree.setProperty(Identifiers::Active, d->getProperty(Identifiers::Active), nullptr);
 		}
 	}
 }

@@ -67,6 +67,7 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, AudioPatchb
 	addAndMakeVisible (connectPatchbayButton = new TextButton ("connectPatchbayButton"));
 	connectPatchbayButton->setButtonText (TRANS("ConnectPatchbay"));
 	connectPatchbayButton->addListener (this);
+	connectPatchbayButton->setVisible(false);
 
 	addAndMakeVisible (disconnectButton = new TextButton ("disconnectButton"));
 	disconnectButton->setButtonText (TRANS("Disconnect"));
@@ -77,6 +78,7 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, AudioPatchb
 	disconnectPatchbayButton->setButtonText (TRANS("DisconnectPatchbay"));
 	disconnectPatchbayButton->addListener (this);
 	disconnectPatchbayButton->setEnabled(false);
+	disconnectPatchbayButton->setVisible(false);
 
 	addAndMakeVisible (infoButton = new TextButton ("Get System Info"));
 	infoButton->setButtonText (TRANS("Get System Info"));
@@ -92,6 +94,7 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, AudioPatchb
 	setTalkerButton->setButtonText( TRANS("Set Talker Info"));
 	setTalkerButton->addListener(this);
 	setTalkerButton->setEnabled(false);
+	setTalkerButton->setVisible(false);
 
 	addAndMakeVisible (getListenersButton = new TextButton ("Get Listener Info"));
 	getListenersButton->setButtonText (TRANS("Get Listener Info"));
@@ -102,6 +105,7 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, AudioPatchb
 	setListenerButton->setButtonText( TRANS("Set Listener Info"));
 	setListenerButton->addListener(this);
 	setListenerButton->setEnabled(false);
+	setListenerButton->setVisible(false);
 
 	readout.setReadOnly(true);
 	readout.setMultiLine(true);
@@ -166,8 +170,8 @@ void MainContentComponent::resized()
 	r = infoButton->getBounds();
 	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
 	r = getTalkersButton->getBounds();
-	setTalkerButton->setBounds(r.translated( r.getWidth() + 5, 0));
-	r = setTalkerButton->getBounds();
+	//setTalkerButton->setBounds(r.translated( r.getWidth() + 5, 0));
+	//r = setTalkerButton->getBounds();
 	getListenersButton->setBounds(r.translated(r.getWidth() + 5, 0));
 	r = getListenersButton->getBounds();
 	setListenerButton->setBounds(r.translated(r.getWidth() + 5, 0));

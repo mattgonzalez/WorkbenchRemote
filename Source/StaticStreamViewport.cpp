@@ -339,6 +339,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 
 	if (& startButton == button)
 	{
+		client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::Active, true);
 		enableControls(true);
 		return;
 	}
@@ -352,6 +353,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 
 	if (& stopButton == button)
 	{
+		client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::Active, false);
 		enableControls(false);
 		return;
 	}
@@ -427,6 +429,12 @@ void StaticStreamViewport::StaticStreamComponent::valueTreePropertyChanged( Valu
 		int subtype = tree[Identifiers::Subtype];
 		clockReferenceButton.setToggleState(AVTP_SUBTYPE_CRS == subtype,dontSendNotification);
 		setChannelsVisible();
+		return;
+	}
+
+	if (Identifiers::Active == property)
+	{
+		enableControls(treeWhosePropertyHasChanged.getProperty(property));
 		return;
 	}
 }
