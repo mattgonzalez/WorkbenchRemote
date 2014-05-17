@@ -58,14 +58,13 @@ protected:
 		ComboBox channelsCombo;
 		TextButton startButton;
 		TextButton stopButton;
-		
+		TextButton faultButton;
+
 		ToggleButton clockReferenceButton;
 
 		Label streamIdLabel;
 		Label multicastAddressLabel;
 		Label channelsLabel;
-
-		bool injectionEnabled;
 
 		class MetricsButton : public Button
 		{
@@ -73,14 +72,6 @@ protected:
 			MetricsButton();
 			virtual void paintButton( Graphics& g, bool isMouseOverButton, bool isButtonDown );
 		} metricsButton;
-
-		class InjectButton : public Button
-		{
-		public:
-			InjectButton();
-			virtual void paintButton( Graphics& g, bool isMouseOverButton, bool isButtonDown );
-		} faultCalloutButton;
-
 
 	protected:
 		void userInputMulticastAddress();

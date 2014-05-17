@@ -1,34 +1,44 @@
 #pragma once
+#include "WorkbenchClient.h"
 class Controller;
 class Stream;
-class FaultInjectionCallout : public Component, public Slider::Listener, public Button::Listener
+class FaultInjectionCallout : public Component, public Slider::Listener, public Button::Listener, public ValueTree::Listener
 {
 public:
-	FaultInjectionCallout(Controller * controller_, ReferenceCountedObjectPtr<Stream> stream_);
+	FaultInjectionCallout(ValueTree tree_, CriticalSection& lock_, WorkbenchClient* client_);
 	~FaultInjectionCallout();
 
 	virtual void resized();
 
-	Label faultInjectionLab;
+	Label faultInjectionLabel;
 	TextButton resetButton;
 
-	ReferenceCountedObjectPtr<Stream> stream;
+	ValueTree tree;
+	CriticalSection &lock;
+	WorkbenchClient* client;
 
 protected:
 	void configPercentSlider(Slider &slider);
 
 	virtual void sliderValueChanged( Slider* slider );
 
-	ValueTree getFaultInjectionTree();
-
 	virtual void buttonClicked( Button* );
 	void resetSliders();
-	Controller * controller;
+
+	virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
+
+	virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
+
+	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
+
+	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
+
+	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
 
 	class Group
 	{
 	public:
-		ScopedPointer<ToggleButton> toggleBtn;
+		ScopedPointer<ToggleButton> toggleButton;
 		ScopedPointer<Slider> percentSlider;
 		ScopedPointer<Slider> amountSlider;
 	};
