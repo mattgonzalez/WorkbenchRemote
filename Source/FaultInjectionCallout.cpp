@@ -199,7 +199,7 @@ void FaultInjectionCallout::valueTreePropertyChanged( ValueTree& treeWhoseProper
 {
 	if (property == Identifiers::Enabled)
 	{
-		groups[0]->toggleButton->setToggleState(treeWhosePropertyHasChanged.getProperty(property), false);
+		groups[0]->toggleButton->setToggleState(treeWhosePropertyHasChanged.getProperty(property), dontSendNotification);
 	}
 }
 
