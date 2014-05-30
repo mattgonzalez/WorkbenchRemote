@@ -103,7 +103,7 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	parentContentComponent(parent_),
 	startButton("Start"),
 	stopButton("Stop"),
-	//faultCalloutButton("Inject"),
+	faultButton("Inject"),
 	clockReferenceButton("CRS"),
 	streamIdLabel(String::empty,"Stream ID"),
 	multicastAddressLabel(String::empty,"Multicast address"),
@@ -126,17 +126,13 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	addAndMakeVisible(&channelsLabel);
 	addAndMakeVisible(&startButton);
 	addAndMakeVisible(&stopButton);
-#if 0
 
-	if (stream_->getType() == AUDIO_RENDER_STREAM)
+	if(tree.getParent().getType() == Identifiers::Talkers)
 	{
-		addAndMakeVisible(&faultCalloutButton);
-		ValueTree renderStreamsTree(parent_->controller->getTree(Identifiers::RenderStreams));
-		ValueTree streamTree(renderStreamsTree.getChild(stream->listenerUniqueID));
-		faultInjectionTree = streamTree.getChildWithName(Identifiers::FaultInjection);
-		faultInjectionTree.addListener(this);
+		addAndMakeVisible(&faultButton);
+		faultButton.addListener(this);
 	}
-#endif
+	
 	addAndMakeVisible(&clockReferenceButton);
 	startButton.setEnabled(false);
 	stopButton.setEnabled(false);
@@ -159,7 +155,6 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	metricsButton.addListener(this);
 	startButton.addListener(this);
 	stopButton.addListener(this);
-	faultCalloutButton.addListener(this);
 	clockReferenceButton.addListener(this);
 
 	tree.addListener(this);
@@ -214,19 +209,15 @@ void StaticStreamViewport::StaticStreamComponent::resized()
 
 	startButton.setSize(40,25);
 	stopButton.setSize(40,25);
-	//Image fault(ImageCache::getFromMemory(BinaryData::injectionbuttonnorm_jpg, BinaryData::injectionbuttonnorm_jpgSize));
-	//faultCalloutButton.setSize(fault.getWidth(),fault.getHeight());
+	faultButton.setSize(80, 25);
 	clockReferenceButton.setSize(60,25);
 	startButton.setCentreRelative(0.4f,0.8f);
 	stopButton.setCentreRelative(0.6f,0.8f);
-	faultCalloutButton.setCentreRelative(0.2f,0.8f);
+	faultButton.setCentreRelative(0.2f,0.8f);
 	clockReferenceButton.setCentreRelative(0.85f,0.8f);
 
-#if 0
-
-	switch (stream->getType())
+	if (tree.getParent().getType() == Identifiers::Talkers)
 	{
-	case AUDIO_RENDER_STREAM:
 		streamIdEditor.setCentreRelative(0.3f,0.5f);
 		multicastAddressEditor.setCentreRelative(0.6f,0.5f);
 		channelsCombo.setCentreRelative(0.85f,0.5f);
@@ -243,13 +234,11 @@ void StaticStreamViewport::StaticStreamComponent::resized()
 			channelsLabel.setBounds(r.translated(0, -r.getHeight()));
 		}
 		metricsButton.setCentreRelative(0.1f, 0.5f);
-		break;
-
-	case AUDIO_CAPTURE_STREAM:
-		metricsButton.setCentreRelative(0.9f, 0.5f);
-		break;
 	}
-#endif
+	else
+	{
+		metricsButton.setCentreRelative(0.9f, 0.5f);
+	}
 }
 
 void StaticStreamViewport::StaticStreamComponent::textEditorTextChanged( TextEditor&)
@@ -304,9 +293,6 @@ void StaticStreamViewport::StaticStreamComponent::userInputMulticastAddress()
 
 	String text = multicastAddressEditor.getText();
 	int64 temp = text.getHexValue64();
-	//temp = jlimit( ProtocolMAAP_firstStaticAddress, ProtocolMAAP_lastStaticAddress, temp);
-	//MACAddress address(Int64ToMACAddress(temp));
-	//multicastAddressEditor.setText(address.toString(), false);
 	tree.setProperty(Identifiers::DestinationAddress, temp, nullptr);
 	client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::DestinationAddress, text);
 }
@@ -317,7 +303,6 @@ void StaticStreamViewport::StaticStreamComponent::userInputStreamID()
 
 	String text = streamIdEditor.getText();
 	int64 streamID = text.getHexValue64();
-	//streamIdEditor.setText(String::toHexString(streamID));
 	tree.setProperty(Identifiers::StreamID, streamID, nullptr);
 	client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::StreamID, text);
 }
@@ -328,7 +313,6 @@ void StaticStreamViewport::StaticStreamComponent::comboBoxChanged( ComboBox* com
 
 	String text(channelsCombo.getText());
 	int channels = text.getIntValue();
-	//channelsCombo.setSelectedId(channels);
 	tree.setProperty(Identifiers::ChannelCount, channels, nullptr);
 	client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::ChannelCount, channels);
 }
@@ -344,10 +328,13 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 		return;
 	}
 
-	if (& faultCalloutButton == button)
+	if (& faultButton == button)
 	{
-		//FaultInjectionCallout * content = new FaultInjectionCallout(parentContentComponent->controller, stream);
-		//CallOutBox::launchAsynchronously(content, button->getScreenBounds(), nullptr);
+		if (tree.getParent().isValid())
+		{
+			FaultInjectionCallout * content = new FaultInjectionCallout(tree.getParent(), lock, client);
+			CallOutBox::launchAsynchronously(content, button->getScreenBounds(), nullptr);
+		}
 		return;
 	}
 
@@ -376,7 +363,6 @@ void StaticStreamViewport::StaticStreamComponent::enableControls( bool started )
 	channelsCombo.setEnabled(!started);
 	startButton.setEnabled(!started);
 	stopButton.setEnabled(started);
-
 	setChannelsVisible();
 
 	repaint();
@@ -476,28 +462,3 @@ void StaticStreamViewport::StaticStreamComponent::MetricsButton::paintButton( Gr
 #endif
 }
 
-StaticStreamViewport::StaticStreamComponent::InjectButton::InjectButton(): Button("Injection Button")
-{
-
-}
-
-void StaticStreamViewport::StaticStreamComponent::InjectButton::paintButton( Graphics& g, bool isMouseOverButton, bool isButtonDown )
-{
-#if 0
-
-	Image fault(ImageCache::getFromMemory(BinaryData::injectionbuttonnorm_jpg, BinaryData::injectionbuttonnorm_jpgSize));
-	if (isMouseOverButton)
-	{
-		fault = ImageCache::getFromMemory(BinaryData::injectionbuttonnorm_jpg, BinaryData::injectionbuttonnorm_jpgSize);
-	}
-	if (isButtonDown)
-	{
-		fault = ImageCache::getFromMemory(BinaryData::injectionbuttonnorm_jpg, BinaryData::injectionbuttonnorm_jpgSize);
-	}
-// 	if (isEnabled())
-// 	{
-// 		fault = ImageCache::getFromMemory(BinaryData::injectionbuttoninjecting_jpg, BinaryData::injectionbuttoninjecting_jpgSize);
-// 	}
-	g.drawImageAt(fault,0,0);
-#endif
-}

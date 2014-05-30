@@ -12,6 +12,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( DestinationAddress		) \
 						IDENTIFIER( ChannelCount			) \
 						IDENTIFIER( Subtype					) \
+<<<<<<< HEAD
 						IDENTIFIER( HelpText	) \
 						IDENTIFIER( TimestampJump ) \
 						IDENTIFIER( Enabled ) \
@@ -37,6 +38,33 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( Status ) \
 						IDENTIFIER( Index ) \
 						IDENTIFIER( Active )
+=======
+						IDENTIFIER( HelpText				) \
+						IDENTIFIER( TimestampJump			) \
+						IDENTIFIER( Enabled					) \
+						IDENTIFIER( FaultInjection			) \
+						IDENTIFIER( FaultLogging			) \
+						IDENTIFIER( Count					) \
+						IDENTIFIER( Percent					) \
+						IDENTIFIER( Amount					) \
+						IDENTIFIER( CorruptPacket			) \
+						IDENTIFIER( SkipPackets				) \
+						IDENTIFIER( DupePackets				) \
+						IDENTIFIER( TimestampJitter			) \
+						IDENTIFIER( TrafficShapingJitter	) \
+						IDENTIFIER( Talkers					) \
+						IDENTIFIER( Listeners				) \
+						IDENTIFIER( GetCommand				) \
+						IDENTIFIER( GetResponse				) \
+						IDENTIFIER( SetCommand				) \
+						IDENTIFIER( SetResponse				) \
+						IDENTIFIER( System					) \
+						IDENTIFIER( Version					) \
+						IDENTIFIER( Sequence				) \
+						IDENTIFIER( Status					) \
+						IDENTIFIER( Index					) \
+						IDENTIFIER( Active					)
+>>>>>>> f2bb0d171775defbbc7985001ac9aed8fb2122aa
 
 
 namespace Identifiers

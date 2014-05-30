@@ -388,6 +388,30 @@ void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
 		{
 			streamTree.setProperty(Identifiers::Active, d->getProperty(Identifiers::Active), nullptr);
 		}
+
+		if (d->hasProperty(Identifiers::FaultInjection))
+		{
+			ValueTree faultTree(streamTree.getChildWithName(Identifiers::FaultInjection));
+			var const& faultVar(d->getProperty(Identifiers::FaultInjection));
+			DynamicObject::Ptr const faultObject(faultVar.getDynamicObject());
+
+			if (faultObject->hasProperty(Identifiers::CorruptPacket))
+			{
+				ValueTree corruptTree(faultTree.getChildWithName(Identifiers::CorruptPacket));
+				var const& corruptVar(faultObject->getProperty(Identifiers::CorruptPacket));
+				DynamicObject::Ptr const corruptObject(corruptVar.getDynamicObject());
+				if (corruptObject->hasProperty(Identifiers::Enabled))
+				{
+					corruptTree.setProperty(Identifiers::Enabled, corruptObject->getProperty(Identifiers::Enabled), nullptr);
+				}
+
+				if (corruptObject->hasProperty(Identifiers::Percent))
+				{
+					corruptTree.setProperty(Identifiers::Percent, corruptObject->getProperty(Identifiers::Percent), nullptr);
+				}
+			}
+
+		}
 	}
 }
 
