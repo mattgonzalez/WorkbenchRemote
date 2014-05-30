@@ -15,7 +15,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 
 namespace Identifiers
 {
-	Identifier const CorruptPacket("CorruptPacket");
+	Identifier const CorruptPackets("CorruptPackets");
 	Identifier const DupePackets("DupePackets");
 	Identifier const TimestampJitter("TimestampJitter");
 	Identifier const TimestampJump("TimestampJump");
@@ -26,7 +26,7 @@ namespace FaultInjection
 	extern const Type types[NUM_TYPES] = 
 	{
 		{
-			"Corrupt packets", &Identifiers::CorruptPacket, nullptr, 0.0, 0.0,
+			"Corrupt packets", &Identifiers::CorruptPackets, nullptr, 0.0, 0.0,
 			"Enable intentionally sending corrupted packets for this stream", 
 			"Set how often a corrupted packet will be sent", nullptr
 		},

@@ -61,7 +61,7 @@ void Settings::initializeStreams( int numTalkers,int numListeners )
 		ValueTree child("Talker" + String(i));
 		child.setProperty(Identifiers::Index, i, nullptr);
 		ValueTree fault(child.getOrCreateChildWithName(Identifiers::FaultInjection, nullptr));
-		ValueTree corrupt(fault.getOrCreateChildWithName(Identifiers::CorruptPacket, nullptr));
+		ValueTree corrupt(fault.getOrCreateChildWithName(Identifiers::CorruptPackets, nullptr));
 		corrupt.setProperty(Identifiers::Enabled, false, nullptr);
 		corrupt.setProperty(Identifiers::Percent, 0.0f, nullptr);
 		talkersTree.addChild(child,-1,nullptr);

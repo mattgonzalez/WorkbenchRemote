@@ -395,10 +395,10 @@ void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
 			var const& faultVar(d->getProperty(Identifiers::FaultInjection));
 			DynamicObject::Ptr const faultObject(faultVar.getDynamicObject());
 
-			if (faultObject->hasProperty(Identifiers::CorruptPacket))
+			if (faultObject->hasProperty(Identifiers::CorruptPackets))
 			{
-				ValueTree corruptTree(faultTree.getChildWithName(Identifiers::CorruptPacket));
-				var const& corruptVar(faultObject->getProperty(Identifiers::CorruptPacket));
+				ValueTree corruptTree(faultTree.getChildWithName(Identifiers::CorruptPackets));
+				var const& corruptVar(faultObject->getProperty(Identifiers::CorruptPackets));
 				DynamicObject::Ptr const corruptObject(corruptVar.getDynamicObject());
 				if (corruptObject->hasProperty(Identifiers::Enabled))
 				{
