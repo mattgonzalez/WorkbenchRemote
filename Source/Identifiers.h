@@ -20,9 +20,9 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( Count ) \
 						IDENTIFIER( Percent ) \
 						IDENTIFIER( Amount ) \
-						IDENTIFIER( CorruptPacket ) \
+						IDENTIFIER( CorruptPackets ) \
 						IDENTIFIER( SkipPackets ) \
-						IDENTIFIER( DupePackets) \
+						IDENTIFIER( DuplicatePackets) \
 						IDENTIFIER( TimestampJitter) \
 						IDENTIFIER( TrafficShapingJitter) \
 						IDENTIFIER( Talkers )\
