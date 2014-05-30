@@ -1059,6 +1059,9 @@
     <ClCompile Include="..\..\Source\AudioPatchbayClient.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchComponent.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\AddressUtilities.h">
@@ -2085,6 +2088,9 @@
       <Filter>Juce Library Code</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\AudioPatchbayClient.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\WorkbenchComponent.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
   </ItemGroup>

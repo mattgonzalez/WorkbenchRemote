@@ -14,15 +14,11 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "AudioPatchbayClient.h"
 #include "Settings.h"
 #include "StaticStreamViewport.h"
+#include "WorkbenchComponent.h"
 
 
 class MainContentComponent   : public Component, 
-	public ButtonListener, 
-	public ChangeListener, 
-	public TextEditor::Listener,
-	public ActionListener,
-	public ValueTree::Listener,
-	public AsyncUpdater
+	public TextEditor::Listener
 {
 public:
     //==============================================================================
@@ -32,6 +28,7 @@ public:
     void paint (Graphics&);
     void resized();
 	void buttonClicked (Button* buttonThatWasClicked);
+	String getAddress();
 
 private:
     //==============================================================================
@@ -40,24 +37,11 @@ private:
 	void updateAddress();
 	void updatePort();
 
-	virtual void changeListenerCallback( ChangeBroadcaster* source );
-
-	void enableControls();
-	void updateStreamControls();
-
 	virtual void textEditorTextChanged( TextEditor& );
 	virtual void textEditorReturnKeyPressed( TextEditor& );
 	virtual void textEditorEscapeKeyPressed( TextEditor& );
 	virtual void textEditorFocusLost( TextEditor& );
-	virtual void actionListenerCallback( const String& message );
 
-	virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
-	virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
-	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
-	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
-	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
-	virtual void handleAsyncUpdate();
-	
 	WorkbenchClient* client;
 	AudioPatchbayClient* patchbayClient;
 	Settings *settings;
@@ -66,25 +50,14 @@ private:
 	ScopedPointer<TextEditor> portEditor;
 	ScopedPointer<Label> addressLabel;
 	ScopedPointer<Label> portLabel;
-	ScopedPointer<TextButton> connectButton;
-	ScopedPointer<TextButton> connectPatchbayButton;
-	ScopedPointer<TextButton> disconnectButton;
-	ScopedPointer<TextButton> disconnectPatchbayButton;
-	ScopedPointer<TextButton> infoButton;
-	ScopedPointer<TextButton> getTalkersButton;
-	ScopedPointer<TextButton> setTalkerButton;
-	ScopedPointer<TextButton> getListenersButton;
-	ScopedPointer<TextButton> setListenerButton;
 
-	TextEditor readout;
 	ScopedPointer<TabbedComponent> tabs;
-	StaticStreamViewport *talkerStreamsTab;
-	StaticStreamViewport *listenerStreamsTab;
+	WorkbenchComponent *workbenchTab;
 
-	enum
+	enum 
 	{
-		TALKERS_TAB,
-		LISTENERS_TAB
+		WORKBENCH_TAB,
+		PATCHBAY_TAB
 	};
 };
 
