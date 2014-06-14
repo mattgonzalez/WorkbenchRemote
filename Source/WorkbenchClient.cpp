@@ -11,8 +11,8 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "Settings.h"
 #include "Identifiers.h"
 
-const String Receive("Receive");
-const String Send("Send");
+// const String Receive("Receive");
+// const String Send("Send");
 const String HexChars("0123456789abcdef");
 const String OK("OK");
 
@@ -52,7 +52,7 @@ Strings are sent without a zero terminator.
 // that has to match at both ends of the connection
 //
 WorkbenchClient::WorkbenchClient(Settings* settings_):
-	InterprocessConnection(true, 'KROW'),
+	InterprocessConnection( true, 'KROW'),
 	settings(settings_),
 	commandSequence(0)
 {
@@ -118,14 +118,25 @@ void WorkbenchClient::messageReceived( const MemoryBlock& message )
 		return;
 	}
 
-	// Send the JSON string to the user interface
-	stringBroadcaster.sendActionMessage(Receive + message.toString());
+	lastMessageReceived = message.toString();
 
 	// Start reading properties from the JSON data
 	DynamicObject * messageObject = messageVar.getDynamicObject();
 	if (nullptr == messageObject)
 	{
 		DBG ("Could not convert JSON var to DynamicObject");
+		return;
+	}
+
+	if (messageObject->hasProperty(Identifiers::PropertyChanged))
+	{
+		handlePropertyChangedMessage(messageObject, Identifiers::PropertyChanged);
+		return;
+	}	
+	
+	if (messageObject->hasProperty(Identifiers::FaultNotification))
+	{
+		handleFaultNotificationMessage(messageObject);
 		return;
 	}
 
@@ -163,7 +174,7 @@ void WorkbenchClient::messageReceived( const MemoryBlock& message )
 	// See if this is a GetResponse message
 	if (messageObject->hasProperty(Identifiers::GetResponse))
 	{
-		handleGetResponse(messageObject);
+		handlePropertyChangedMessage(messageObject, Identifiers::GetResponse);
 		return;
 	}
 }
@@ -247,7 +258,7 @@ Result WorkbenchClient::sendJSONToSocket( DynamicObject &messageObject )
 	messageObject.writeAsJSON(stream, 0, true);
 
 	// Update the user interface
-	stringBroadcaster.sendActionMessage(Send + stream.toString());
+	lastMessageSent = stream.toString();
 
 	// Transmit the JSON string.  The sendMessage function
 	// will prepend the data with the magic number and byte count.
@@ -264,9 +275,9 @@ Result WorkbenchClient::sendJSONToSocket( DynamicObject &messageObject )
 //
 //============================================================================
 
-void WorkbenchClient::handleGetResponse( DynamicObject * messageObject )
+void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage)
 {
-	var propertyVar(messageObject->getProperty(Identifiers::GetResponse));
+	var propertyVar(messageObject->getProperty(expectedMessage));
 	DynamicObject * propertyObject = propertyVar.getDynamicObject();
 
 	if (nullptr == propertyObject)
@@ -298,7 +309,7 @@ void WorkbenchClient::handleGetResponse( DynamicObject * messageObject )
 			DBG("Could not parse get talkers response");
 			return;
 		}
-		handleGetTalkersResponse(talkersPropertyVar);
+		handleGetStreamsResponse(talkersPropertyVar, settings->tree.getChildWithName(Identifiers::Talkers));
 		return;
 	}
 
@@ -310,7 +321,7 @@ void WorkbenchClient::handleGetResponse( DynamicObject * messageObject )
 			DBG("Could not parse get listeners response");
 			return;
 		}
-		handleGetListenersResponse(listenersPropertyVar);
+		handleGetStreamsResponse(listenersPropertyVar, settings->tree.getChildWithName(Identifiers::Listeners));
 		return;
 	}
 }
@@ -323,17 +334,16 @@ void WorkbenchClient::handleGetSystemResponse( DynamicObject * systemPropertyObj
 	settings->initializeStreams(numTalkers, numListeners);
 }
 
-void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
+void WorkbenchClient::handleGetStreamsResponse( var streamsPropertyVar, ValueTree streamsTree )
 {
 	ScopedLock locker(settings->lock);
-	ValueTree talkersTree(settings->tree.getChildWithName(Identifiers::Talkers));
 
-	for (int responseIndex = 0; responseIndex < talkersPropertyVar.size(); ++responseIndex)
+	for (int responseIndex = 0; responseIndex < streamsPropertyVar.size(); ++responseIndex)
 	{
 		//
 		// Get the stream index from the response...
 		//
-		var const &v(talkersPropertyVar[responseIndex]);
+		var const &v(streamsPropertyVar[responseIndex]);
 		DynamicObject::Ptr const d(v.getDynamicObject());
 
 		if (nullptr == d || false == d->hasProperty(Identifiers::Index))
@@ -348,7 +358,7 @@ void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
 		//
 		// Get the values for the stream from the response and put them into the tree
 		//
-		ValueTree streamTree(talkersTree.getChild(streamIndex));
+		ValueTree streamTree(streamsTree.getChild(streamIndex));
 		if (false == streamTree.isValid())
 		{
 			DBG("Invalid stream index for get talkers");
@@ -389,7 +399,7 @@ void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
 			streamTree.setProperty(Identifiers::Active, d->getProperty(Identifiers::Active), nullptr);
 		}
 
-		if (d->hasProperty(Identifiers::FaultInjection))
+		if (d->hasProperty(Identifiers::FaultInjection) && Identifiers::Talkers == streamsTree.getType())
 		{
 			ValueTree faultTree(streamTree.getChildWithName(Identifiers::FaultInjection));
 			var const& faultVar(d->getProperty(Identifiers::FaultInjection));
@@ -415,70 +425,7 @@ void WorkbenchClient::handleGetTalkersResponse(var talkersPropertyVar )
 	}
 }
 
-void WorkbenchClient::handleGetListenersResponse( var listenersPropertyVar )
+void WorkbenchClient::handleFaultNotificationMessage( DynamicObject * messageObject )
 {
-	ScopedLock locker(settings->lock);
-	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
 
-	for (int responseIndex = 0; responseIndex < listenersPropertyVar.size(); ++responseIndex)
-	{
-		//
-		// Get the stream index from the response...
-		//
-		var const &v(listenersPropertyVar[responseIndex]);
-		DynamicObject::Ptr const d(v.getDynamicObject());
-
-		if (nullptr == d || false == d->hasProperty(Identifiers::Index))
-		{
-			DBG("Invalid response for get listeners");
-			continue;
-		}
-
-		int streamIndex = d->getProperty(Identifiers::Index);
-		//DBG(streamIndex);
-
-		//
-		// Get the values for the stream from the response and put them into the tree
-		//
-		ValueTree streamTree(listenersTree.getChild(streamIndex));
-		if (false == streamTree.isValid())
-		{
-			DBG("Invalid stream index for get listeners");
-			continue;
-		}
-
-		if (d->hasProperty(Identifiers::Name))
-		{
-			streamTree.setProperty(Identifiers::Name, d->getProperty(Identifiers::Name), nullptr);
-		}
-
-		if (d->hasProperty(Identifiers::StreamID))
-		{
-			int64 streamID = d->getProperty(Identifiers::StreamID).toString().getHexValue64();
-			streamTree.setProperty(Identifiers::StreamID, streamID, nullptr);
-		}
-
-		if (d->hasProperty(Identifiers::DestinationAddress))
-		{
-			String addressString(d->getProperty(Identifiers::DestinationAddress).toString());
-			addressString = addressString.toLowerCase();
-			addressString.retainCharacters(HexChars);
-			streamTree.setProperty(Identifiers::DestinationAddress, addressString.getHexValue64(), nullptr);
-		}
-
-		if (d->hasProperty(Identifiers::Subtype))
-		{
-			streamTree.setProperty(Identifiers::Subtype, (int) d->getProperty(Identifiers::Subtype), nullptr);
-		}
-
-		if (d->hasProperty(Identifiers::ChannelCount))
-		{
-			streamTree.setProperty(Identifiers::ChannelCount, (int) d->getProperty(Identifiers::ChannelCount), nullptr);
-		}
-
-		if (d->hasProperty(Identifiers::Active))
-		{
-			streamTree.setProperty(Identifiers::Active, d->getProperty(Identifiers::Active), nullptr);
-		}
-	}
 }

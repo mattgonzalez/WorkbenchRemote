@@ -12,31 +12,33 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( DestinationAddress		) \
 						IDENTIFIER( ChannelCount			) \
 						IDENTIFIER( Subtype					) \
-						IDENTIFIER( HelpText	) \
-						IDENTIFIER( TimestampJump ) \
-						IDENTIFIER( Enabled ) \
-						IDENTIFIER( FaultInjection ) \
-						IDENTIFIER( FaultLogging ) \
-						IDENTIFIER( Count ) \
-						IDENTIFIER( Percent ) \
-						IDENTIFIER( Amount ) \
-						IDENTIFIER( CorruptPackets ) \
-						IDENTIFIER( SkipPackets ) \
-						IDENTIFIER( DuplicatePackets) \
-						IDENTIFIER( TimestampJitter) \
-						IDENTIFIER( TrafficShapingJitter) \
-						IDENTIFIER( Talkers )\
-						IDENTIFIER( Listeners )\
-						IDENTIFIER( GetCommand )\
-						IDENTIFIER( GetResponse )\
-						IDENTIFIER( SetCommand )\
-						IDENTIFIER( SetResponse )\
-						IDENTIFIER( System )\
-						IDENTIFIER( Version )\
-						IDENTIFIER( Sequence )\
-						IDENTIFIER( Status ) \
-						IDENTIFIER( Index ) \
-						IDENTIFIER( Active )
+						IDENTIFIER( HelpText				) \
+						IDENTIFIER( TimestampJump			) \
+						IDENTIFIER( Enabled					) \
+						IDENTIFIER( FaultInjection			) \
+						IDENTIFIER( FaultLogging			) \
+						IDENTIFIER( Count					) \
+						IDENTIFIER( Percent					) \
+						IDENTIFIER( Amount					) \
+						IDENTIFIER( CorruptPackets			) \
+						IDENTIFIER( SkipPackets				) \
+						IDENTIFIER( DuplicatePackets		) \
+						IDENTIFIER( TimestampJitter			) \
+						IDENTIFIER( TrafficShapingJitter	) \
+						IDENTIFIER( Talkers					) \
+						IDENTIFIER( Listeners				) \
+						IDENTIFIER( GetCommand				) \
+						IDENTIFIER( GetResponse				) \
+						IDENTIFIER( SetCommand				) \
+						IDENTIFIER( SetResponse				) \
+						IDENTIFIER( System					) \
+						IDENTIFIER( Version					) \
+						IDENTIFIER( Sequence				) \
+						IDENTIFIER( Status					) \
+						IDENTIFIER( Index					) \
+						IDENTIFIER( Active					) \
+						IDENTIFIER( PropertyChanged			) \
+						IDENTIFIER( FaultNotification		)
 
 
 namespace Identifiers

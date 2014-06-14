@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{926B949D-8867-8C0B-73BB-9B48FB1142B1}") = "WorkbenchRemote", "WorkbenchRemote.vcxproj", "{609239AE-72FB-C7D9-A577-5618B99CDF40}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WorkbenchRemote", "WorkbenchRemote.vcxproj", "{609239AE-72FB-C7D9-A577-5618B99CDF40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

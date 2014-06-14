@@ -30,7 +30,7 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	portLabel->setEditable (false, false, false);
 	portLabel->setColour (TextEditor::textColourId, Colours::black);
 	portLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
+	
 	addAndMakeVisible (connectButton = new TextButton ("connectButton"));
 	connectButton->setButtonText (TRANS("Connect"));
 	connectButton->addListener (this);
@@ -41,29 +41,33 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	disconnectButton->setEnabled(false);
 
 	addAndMakeVisible (infoButton = new TextButton ("Get System Info"));
-	infoButton->setButtonText (TRANS("Get System Info"));
 	infoButton->addListener (this);
 	infoButton->setEnabled(false);
 
 	addAndMakeVisible (getTalkersButton = new TextButton ("Get Talker Info"));
-	getTalkersButton->setButtonText (TRANS("Get Talker Info"));
 	getTalkersButton->addListener (this);
 	getTalkersButton->setEnabled(false);
 
 	addAndMakeVisible (getListenersButton = new TextButton ("Get Listener Info"));
-	getListenersButton->setButtonText (TRANS("Get Listener Info"));
 	getListenersButton->addListener (this);
 	getListenersButton->setEnabled(false);
 
-	readout.setReadOnly(true);
-	readout.setMultiLine(true);
-	addAndMakeVisible(&readout);
+	addAndMakeVisible(&sendReadout);
+	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
+	sendReadout.setReadOnly(true);
+	sendReadout.setMultiLine(true);
+	addAndMakeVisible(&receiveReadout);
+	receiveReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
+	receiveReadout.setReadOnly(true);
+	receiveReadout.setMultiLine(true);
+
+	client->lastMessageSent.addListener(this);
+	client->lastMessageReceived.addListener(this);
 
 	tabs = new TabbedComponent(TabbedButtonBar::TabsAtTop);
 	addAndMakeVisible(tabs);
 
 	client->changeBroadcaster.addChangeListener(this);
-	client->stringBroadcaster.addActionListener(this);
 	settings->tree.addListener(this);
 
 	setSize (600, 400);
@@ -79,7 +83,8 @@ WorkbenchComponent::~WorkbenchComponent()
 	infoButton = nullptr;
 	getTalkersButton = nullptr;
 	getListenersButton = nullptr;
-	client->stringBroadcaster.removeActionListener(this);
+	client->lastMessageSent.removeListener(this);
+	client->lastMessageReceived.removeListener(this);
 	client->changeBroadcaster.removeChangeListener(this);
 	settings->tree.removeListener(this);
 }
@@ -111,7 +116,9 @@ void WorkbenchComponent::resized()
 	int w = getWidth()/2 - 20;
 	int h = getHeight() - y - 10;
 	tabs->setBounds(10, y, w, h);
-	readout.setBounds(tabs->getRight() + 20, y, w, h);
+	h /= 2;
+	sendReadout.setBounds(tabs->getRight() + 20, y, w, h);
+	receiveReadout.setBounds(sendReadout.getBounds().translated(0, h));
 }
 
 void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
@@ -217,17 +224,7 @@ void WorkbenchComponent::updatePort()
 
 void WorkbenchComponent::actionListenerCallback( const String& message )
 {
-	int split = message.indexOfChar('{');
-
-	readout.setCaretPosition(INT_MAX);
-	readout.setColour(TextEditor::textColourId, Colours::slategrey);
-	readout.insertTextAtCaret(message.substring(0, split));
-	readout.insertTextAtCaret("\n");
-
-	readout.setColour(TextEditor::textColourId, Colours::black);
-	var json(JSON::parse(message.substring(split)));
-	readout.insertTextAtCaret(JSON::toString(json));
-	readout.insertTextAtCaret("\n\n");
+	
 }
 
 void WorkbenchComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
@@ -313,4 +310,25 @@ void WorkbenchComponent::updateStreamControls()
 		tabs->removeTab(LISTENERS_TAB);
 		listenerStreamsTab = nullptr;
 	}
+}
+
+void WorkbenchComponent::valueChanged( Value& value )
+{
+	TextEditor* editor;
+
+	if (value.refersToSameSourceAs(client->lastMessageSent))
+	{
+		editor = &sendReadout;
+	}
+	else if (value.refersToSameSourceAs(client->lastMessageReceived))
+	{
+		editor = &receiveReadout;
+	}
+	else
+	{
+		return;
+	}
+
+	var json(JSON::parse(value.toString()));
+	editor->setText(JSON::toString(json));
 }

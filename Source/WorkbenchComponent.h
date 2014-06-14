@@ -13,7 +13,8 @@ class WorkbenchComponent   : public Component,
 	public TextEditor::Listener,
 	public ActionListener,
 	public ValueTree::Listener,
-	public AsyncUpdater
+	public AsyncUpdater,
+	public Value::Listener
 {
 public:
 	//==============================================================================
@@ -28,7 +29,7 @@ private:
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WorkbenchComponent)
 
-		void updateAddress();
+	void updateAddress();
 	void updatePort();
 
 	virtual void changeListenerCallback( ChangeBroadcaster* source );
@@ -49,6 +50,8 @@ private:
 	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
 	virtual void handleAsyncUpdate();
 
+	virtual void valueChanged( Value& value );
+
 	WorkbenchClient* client;
 	Settings *settings;
 	MainContentComponent *mainComponent;
@@ -60,8 +63,10 @@ private:
 	ScopedPointer<TextButton> infoButton;
 	ScopedPointer<TextButton> getTalkersButton;
 	ScopedPointer<TextButton> getListenersButton;
+	
+	TextEditor sendReadout;
+	TextEditor receiveReadout;
 
-	TextEditor readout;
 	ScopedPointer<TabbedComponent> tabs;
 	StaticStreamViewport *talkerStreamsTab;
 	StaticStreamViewport *listenerStreamsTab;

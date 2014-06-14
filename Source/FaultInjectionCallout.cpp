@@ -197,10 +197,12 @@ void FaultInjectionCallout::resetSliders()
 
 void FaultInjectionCallout::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
+#if 0
 	if (property == Identifiers::Enabled)
 	{
 		groups[0]->toggleButton->setToggleState(treeWhosePropertyHasChanged.getProperty(property), dontSendNotification);
 	}
+#endif
 }
 
 void FaultInjectionCallout::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )

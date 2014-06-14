@@ -22,7 +22,9 @@ public:
 	Result setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
 
 	ChangeBroadcaster changeBroadcaster;
-	ActionBroadcaster stringBroadcaster;
+
+	Value lastMessageSent;
+	Value lastMessageReceived;
 
 protected:
 	CriticalSection lock;
@@ -36,13 +38,13 @@ protected:
 
 	void handleGetResponse( DynamicObject * messageObject );
 	void handleGetSystemResponse( DynamicObject * systemPropertyObject );
-	void handleGetTalkersResponse( var talkersPropertyVar );
-	void handleGetListenersResponse( var listenersPropertyVar );
+	void handleGetStreamsResponse( var streamsPropertyVar, ValueTree streamsTree );
+	void handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage);
+	void handleFaultNotificationMessage(DynamicObject * messageObject);
 
 	Result getProperty (Identifier const ID, var const parameter);
 
 	Result sendJSONToSocket( DynamicObject &messageObject );
-
 
 	JUCE_LEAK_DETECTOR(WorkbenchClient)
 };
