@@ -1,13 +1,13 @@
 #pragma once
 
+
 #include "base.h"
-#include "WorkbenchClient.h"
+#include "AudioPatchbayClient.h"
 #include "Settings.h"
-#include "StaticStreamViewport.h"
 
 class MainContentComponent;
 
-class WorkbenchComponent   : public Component, 
+class AudioPatchbayComponent   : public Component, 
 	public ButtonListener, 
 	public ChangeListener, 
 	public TextEditor::Listener,
@@ -18,8 +18,8 @@ class WorkbenchComponent   : public Component,
 {
 public:
 	//==============================================================================
-	WorkbenchComponent(MainContentComponent *mainComponent_, WorkbenchClient * client_,  Settings *settings_);
-	~WorkbenchComponent();
+	AudioPatchbayComponent(MainContentComponent *mainComponent_, AudioPatchbayClient * client_,  Settings *settings_);
+	~AudioPatchbayComponent();
 
 	void paint (Graphics&);
 	void resized();
@@ -27,14 +27,13 @@ public:
 
 private:
 	//==============================================================================
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WorkbenchComponent)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPatchbayComponent)
 
-	void updatePort();
+		void updatePort();
 
 	virtual void changeListenerCallback( ChangeBroadcaster* source );
 
 	void enableControls();
-	void updateStreamControls();
 
 	virtual void textEditorTextChanged( TextEditor& );
 	virtual void textEditorReturnKeyPressed( TextEditor& );
@@ -51,7 +50,7 @@ private:
 
 	virtual void valueChanged( Value& value );
 
-	WorkbenchClient* client;
+	AudioPatchbayClient* client;
 	Settings *settings;
 	MainContentComponent *mainComponent;
 
@@ -62,13 +61,11 @@ private:
 	ScopedPointer<TextButton> infoButton;
 	ScopedPointer<TextButton> getTalkersButton;
 	ScopedPointer<TextButton> getListenersButton;
-	
+
 	TextEditor sendReadout;
 	TextEditor receiveReadout;
 
-	ScopedPointer<TabbedComponent> tabs;
-	StaticStreamViewport *talkerStreamsTab;
-	StaticStreamViewport *listenerStreamsTab;
+	//ScopedPointer<TabbedComponent> tabs;
 
 	enum
 	{

@@ -15,7 +15,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "Settings.h"
 #include "StaticStreamViewport.h"
 #include "WorkbenchComponent.h"
-
+#include "AudioPatchbayComponent.h"
 
 class MainContentComponent   : public Component, 
 	public TextEditor::Listener
@@ -35,7 +35,6 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 
 	void updateAddress();
-	void updatePort();
 
 	virtual void textEditorTextChanged( TextEditor& );
 	virtual void textEditorReturnKeyPressed( TextEditor& );
@@ -47,12 +46,11 @@ private:
 	Settings *settings;
 
 	ScopedPointer<TextEditor> addressEditor;
-	ScopedPointer<TextEditor> portEditor;
 	ScopedPointer<Label> addressLabel;
-	ScopedPointer<Label> portLabel;
 
 	ScopedPointer<TabbedComponent> tabs;
 	WorkbenchComponent *workbenchTab;
+	AudioPatchbayComponent *audioPatchbayTab;
 
 	enum 
 	{

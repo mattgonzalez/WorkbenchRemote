@@ -199,15 +199,27 @@
     <Filter Include="WorkbenchRemote\Juce Modules\juce_gui_extra\native">
       <UniqueIdentifier>{C413328B-5D81-89EE-F4F3-75752E700DE4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WorkbenchRemote\Source\AudioPatchbay">
+      <UniqueIdentifier>{637d5c4d-6fd0-4014-89be-72877d4fe371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkbenchRemote\Source\AudioPatchbay\GUI">
+      <UniqueIdentifier>{fd1b7a3c-0ab7-4927-b63e-4132b5e64786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkbenchRemote\Source\AudioPatchbay\GUI\Input">
+      <UniqueIdentifier>{a458a92b-3db0-439e-84b4-afe8badfb038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkbenchRemote\Source\AudioPatchbay\GUI\Output">
+      <UniqueIdentifier>{fb85eed9-073a-4a6e-a0df-8f6d8102cd87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkbenchRemote\Source\Workbench">
+      <UniqueIdentifier>{50f6a1a2-b45f-4fed-8167-30b348902431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkbenchRemote\Source\Workbench\GUI">
+      <UniqueIdentifier>{c706f0ac-b7a8-4b65-980d-fd913be27547}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\AddressUtilities.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\FaultInjection.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Identifiers.cpp">
@@ -220,12 +232,6 @@
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Settings.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\StaticStreamViewport.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\WorkbenchClient.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_CharacterFunctions.cpp">
@@ -1056,11 +1062,74 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_extra\juce_gui_extra.cpp">
       <Filter>WorkbenchRemote\Juce Library Code</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\OutputChannel.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Output</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OutputChannelCallout.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Output</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OutputChannelComponent.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Output</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OutputChannelViewport.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Output</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\InputChannel.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\InputChannelComponent.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\InputChannelViewport.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Input</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\AudioPatchbayClient.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
+      <Filter>WorkbenchRemote\Source\AudioPatchbay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\AudioPatchbayComponent.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\BinaryData.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Channel.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ChannelComponent.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ChannelViewport.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DeviceComponent.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DeviceHeaderComponent.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GearButton.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient.cpp">
+      <Filter>WorkbenchRemote\Source\Workbench</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\FaultInjection.cpp">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\StaticStreamViewport.cpp">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\WorkbenchComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DeviceCallout.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\MeterComponent.cpp">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1070,12 +1139,6 @@
     <ClInclude Include="..\..\Source\base.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\FaultInjection.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\FaultInjectionCallout.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Identifiers.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
@@ -1083,12 +1146,6 @@
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Settings.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\StaticStreamViewport.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\WorkbenchClient.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_CharacterFunctions.h">
@@ -2087,11 +2144,74 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">
       <Filter>WorkbenchRemote\Juce Library Code</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\OutputChannelViewport.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OutputChannel.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OutputChannelCallout.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OutputChannelComponent.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\InputChannelViewport.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\InputChannel.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\InputChannelComponent.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI\Input</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\AudioPatchbayClient.h">
-      <Filter>WorkbenchRemote\Source</Filter>
+      <Filter>WorkbenchRemote\Source\AudioPatchbay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AudioPatchbayComponent.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\BinaryData.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Channel.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChannelComponent.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChannelViewport.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DeviceComponent.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DeviceHeaderComponent.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GearButton.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\WorkbenchClient.h">
+      <Filter>WorkbenchRemote\Source\Workbench</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\FaultInjection.h">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\FaultInjectionCallout.h">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\StaticStreamViewport.h">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\WorkbenchComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DeviceCallout.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MeterComponent.h">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

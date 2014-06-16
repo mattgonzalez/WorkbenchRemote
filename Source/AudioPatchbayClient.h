@@ -15,6 +15,9 @@ public:
 	ChangeBroadcaster changeBroadcaster;
 	ActionBroadcaster stringBroadcaster;
 
+	Value lastMessageSent;
+	Value lastMessageReceived;
+
 protected:
 	CriticalSection lock;
 	int commandSequence;

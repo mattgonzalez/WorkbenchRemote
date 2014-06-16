@@ -1,13 +1,11 @@
-#include "WorkbenchComponent.h"
+#include "AudioPatchBayComponent.h"
 #include "Identifiers.h"
 #include "MainComponent.h"
 
-WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, WorkbenchClient* client_, Settings *settings_):
+AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainComponent_, AudioPatchbayClient* client_, Settings *settings_):
 	mainComponent(mainComponent_),
 	client(client_),
-	settings(settings_),
-	talkerStreamsTab(nullptr),
-	listenerStreamsTab(nullptr)
+	settings(settings_)
 {
 	addAndMakeVisible (portEditor = new TextEditor ("portEditor"));
 	portEditor->setMultiLine (false);
@@ -30,11 +28,11 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	portLabel->setEditable (false, false, false);
 	portLabel->setColour (TextEditor::textColourId, Colours::black);
 	portLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-	
+
 	addAndMakeVisible (connectButton = new TextButton ("connectButton"));
 	connectButton->setButtonText (TRANS("Connect"));
 	connectButton->addListener (this);
-	
+
 	addAndMakeVisible (disconnectButton = new TextButton ("disconnectButton"));
 	disconnectButton->setButtonText (TRANS("Disconnect"));
 	disconnectButton->addListener (this);
@@ -52,20 +50,17 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	getListenersButton->addListener (this);
 	getListenersButton->setEnabled(false);
 
-	addAndMakeVisible(&sendReadout);
-	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
-	sendReadout.setReadOnly(true);
-	sendReadout.setMultiLine(true);
-	addAndMakeVisible(&receiveReadout);
-	receiveReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
-	receiveReadout.setReadOnly(true);
-	receiveReadout.setMultiLine(true);
+// 	addAndMakeVisible(&sendReadout);
+// 	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
+// 	sendReadout.setReadOnly(true);
+// 	sendReadout.setMultiLine(true);
+// 	addAndMakeVisible(&receiveReadout);
+// 	receiveReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
+// 	receiveReadout.setReadOnly(true);
+// 	receiveReadout.setMultiLine(true);
 
 	client->lastMessageSent.addListener(this);
 	client->lastMessageReceived.addListener(this);
-
-	tabs = new TabbedComponent(TabbedButtonBar::TabsAtTop);
-	addAndMakeVisible(tabs);
 
 	client->changeBroadcaster.addChangeListener(this);
 	settings->tree.addListener(this);
@@ -73,9 +68,9 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	setSize (600, 400);
 }
 
-WorkbenchComponent::~WorkbenchComponent()
+AudioPatchbayComponent::~AudioPatchbayComponent()
 {
-	tabs = nullptr;
+//	tabs = nullptr;
 	portEditor = nullptr;
 	portLabel = nullptr;
 	connectButton = nullptr;
@@ -89,13 +84,13 @@ WorkbenchComponent::~WorkbenchComponent()
 	settings->tree.removeListener(this);
 }
 
-void WorkbenchComponent::paint (Graphics& g)
+void AudioPatchbayComponent::paint (Graphics& g)
 {
 	g.fillAll (Colours::white);
 
 }
 
-void WorkbenchComponent::resized()
+void AudioPatchbayComponent::resized()
 {
 	portLabel->setBounds (10, 20, 40, 24);
 	portEditor->setBounds (portLabel->getRight() + 5, 20, 50, 24);
@@ -110,18 +105,18 @@ void WorkbenchComponent::resized()
 	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
 	r = getTalkersButton->getBounds();
 	getListenersButton->setBounds(r.translated(r.getWidth() + 5, 0));
-	r = getListenersButton->getBounds();
+	//r = getListenersButton->getBounds();
 
-	y = infoButton->getBottom() + 10;
-	int w = getWidth()/2 - 20;
-	int h = getHeight() - y - 10;
-	tabs->setBounds(10, y, w, h);
-	h /= 2;
-	sendReadout.setBounds(tabs->getRight() + 20, y, w, h);
-	receiveReadout.setBounds(sendReadout.getBounds().translated(0, h));
+// 	y = infoButton->getBottom() + 10;
+// 	int w = getWidth()/2 - 20;
+// 	int h = getHeight() - y - 10;
+	//tabs->setBounds(10, y, w, h);
+	//h /= 2;
+// 	sendReadout.setBounds(tabs->getRight() + 20, y, w, h);
+// 	receiveReadout.setBounds(sendReadout.getBounds().translated(0, h));
 }
 
-void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
+void AudioPatchbayComponent::buttonClicked (Button* buttonThatWasClicked)
 {
 	if (buttonThatWasClicked == infoButton)
 	{
@@ -131,13 +126,13 @@ void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
 
 	if (buttonThatWasClicked == getTalkersButton)
 	{
-		client->getTalkerStreams();
+		//client->getTalkerStreams();
 		return;
 	}
 
 	if (buttonThatWasClicked == getListenersButton)
 	{
-		client->getListenerStreams();
+		//client->getListenerStreams();
 		return;
 	}
 
@@ -154,16 +149,16 @@ void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
 	}
 }
 
-void WorkbenchComponent::changeListenerCallback( ChangeBroadcaster* /*source*/ )
+void AudioPatchbayComponent::changeListenerCallback( ChangeBroadcaster* /*source*/ )
 {
 	triggerAsyncUpdate();
 }
 
-void WorkbenchComponent::textEditorTextChanged( TextEditor& )
+void AudioPatchbayComponent::textEditorTextChanged( TextEditor& )
 {
 }
 
-void WorkbenchComponent::textEditorReturnKeyPressed( TextEditor& edit)
+void AudioPatchbayComponent::textEditorReturnKeyPressed( TextEditor& edit)
 {
 
 	if (&edit == portEditor)
@@ -173,7 +168,7 @@ void WorkbenchComponent::textEditorReturnKeyPressed( TextEditor& edit)
 	}
 }
 
-void WorkbenchComponent::textEditorEscapeKeyPressed( TextEditor& edit)
+void AudioPatchbayComponent::textEditorEscapeKeyPressed( TextEditor& edit)
 {
 
 	if (&edit == portEditor)
@@ -183,7 +178,7 @@ void WorkbenchComponent::textEditorEscapeKeyPressed( TextEditor& edit)
 	}
 }
 
-void WorkbenchComponent::textEditorFocusLost( TextEditor& edit)
+void AudioPatchbayComponent::textEditorFocusLost( TextEditor& edit)
 {
 	if (&edit == portEditor)
 	{
@@ -192,7 +187,7 @@ void WorkbenchComponent::textEditorFocusLost( TextEditor& edit)
 	}
 }
 
-void WorkbenchComponent::updatePort()
+void AudioPatchbayComponent::updatePort()
 {
 	int port = portEditor->getText().getIntValue();
 	port = jlimit(0, 65535, port);
@@ -201,41 +196,41 @@ void WorkbenchComponent::updatePort()
 
 }
 
-void WorkbenchComponent::actionListenerCallback( const String& message )
+void AudioPatchbayComponent::actionListenerCallback( const String& message )
 {
-	
+
 }
 
-void WorkbenchComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
+void AudioPatchbayComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
-	//DBG("WorkbenchComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+	//DBG("AudioPatchbayComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
 }
 
-void WorkbenchComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
+void AudioPatchbayComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
 {
-	//DBG("WorkbenchComponent::valueTreeChildAdded " << parentTree.getType().toString() << " " << childWhichHasBeenAdded.getType().toString());
+	//DBG("AudioPatchbayComponent::valueTreeChildAdded " << parentTree.getType().toString() << " " << childWhichHasBeenAdded.getType().toString());
 
 	triggerAsyncUpdate();
 }
 
-void WorkbenchComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void AudioPatchbayComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
 {
-	//DBG("WorkbenchComponent::valueTreeChildRemoved " << parentTree.getType().toString() << " " << childWhichHasBeenRemoved.getType().toString());
+	//DBG("AudioPatchbayComponent::valueTreeChildRemoved " << parentTree.getType().toString() << " " << childWhichHasBeenRemoved.getType().toString());
 
 	triggerAsyncUpdate();
 }
 
-void WorkbenchComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void AudioPatchbayComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
 {
 
 }
 
-void WorkbenchComponent::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged )
+void AudioPatchbayComponent::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged )
 {
 
 }
 
-void WorkbenchComponent::enableControls()
+void AudioPatchbayComponent::enableControls()
 {
 	bool connected = client->isConnected();
 	connectButton->setEnabled(!connected);
@@ -250,64 +245,30 @@ void WorkbenchComponent::enableControls()
 	getListenersButton->setEnabled(listenersTree.isValid());
 }
 
-void WorkbenchComponent::handleAsyncUpdate()
+void AudioPatchbayComponent::handleAsyncUpdate()
 {
 	enableControls();
-	updateStreamControls();
 }
 
-void WorkbenchComponent::updateStreamControls()
+void AudioPatchbayComponent::valueChanged( Value& value )
 {
-	ScopedLock locker(settings->lock);
-
-	ValueTree talkersTree(settings->tree.getChildWithName(Identifiers::Talkers));
-	if (talkersTree.getNumChildren() != 0)
-	{
-		if (nullptr == talkerStreamsTab)
-		{
-			talkerStreamsTab = new StaticStreamViewport(talkersTree, settings->lock, client);
-			tabs->addTab("Talkers", Colours:: white, talkerStreamsTab, true,TALKERS_TAB);
-		}
-	}
-	else
-	{
-		tabs->removeTab(TALKERS_TAB);
-		talkerStreamsTab = nullptr;
-	}
-
-	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
-	if (listenersTree.getNumChildren() != 0)
-	{
-		if (nullptr == listenerStreamsTab)
-		{
-			listenerStreamsTab = new StaticStreamViewport(listenersTree, settings->lock, client);
-			tabs->addTab("Listeners", Colours:: white, listenerStreamsTab, true, LISTENERS_TAB);
-		}
-	}
-	else
-	{
-		tabs->removeTab(LISTENERS_TAB);
-		listenerStreamsTab = nullptr;
-	}
+// 	TextEditor* editor;
+// 
+// 	if (value.refersToSameSourceAs(client->lastMessageSent))
+// 	{
+// 		editor = &sendReadout;
+// 	}
+// 	else if (value.refersToSameSourceAs(client->lastMessageReceived))
+// 	{
+// 		editor = &receiveReadout;
+// 	}
+// 	else
+// 	{
+// 		return;
+// 	}
+// 
+// 	var json(JSON::parse(value.toString()));
+// 	editor->setText(JSON::toString(json));
 }
 
-void WorkbenchComponent::valueChanged( Value& value )
-{
-	TextEditor* editor;
 
-	if (value.refersToSameSourceAs(client->lastMessageSent))
-	{
-		editor = &sendReadout;
-	}
-	else if (value.refersToSameSourceAs(client->lastMessageReceived))
-	{
-		editor = &receiveReadout;
-	}
-	else
-	{
-		return;
-	}
-
-	var json(JSON::parse(value.toString()));
-	editor->setText(JSON::toString(json));
-}
