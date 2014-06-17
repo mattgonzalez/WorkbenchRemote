@@ -1,7 +1,6 @@
 #pragma once
 #include "ChannelViewport.h"
 
-class Controller;
 
 class InputChannelViewport : public ChannelViewport
 {

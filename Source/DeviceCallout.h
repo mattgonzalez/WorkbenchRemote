@@ -1,6 +1,5 @@
 #pragma once
 
-class Controller;
 
 class DeviceCallout : public Component, 
 	public Timer, 
@@ -42,4 +41,13 @@ protected:
 	Label outputChannelsLabel;
 	Slider inputChannelCountSlider;
 	Slider outputChannelCountSlider;
+
+	typedef struct 
+	{
+		double averageCallbackIntervalMsec;
+		double minCallbackIntervalMsec;
+		double maxCallbackIntervalMsec;		
+	} CallbackMetrics;
+
+	CallbackMetrics metrics;
 };

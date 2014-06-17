@@ -1,6 +1,5 @@
 #pragma once
 #include "WorkbenchClient.h"
-class Controller;
 class Stream;
 class FaultInjectionCallout : public Component, public Slider::Listener, public Button::Listener, public ValueTree::Listener
 {

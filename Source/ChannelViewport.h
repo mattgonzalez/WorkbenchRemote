@@ -1,6 +1,5 @@
 #pragma once
 
-class Controller;
 class ChannelComponent;
 
 class ChannelViewport : public Viewport, public ValueTree::Listener, public AsyncUpdater

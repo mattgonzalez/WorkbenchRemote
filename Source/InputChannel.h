@@ -16,7 +16,6 @@
 //==============================================================================
 /*
 */
-class Controller;
 
 class InputChannel   : public Channel
 {

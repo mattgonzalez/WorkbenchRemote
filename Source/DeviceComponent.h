@@ -6,8 +6,6 @@
 #include "InputChannelViewport.h"
 #include "OutputChannelViewport.h"
 
-class Controller;
-
 class DeviceComponent : public Component, public Button::Listener, public ValueTree::Listener
 {
 public:

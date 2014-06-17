@@ -16,7 +16,6 @@
 //==============================================================================
 /*
 */
-class Controller;
 class OutputChannel   : public Channel
 {
 public:

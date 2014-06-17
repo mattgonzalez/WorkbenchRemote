@@ -1,6 +1,5 @@
 #pragma once
 
-class Controller;
 
 class OutputChannelViewport : public ChannelViewport
 {

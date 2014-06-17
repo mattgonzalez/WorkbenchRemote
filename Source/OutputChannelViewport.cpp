@@ -1,5 +1,4 @@
 #include "base.h"
-#include "Controller.h"
 #include "Identifiers.h"
 #include "ChannelViewport.h"
 #include "OutputChannelViewport.h"
@@ -24,7 +23,7 @@ void OutputChannelViewport::buildChannelComponents()
 		ValueTree channelTree(channelsTree.getChild(i));
 		String name(channelTree[Identifiers::Name]);
 
-		OutputChannelComponent *icc = new OutputChannelComponent(controller, deviceIndex, channelTree, i);
+		OutputChannelComponent *icc = new OutputChannelComponent(deviceIndex, channelTree, i);
 		icc->channelNameLabel.setText(name,dontSendNotification);
 
 		content.channelComponents.add(icc);

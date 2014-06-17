@@ -3,9 +3,10 @@
 #include "OutputChannelComponent.h"
 #include "OutputChannelCallout.h"
 #include "Identifiers.h"
+#include "OutputChannel.h"
 
 OutputChannelComponent::OutputChannelComponent(int deviceIndex_, ValueTree outputChannelTree_, int channelNumber_) :
-	ChannelComponent(channelNumber_),
+	ChannelComponent(deviceIndex_, channelNumber_),
 	outputChannelTree(outputChannelTree_),
 	gainSlider(Slider:: LinearBar, Slider::TextBoxRight),
 	muteButton("M", "Mute this output channel"),
@@ -60,16 +61,6 @@ void OutputChannelComponent::timerCallback()
 
 void OutputChannelComponent::mouseUp( const MouseEvent& event )
 {
-#if 0
-	OutputChannelCallout* content = new OutputChannelCallout(controller, channelTree);
-
-	juce::Rectangle<int> b(getBoundsInParent());
-	Component* parent = getParentComponent();
-	b.setWidth(b.getWidth() >> 2);
-	b.reduce(0, b.getHeight() >> 2);
-	CallOutBox & box (CallOutBox::launchAsynchronously (content, b, parent));
-	box.setAlpha(0.9f);
-#endif
 }
 
 void OutputChannelComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
@@ -244,6 +235,7 @@ void OutputChannelComponent::showModePopup()
 	menu.addItem( OutputChannel::MODE_MUTE, "Muted", true, OutputChannel::MODE_MUTE == mode);
 	menu.addItem( OutputChannel::MODE_TONE, "Tone", true, OutputChannel::MODE_TONE == mode);
 
+	#if 0
 	ValueTree devicesTree(controller->settings.root.getChildWithName(Identifiers::AudioDevices));
 	for (int i = 0; i < devicesTree.getNumChildren(); i++)
 	{
@@ -276,6 +268,7 @@ void OutputChannelComponent::showModePopup()
 
 		menu.addSubMenu(otherDeviceFriendlyName,deviceMenu, true, blank, submenuTicked);
 	}
+#endif
 
 	menu.showMenuAsync (PopupMenu::Options().withTargetComponent (&modeButton)
 		.withMinimumWidth (modeButton.getWidth())
@@ -301,21 +294,21 @@ void OutputChannelComponent::popupMenuFinishedCallback( int menuID, OutputChanne
 
 	default:
 		{
-			int sourceDeviceIndex;
-			ValueTree devicesTree(that->controller->settings.root.getChildWithName(Identifiers::AudioDevices));
-			
-			sourceDeviceIndex = getDeviceIndexFromMenuID(menuID);
-			if (sourceDeviceIndex >= 0)
-			{
-				int sourceChannel = getChannelFromMenuID(menuID);
-
-				String sourceDeviceFriendlyName(devicesTree.getChild(sourceDeviceIndex)[Identifiers::DeviceName]);
-				String sourceDeviceActualName(that->controller->deviceManager.getActualName(sourceDeviceFriendlyName));
-				that->outputChannelTree.setProperty(Identifiers::SourceDeviceName, sourceDeviceActualName, nullptr);
-				that->outputChannelTree.setProperty(Identifiers::SourceChannel, sourceChannel, nullptr);
-				that->outputChannelTree.setProperty(Identifiers::Mode, OutputChannel::MODE_INPUT, nullptr);
-				that->outputChannelTree.setProperty(Identifiers::SourceDeviceIndex, sourceDeviceIndex, nullptr);
-			}
+// 			int sourceDeviceIndex;
+// 			ValueTree devicesTree(that->controller->settings.root.getChildWithName(Identifiers::AudioDevices));
+// 			
+// 			sourceDeviceIndex = getDeviceIndexFromMenuID(menuID);
+// 			if (sourceDeviceIndex >= 0)
+// 			{
+// 				int sourceChannel = getChannelFromMenuID(menuID);
+// 
+// 				String sourceDeviceFriendlyName(devicesTree.getChild(sourceDeviceIndex)[Identifiers::DeviceName]);
+// 				String sourceDeviceActualName(that->controller->deviceManager.getActualName(sourceDeviceFriendlyName));
+// 				that->outputChannelTree.setProperty(Identifiers::SourceDeviceName, sourceDeviceActualName, nullptr);
+// 				that->outputChannelTree.setProperty(Identifiers::SourceChannel, sourceChannel, nullptr);
+// 				that->outputChannelTree.setProperty(Identifiers::Mode, OutputChannel::MODE_INPUT, nullptr);
+// 				that->outputChannelTree.setProperty(Identifiers::SourceDeviceIndex, sourceDeviceIndex, nullptr);
+// 			}
 		}
 		break;
 	}
@@ -343,27 +336,27 @@ void OutputChannelComponent::setModeButtonText()
 
 	case OutputChannel::MODE_INPUT:
 		{
-			String inputDeviceActualName(outputChannelTree[Identifiers::SourceDeviceName]);
-			String inputDeviceFriendlyName(controller->deviceManager.getFriendlyName(inputDeviceActualName));
-			int inputChannel = outputChannelTree[Identifiers::SourceChannel];
-
-			ValueTree inputDeviceTree(controller->settings.getDeviceTree(inputDeviceActualName));
-			ValueTree inputDeviceInputsTree(inputDeviceTree.getChildWithName(Identifiers::Input));
-			ValueTree inputChannelTree(inputDeviceInputsTree.getChild(inputChannel));
-
-			//dumpTree(inputDeviceTree);
-
-			if (inputChannelTree.isValid())
-			{
-				tooltip = inputDeviceFriendlyName;
-				tooltip += "\n" + inputChannelTree[Identifiers::Name].toString();
-				text = inputDeviceFriendlyName + " / " + inputChannelTree[Identifiers::Name].toString();
-			}
-			else
-			{
-				text = modeButton.getButtonText();
-				c = Colours::grey;
-			}
+// 			String inputDeviceActualName(outputChannelTree[Identifiers::SourceDeviceName]);
+// 			String inputDeviceFriendlyName(controller->deviceManager.getFriendlyName(inputDeviceActualName));
+// 			int inputChannel = outputChannelTree[Identifiers::SourceChannel];
+// 
+// 			ValueTree inputDeviceTree(controller->settings.getDeviceTree(inputDeviceActualName));
+// 			ValueTree inputDeviceInputsTree(inputDeviceTree.getChildWithName(Identifiers::Input));
+// 			ValueTree inputChannelTree(inputDeviceInputsTree.getChild(inputChannel));
+// 
+// 			//dumpTree(inputDeviceTree);
+// 
+// 			if (inputChannelTree.isValid())
+// 			{
+// 				tooltip = inputDeviceFriendlyName;
+// 				tooltip += "\n" + inputChannelTree[Identifiers::Name].toString();
+// 				text = inputDeviceFriendlyName + " / " + inputChannelTree[Identifiers::Name].toString();
+// 			}
+// 			else
+// 			{
+// 				text = modeButton.getButtonText();
+// 				c = Colours::grey;
+// 			}
 
 			//DBG("MODE_INPUT " + text);
 		}

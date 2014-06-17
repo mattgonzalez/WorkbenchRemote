@@ -1,8 +1,6 @@
 #pragma once
 #include "GearButton.h"
 
-class Controller;
-
 class DeviceHeaderComponent: public Component, public ComboBox::Listener, public Value::Listener, public Button::Listener
 {
 public:

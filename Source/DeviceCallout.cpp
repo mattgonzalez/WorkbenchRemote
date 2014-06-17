@@ -1,10 +1,6 @@
 #include "base.h"
 #include "DeviceCallout.h"
-#include "Controller.h"
 #include "Identifiers.h"
-#include "CallbackMetrics.h"
-#include "Processor.h"
-#include "Device.h"
 
 DeviceCallout::DeviceCallout(ValueTree deviceTree_ ):
 	deviceTree(deviceTree_),
@@ -47,7 +43,7 @@ DeviceCallout::DeviceCallout(ValueTree deviceTree_ ):
 	deviceCombo.clear(dontSendNotification);
 	deviceCombo.addItem("None", -1);
 	//deviceCombo.addItemList(device_names, 1);
-	deviceCombo.setSelectedId -1,dontSendNotification);
+	deviceCombo.setSelectedId(-1,dontSendNotification);
 
 	var deviceName(deviceTree.getProperty(Identifiers::DeviceName,String::empty));
 	if (deviceName.toString().isNotEmpty())
@@ -124,10 +120,8 @@ void DeviceCallout::resized()
 
 void DeviceCallout::timerCallback()
 {
+	//Needs to be redone, have the metrics be sent over from the patchbay periodically, or have this ask for them periodically.
 #if 0
-	CallbackMetrics metrics;
-	controller->processor->getMetrics(metrics);
-
 	minCallbackIntervalReadout.setText(String (metrics.minCallbackIntervalMsec, 1), dontSendNotification);
 	averageCallbackIntervalReadout.setText(String (metrics.averageCallbackIntervalMsec, 1), dontSendNotification);
 	maxCallbackIntervalReadout.setText(String (metrics.maxCallbackIntervalMsec, 1), dontSendNotification);

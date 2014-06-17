@@ -49,7 +49,10 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( Source					) \
 						IDENTIFIER( GainDecibels			) \
 						IDENTIFIER( Mute					) \
-						IDENTIFIER( ToneFrequency			)
+						IDENTIFIER( ToneFrequency			) \
+						IDENTIFIER( SourceDeviceName		) \
+						IDENTIFIER( SourceDeviceIndex		) \
+						IDENTIFIER( SourceChannel			)
 
 namespace Identifiers
 {

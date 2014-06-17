@@ -1,9 +1,5 @@
 #include "base.h"
-#include "Controller.h"
 #include "InputChannelComponent.h"
-#include "Processor.h"
-#include "DeviceManager.h"
-#include "Device.h"
 
 InputChannelComponent::InputChannelComponent(int deviceIndex_, int channelNumber_) :
 	ChannelComponent(deviceIndex_,channelNumber_)
