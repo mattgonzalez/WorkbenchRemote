@@ -1,19 +1,24 @@
+/*
+==============================================================================
+
+Copyright (C) 2014 Echo Digital Audio Corporation.
+
+==============================================================================
+*/
+
 #pragma once
 
 class Settings;
 
-class AudioPatchbayClient: public InterprocessConnection
+class AudioPatchbayClient : public InterprocessConnection
 {
 public:
 	AudioPatchbayClient(Settings* settings_);
 	~AudioPatchbayClient();
 
 	Result getSystemInfo();
-	Result getTalkerStreams();
-	Result setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
 
 	ChangeBroadcaster changeBroadcaster;
-	ActionBroadcaster stringBroadcaster;
 
 	Value lastMessageSent;
 	Value lastMessageReceived;
@@ -30,12 +35,11 @@ protected:
 
 	void handleGetResponse( DynamicObject * messageObject );
 	void handleGetSystemResponse( DynamicObject * systemPropertyObject );
-	void handleGetTalkersResponse( var talkersPropertyVar );
+	void handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage);
 
 	Result getProperty (Identifier const ID, var const parameter);
 
 	Result sendJSONToSocket( DynamicObject &messageObject );
-
 
 	JUCE_LEAK_DETECTOR(AudioPatchbayClient)
 };

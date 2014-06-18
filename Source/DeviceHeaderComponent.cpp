@@ -4,8 +4,8 @@
 #include "BinaryData.h"
 #include "DeviceCallout.h"
 
-DeviceHeaderComponent::DeviceHeaderComponent(int const deviceIndex_ ):
-	deviceIndex(deviceIndex_)
+DeviceHeaderComponent::DeviceHeaderComponent(ValueTree tree_):
+	deviceTree(tree_)
 {
 	//StringArray const device_names (controller_->deviceManager.getFriendlyDeviceNames());
 	deviceCombo.clear(dontSendNotification);

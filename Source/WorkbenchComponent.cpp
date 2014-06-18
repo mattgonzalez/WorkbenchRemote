@@ -266,7 +266,7 @@ void WorkbenchComponent::updateStreamControls()
 		if (nullptr == talkerStreamsTab)
 		{
 			talkerStreamsTab = new StaticStreamViewport(talkersTree, settings->lock, client);
-			tabs->addTab("Talkers", Colours:: white, talkerStreamsTab, true,TALKERS_TAB);
+			tabs->addTab("Talkers", Colours::white, talkerStreamsTab, true, TALKERS_TAB);
 		}
 	}
 	else

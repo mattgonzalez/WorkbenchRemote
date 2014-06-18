@@ -50,14 +50,14 @@ AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainCompone
 	getListenersButton->addListener (this);
 	getListenersButton->setEnabled(false);
 
-// 	addAndMakeVisible(&sendReadout);
-// 	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
-// 	sendReadout.setReadOnly(true);
-// 	sendReadout.setMultiLine(true);
-// 	addAndMakeVisible(&receiveReadout);
-// 	receiveReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
-// 	receiveReadout.setReadOnly(true);
-// 	receiveReadout.setMultiLine(true);
+	addAndMakeVisible(&sendReadout);
+	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
+	sendReadout.setReadOnly(true);
+	sendReadout.setMultiLine(true);
+	addAndMakeVisible(&receiveReadout);
+	receiveReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
+	receiveReadout.setReadOnly(true);
+	receiveReadout.setMultiLine(true);
 
 	client->lastMessageSent.addListener(this);
 	client->lastMessageReceived.addListener(this);
@@ -65,12 +65,15 @@ AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainCompone
 	client->changeBroadcaster.addChangeListener(this);
 	settings->tree.addListener(this);
 
+	tabs = new TabbedComponent(TabbedButtonBar::TabsAtTop);
+	addAndMakeVisible(tabs);
+
 	setSize (600, 400);
 }
 
 AudioPatchbayComponent::~AudioPatchbayComponent()
 {
-//	tabs = nullptr;
+	tabs = nullptr;
 	portEditor = nullptr;
 	portLabel = nullptr;
 	connectButton = nullptr;
@@ -105,15 +108,15 @@ void AudioPatchbayComponent::resized()
 	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
 	r = getTalkersButton->getBounds();
 	getListenersButton->setBounds(r.translated(r.getWidth() + 5, 0));
-	//r = getListenersButton->getBounds();
+	r = getListenersButton->getBounds();
 
-// 	y = infoButton->getBottom() + 10;
-// 	int w = getWidth()/2 - 20;
-// 	int h = getHeight() - y - 10;
-	//tabs->setBounds(10, y, w, h);
-	//h /= 2;
-// 	sendReadout.setBounds(tabs->getRight() + 20, y, w, h);
-// 	receiveReadout.setBounds(sendReadout.getBounds().translated(0, h));
+	y = infoButton->getBottom() + 10;
+	int w = getWidth()/2 - 20;
+	int h = getHeight() - y - 10;
+	tabs->setBounds(10, y, w, h);
+	h /= 2;
+	sendReadout.setBounds(tabs->getRight() + 20, y, w, h);
+	receiveReadout.setBounds(sendReadout.getBounds().translated(0, h));
 }
 
 void AudioPatchbayComponent::buttonClicked (Button* buttonThatWasClicked)
@@ -126,7 +129,9 @@ void AudioPatchbayComponent::buttonClicked (Button* buttonThatWasClicked)
 
 	if (buttonThatWasClicked == getTalkersButton)
 	{
-		//client->getTalkerStreams();
+		ValueTree tree;
+		deviceComponentTab = new DeviceComponent(tree, settings->lock, client);
+		tabs->addTab("Device", Colours::white, deviceComponentTab, true, 0);
 		return;
 	}
 
@@ -237,12 +242,8 @@ void AudioPatchbayComponent::enableControls()
 	disconnectButton->setEnabled(connected);
 	infoButton->setEnabled(connected);
 
-	ScopedLock locker(settings->lock);
-	ValueTree talkersTree(settings->tree.getChildWithName(Identifiers::Talkers));
-	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
-
-	getTalkersButton->setEnabled(talkersTree.isValid());
-	getListenersButton->setEnabled(listenersTree.isValid());
+	getTalkersButton->setEnabled(connected);
+	getListenersButton->setEnabled(connected);
 }
 
 void AudioPatchbayComponent::handleAsyncUpdate()
@@ -252,23 +253,23 @@ void AudioPatchbayComponent::handleAsyncUpdate()
 
 void AudioPatchbayComponent::valueChanged( Value& value )
 {
-// 	TextEditor* editor;
-// 
-// 	if (value.refersToSameSourceAs(client->lastMessageSent))
-// 	{
-// 		editor = &sendReadout;
-// 	}
-// 	else if (value.refersToSameSourceAs(client->lastMessageReceived))
-// 	{
-// 		editor = &receiveReadout;
-// 	}
-// 	else
-// 	{
-// 		return;
-// 	}
-// 
-// 	var json(JSON::parse(value.toString()));
-// 	editor->setText(JSON::toString(json));
+	TextEditor* editor;
+
+	if (value.refersToSameSourceAs(client->lastMessageSent))
+	{
+		editor = &sendReadout;
+	}
+	else if (value.refersToSameSourceAs(client->lastMessageReceived))
+	{
+		editor = &receiveReadout;
+	}
+	else
+	{
+		return;
+	}
+
+	var json(JSON::parse(value.toString()));
+	editor->setText(JSON::toString(json));
 }
 
 

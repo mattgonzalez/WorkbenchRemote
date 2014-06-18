@@ -4,6 +4,7 @@
 #include "base.h"
 #include "AudioPatchbayClient.h"
 #include "Settings.h"
+#include "DeviceComponent.h"
 
 class MainContentComponent;
 
@@ -62,10 +63,12 @@ private:
 	ScopedPointer<TextButton> getTalkersButton;
 	ScopedPointer<TextButton> getListenersButton;
 
+	DeviceComponent* deviceComponentTab;
+
 	TextEditor sendReadout;
 	TextEditor receiveReadout;
 
-	//ScopedPointer<TabbedComponent> tabs;
+	ScopedPointer<TabbedComponent> tabs;
 
 	enum
 	{

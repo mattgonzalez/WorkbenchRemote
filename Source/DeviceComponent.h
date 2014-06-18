@@ -6,10 +6,12 @@
 #include "InputChannelViewport.h"
 #include "OutputChannelViewport.h"
 
+class AudioPatchbayClient;
+
 class DeviceComponent : public Component, public Button::Listener, public ValueTree::Listener
 {
 public:
-	DeviceComponent(int const deviceIndex_);
+	DeviceComponent(ValueTree tree_, CriticalSection &lock_, AudioPatchbayClient* client_);
 	~DeviceComponent();
 
 	void paint (Graphics&);
@@ -18,9 +20,12 @@ public:
 	void timerCallback();
 
 private:
-	int const deviceIndex;
+	int deviceIndex;
 	ValueTree deviceTree;
 
+	AudioPatchbayClient* client;
+
+	CriticalSection& lock;
 	DeviceHeaderComponent header;
 	InputChannelViewport inputChannelViewport;
  	OutputChannelViewport outputChannelViewport;

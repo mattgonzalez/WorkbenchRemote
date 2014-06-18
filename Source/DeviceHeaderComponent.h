@@ -4,7 +4,7 @@
 class DeviceHeaderComponent: public Component, public ComboBox::Listener, public Value::Listener, public Button::Listener
 {
 public:
-	DeviceHeaderComponent(int const deviceIndex_);
+	DeviceHeaderComponent(ValueTree tree_);
 	~DeviceHeaderComponent();	
 	
 	void resized();
@@ -12,7 +12,7 @@ public:
 	virtual void buttonClicked(Button *button);
 
 protected:
-	int const deviceIndex;
+	int deviceIndex;
 	ValueTree deviceTree;
 
 	ComboBox deviceCombo;

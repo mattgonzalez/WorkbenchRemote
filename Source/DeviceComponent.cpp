@@ -2,12 +2,15 @@
 #include "DeviceComponent.h"
 #include "Identifiers.h"
 #include "BinaryData.h"
+#include "AudioPatchbayClient.h"
 
-DeviceComponent::DeviceComponent(int const deviceIndex_ ) :
-	deviceIndex(deviceIndex_),
- 	header(deviceIndex_),
- 	inputChannelViewport(deviceIndex_,deviceTree.getChildWithName(Identifiers::Input)),
- 	outputChannelViewport(deviceIndex_,deviceTree.getChildWithName(Identifiers::Output))
+DeviceComponent::DeviceComponent(ValueTree tree_, CriticalSection &lock_, AudioPatchbayClient* client_) :
+	deviceTree(tree_),
+	lock(lock_),
+	client(client_),
+	header(tree_),
+ 	inputChannelViewport(0, deviceTree.getChildWithName(Identifiers::Input)),
+ 	outputChannelViewport(0, deviceTree.getChildWithName(Identifiers::Output))
 {
 	addAndMakeVisible(&header);
 	addAndMakeVisible(&inputChannelViewport);
@@ -21,7 +24,7 @@ DeviceComponent::~DeviceComponent()
 
 void DeviceComponent::paint( Graphics& g)
 {
-	g.fillAll(/*JUCE_LIVE_CONSTANT*/(Colours::lightsteelblue));
+	g.fillAll((Colours::lightsteelblue));
 
 }
 
