@@ -39,10 +39,13 @@ DeviceCallout::DeviceCallout(ValueTree deviceTree_ ):
 	maxCallbackIntervalReadout.setColour(Label:: outlineColourId, Colours::darkslategrey);
 	//addAndMakeVisible(&maxCallbackIntervalReadout);
 
-	//StringArray const &device_names (controller_->deviceManager.getFriendlyDeviceNames());
-	deviceCombo.clear(dontSendNotification);
+	deviceCombo.clear();
+	var deviceNames(deviceTree.getParent().getProperty(Identifiers::AvailableAudioDevices));
+	for (int i = 0; i < deviceNames.size(); i++)
+	{
+		deviceCombo.addItem(deviceNames[i], i + 1);
+	}
 	deviceCombo.addItem("None", -1);
-	//deviceCombo.addItemList(device_names, 1);
 	deviceCombo.setSelectedId(-1,dontSendNotification);
 
 	var deviceName(deviceTree.getProperty(Identifiers::DeviceName,String::empty));
@@ -226,23 +229,20 @@ void DeviceCallout::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged
 
 void DeviceCallout::fillSampleRateCombo()
 {
-//Needs to be rewritten
+	var sampleRatesVar(deviceTree[Identifiers::SampleRates]);
+	if (false == sampleRatesVar.isArray())
+		return;
 
-// 	int deviceIndex = deviceTree[Identifiers::Index];
-// 	Device* device = controller->deviceManager.getDevice(deviceIndex);
-// 	if (nullptr == device->ioDevice)
-// 		return;
-// 
-// 	sampleRateCombo.clear();
-// 	Array<double> rates(device->ioDevice->getAvailableSampleRates());
-// 	double currentRate = device->ioDevice->getCurrentSampleRate();
-// 	for (int i = 0; i < rates.size(); ++i)
-// 	{
-// 		int id = i + 1;
-// 		sampleRateCombo.addItem(String(rates[i]) + " Hz", id);
-// 		if (rates[i] == currentRate)
-// 		{
-// 			sampleRateCombo.setSelectedId(id, dontSendNotification);
-// 		}
-// 	}
+	sampleRateCombo.clear();
+
+	double currentRate = deviceTree[Identifiers::SampleRate];
+	for (int i = 0; i < sampleRatesVar.size(); ++i)
+	{
+	 	int id = i + 1;
+	 	sampleRateCombo.addItem(String((double)sampleRatesVar[i]) + " Hz", id);
+		if (currentRate == (double)sampleRatesVar[i])
+		{
+			sampleRateCombo.setSelectedId(id, dontSendNotification);
+		}
+	}
 }

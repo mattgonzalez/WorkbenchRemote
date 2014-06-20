@@ -30,7 +30,7 @@ private:
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPatchbayComponent)
 
-		void updatePort();
+	void updatePort();
 
 	virtual void changeListenerCallback( ChangeBroadcaster* source );
 
@@ -50,7 +50,8 @@ private:
 	virtual void handleAsyncUpdate();
 
 	virtual void valueChanged( Value& value );
-
+	
+	ValueTree tree;
 	AudioPatchbayClient* client;
 	Settings *settings;
 	MainContentComponent *mainComponent;
@@ -60,15 +61,14 @@ private:
 	ScopedPointer<TextButton> connectButton;
 	ScopedPointer<TextButton> disconnectButton;
 	ScopedPointer<TextButton> infoButton;
-	ScopedPointer<TextButton> getTalkersButton;
-	ScopedPointer<TextButton> getListenersButton;
-
-	DeviceComponent* deviceComponentTab;
+	ScopedPointer<TextButton> getAvailableAudioDevicesButton;
+	ScopedPointer<TextButton> getCurrentAudioDevicesButton;
 
 	TextEditor sendReadout;
 	TextEditor receiveReadout;
 
 	ScopedPointer<TabbedComponent> tabs;
+	OwnedArray<DeviceComponent> deviceComponents;
 
 	enum
 	{

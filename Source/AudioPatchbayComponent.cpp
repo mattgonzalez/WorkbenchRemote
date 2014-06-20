@@ -5,7 +5,8 @@
 AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainComponent_, AudioPatchbayClient* client_, Settings *settings_):
 	mainComponent(mainComponent_),
 	client(client_),
-	settings(settings_)
+	settings(settings_),
+	tree(settings_->getAudioDevicesTree())
 {
 	addAndMakeVisible (portEditor = new TextEditor ("portEditor"));
 	portEditor->setMultiLine (false);
@@ -19,7 +20,7 @@ AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainCompone
 	portEditor->setInputRestrictions(5, "0123456789");
 	portEditor->addListener(this);
 
-	portEditor->setText(String(settings->getPort()));
+	portEditor->setText(tree[Identifiers::Port].toString());
 
 	addAndMakeVisible (portLabel = new Label ("port label",
 		TRANS("Port")));
@@ -42,13 +43,13 @@ AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainCompone
 	infoButton->addListener (this);
 	infoButton->setEnabled(false);
 
-	addAndMakeVisible (getTalkersButton = new TextButton ("Get Talker Info"));
-	getTalkersButton->addListener (this);
-	getTalkersButton->setEnabled(false);
+	addAndMakeVisible (getAvailableAudioDevicesButton = new TextButton ("Get Available Devices"));
+	getAvailableAudioDevicesButton->addListener (this);
+	getAvailableAudioDevicesButton->setEnabled(false);
 
-	addAndMakeVisible (getListenersButton = new TextButton ("Get Listener Info"));
-	getListenersButton->addListener (this);
-	getListenersButton->setEnabled(false);
+	addAndMakeVisible (getCurrentAudioDevicesButton = new TextButton ("Get Current Devices"));
+	getCurrentAudioDevicesButton->addListener (this);
+	getCurrentAudioDevicesButton->setEnabled(false);
 
 	addAndMakeVisible(&sendReadout);
 	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
@@ -63,7 +64,7 @@ AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainCompone
 	client->lastMessageReceived.addListener(this);
 
 	client->changeBroadcaster.addChangeListener(this);
-	settings->tree.addListener(this);
+	tree.addListener(this);
 
 	tabs = new TabbedComponent(TabbedButtonBar::TabsAtTop);
 	addAndMakeVisible(tabs);
@@ -79,12 +80,11 @@ AudioPatchbayComponent::~AudioPatchbayComponent()
 	connectButton = nullptr;
 	disconnectButton = nullptr;
 	infoButton = nullptr;
-	getTalkersButton = nullptr;
-	getListenersButton = nullptr;
+	getAvailableAudioDevicesButton = nullptr;
+	getCurrentAudioDevicesButton = nullptr;
 	client->lastMessageSent.removeListener(this);
 	client->lastMessageReceived.removeListener(this);
 	client->changeBroadcaster.removeChangeListener(this);
-	settings->tree.removeListener(this);
 }
 
 void AudioPatchbayComponent::paint (Graphics& g)
@@ -103,12 +103,12 @@ void AudioPatchbayComponent::resized()
 	disconnectButton->setBounds(r.translated( r.getWidth() + 5, 0));
 
 	int y = portLabel->getBottom() + 10;
-	infoButton->setBounds(96, y, 104, 24);
+	infoButton->setBounds(96, y, 150, 24);
 	r = infoButton->getBounds();
-	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
-	r = getTalkersButton->getBounds();
-	getListenersButton->setBounds(r.translated(r.getWidth() + 5, 0));
-	r = getListenersButton->getBounds();
+	getAvailableAudioDevicesButton->setBounds(r.translated( r.getWidth() + 5, 0));
+	r = getAvailableAudioDevicesButton->getBounds();
+	getCurrentAudioDevicesButton->setBounds(r.translated(r.getWidth() + 5, 0));
+	r = getCurrentAudioDevicesButton->getBounds();
 
 	y = infoButton->getBottom() + 10;
 	int w = getWidth()/2 - 20;
@@ -127,17 +127,14 @@ void AudioPatchbayComponent::buttonClicked (Button* buttonThatWasClicked)
 		return;
 	}
 
-	if (buttonThatWasClicked == getTalkersButton)
+	if (buttonThatWasClicked == getAvailableAudioDevicesButton)
 	{
-		ValueTree tree;
-		deviceComponentTab = new DeviceComponent(tree, settings->lock, client);
-		tabs->addTab("Device", Colours::white, deviceComponentTab, true, 0);
-		return;
+		client->getAvailableAudioDevices();	
 	}
 
-	if (buttonThatWasClicked == getListenersButton)
+	if (buttonThatWasClicked == getCurrentAudioDevicesButton)
 	{
-		//client->getListenerStreams();
+		client->getCurrentAudioDevices();	
 		return;
 	}
 
@@ -156,7 +153,7 @@ void AudioPatchbayComponent::buttonClicked (Button* buttonThatWasClicked)
 
 void AudioPatchbayComponent::changeListenerCallback( ChangeBroadcaster* /*source*/ )
 {
-	triggerAsyncUpdate();
+	enableControls();
 }
 
 void AudioPatchbayComponent::textEditorTextChanged( TextEditor& )
@@ -165,7 +162,6 @@ void AudioPatchbayComponent::textEditorTextChanged( TextEditor& )
 
 void AudioPatchbayComponent::textEditorReturnKeyPressed( TextEditor& edit)
 {
-
 	if (&edit == portEditor)
 	{
 		updatePort();
@@ -175,10 +171,9 @@ void AudioPatchbayComponent::textEditorReturnKeyPressed( TextEditor& edit)
 
 void AudioPatchbayComponent::textEditorEscapeKeyPressed( TextEditor& edit)
 {
-
 	if (&edit == portEditor)
 	{
-		portEditor->setText(String(settings->getPort()));
+		portEditor->setText(tree[Identifiers::Port].toString());
 		return;
 	}
 }
@@ -197,8 +192,7 @@ void AudioPatchbayComponent::updatePort()
 	int port = portEditor->getText().getIntValue();
 	port = jlimit(0, 65535, port);
 	portEditor->setText(String(port));
-	settings->storePort(port);
-
+	tree.setProperty(Identifiers::Port, port, nullptr);
 }
 
 void AudioPatchbayComponent::actionListenerCallback( const String& message )
@@ -208,21 +202,40 @@ void AudioPatchbayComponent::actionListenerCallback( const String& message )
 
 void AudioPatchbayComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
-	//DBG("AudioPatchbayComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+	DBG("AudioPatchbayComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
 }
 
 void AudioPatchbayComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
 {
-	//DBG("AudioPatchbayComponent::valueTreeChildAdded " << parentTree.getType().toString() << " " << childWhichHasBeenAdded.getType().toString());
+	DBG("AudioPatchbayComponent::valueTreeChildAdded " << parentTree.getType().toString() << " " << childWhichHasBeenAdded.getType().toString());
 
-	triggerAsyncUpdate();
+	//triggerAsyncUpdate();
+	if (Identifiers::AudioDevices == parentTree.getType())
+	{
+		int index = childWhichHasBeenAdded.getProperty(Identifiers::Index);
+		DeviceComponent* component = new DeviceComponent(childWhichHasBeenAdded, settings->lock, client);
+		tabs->addTab("Device " + String(index), Colours::white, component, false, index);
+		deviceComponents.add(component);
+		return;
+	}
 }
 
 void AudioPatchbayComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
 {
-	//DBG("AudioPatchbayComponent::valueTreeChildRemoved " << parentTree.getType().toString() << " " << childWhichHasBeenRemoved.getType().toString());
+	DBG("AudioPatchbayComponent::valueTreeChildRemoved " << parentTree.getType().toString() << " " << childWhichHasBeenRemoved.getType().toString());
 
-	triggerAsyncUpdate();
+	if (Identifiers::AudioDevices == parentTree.getType())
+	{
+		tabs->removeTab(childWhichHasBeenRemoved.getProperty(Identifiers::Index));
+		for (int i = 0; i < deviceComponents.size(); ++i)
+		{
+			if (deviceComponents[i]->deviceTree == childWhichHasBeenRemoved)
+			{
+				deviceComponents.remove(i);
+				break;
+			}
+		}
+	}
 }
 
 void AudioPatchbayComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
@@ -242,14 +255,16 @@ void AudioPatchbayComponent::enableControls()
 	disconnectButton->setEnabled(connected);
 	infoButton->setEnabled(connected);
 
-	getTalkersButton->setEnabled(connected);
-	getListenersButton->setEnabled(connected);
+	getAvailableAudioDevicesButton->setEnabled(connected);
+	getCurrentAudioDevicesButton->setEnabled(connected);
 }
 
 void AudioPatchbayComponent::handleAsyncUpdate()
 {
-	enableControls();
+	//enableControls();
 }
+
+
 
 void AudioPatchbayComponent::valueChanged( Value& value )
 {
@@ -271,5 +286,3 @@ void AudioPatchbayComponent::valueChanged( Value& value )
 	var json(JSON::parse(value.toString()));
 	editor->setText(JSON::toString(json));
 }
-
-

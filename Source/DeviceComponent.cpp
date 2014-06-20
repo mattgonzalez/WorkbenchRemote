@@ -15,6 +15,7 @@ DeviceComponent::DeviceComponent(ValueTree tree_, CriticalSection &lock_, AudioP
 	addAndMakeVisible(&header);
 	addAndMakeVisible(&inputChannelViewport);
 	addAndMakeVisible(&outputChannelViewport);
+	deviceTree.addListener(this);
 }
 
 DeviceComponent::~DeviceComponent()
@@ -24,8 +25,7 @@ DeviceComponent::~DeviceComponent()
 
 void DeviceComponent::paint( Graphics& g)
 {
-	g.fillAll((Colours::lightsteelblue));
-
+	g.fillAll(Colour(0xffcfe4ff));
 }
 
 void DeviceComponent::resized()
@@ -51,6 +51,7 @@ void DeviceComponent::buttonClicked( Button* button )
 
 void DeviceComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
+	//DBG("DeviceComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
 }
 
 void DeviceComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )

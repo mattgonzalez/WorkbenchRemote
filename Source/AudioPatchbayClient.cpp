@@ -48,7 +48,7 @@ Strings are sent without a zero terminator.
 //============================================================================
 
 //
-// The 'KROW' value is the magic number written to the start of the packet
+// The 'HCNB' value is the magic number written to the start of the packet
 // that has to match at both ends of the connection
 //
 AudioPatchbayClient::AudioPatchbayClient(Settings* settings_):
@@ -92,7 +92,7 @@ void AudioPatchbayClient::connectionLost()
 	DBG("AudioPatchbayClient::connectionLost");
 
 	// Remove all the stream information from the settings tree
-	settings->removeStreams();
+	settings->removeAudioDevices();
 
 	// Generate a change notification indicating that the state of the socket has changed
 	changeBroadcaster.sendChangeMessage();
@@ -245,12 +245,122 @@ void AudioPatchbayClient::handlePropertyChangedMessage(DynamicObject * messageOb
 		handleGetSystemResponse(systemPropertyObject);
 		return;
 	}
+
+	if (propertyObject->hasProperty(Identifiers::AvailableAudioDevices))
+	{
+		var availablePropertyVar(propertyObject->getProperty(Identifiers::AvailableAudioDevices));
+
+		if (false== availablePropertyVar.isArray())
+		{
+			DBG("Could not parse get available audio devices response");
+			return;
+		}
+
+		handleGetAvailableAudioDevicesResponse(availablePropertyVar);
+		return;
+	}
+
+	if (propertyObject->hasProperty(Identifiers::CurrentAudioDevices))
+	{
+		var propertyVar(propertyObject->getProperty(Identifiers::CurrentAudioDevices));
+
+		if (false== propertyVar.isArray())
+		{
+			DBG("Could not parse get current audio devices response");
+			return;
+		}
+
+		handleGetCurrentAudioDevicesResponse(propertyVar);
+		return;
+	}
 }
 
 void AudioPatchbayClient::handleGetSystemResponse( DynamicObject * systemPropertyObject )
 {
-	int numTalkers = systemPropertyObject->getProperty(Identifiers::Talkers);
-	int numListeners = systemPropertyObject->getProperty(Identifiers::Listeners);
+	int numAudioDevices = systemPropertyObject->getProperty(Identifiers::AudioDevices);
 
-	settings->initializeStreams(numTalkers, numListeners);
+	settings->initializeAudioDevices(numAudioDevices);
+}
+
+Result AudioPatchbayClient::getAvailableAudioDevices()
+{
+	return getProperty(Identifiers::AvailableAudioDevices, new DynamicObject());
+}
+
+void AudioPatchbayClient::handleGetAvailableAudioDevicesResponse( var availablePropertyVar )
+{
+	ScopedLock locker(lock);
+
+	ValueTree tree(settings->getAudioDevicesTree());
+	tree.setProperty(Identifiers::AvailableAudioDevices, availablePropertyVar, nullptr);
+}
+
+Result AudioPatchbayClient::getCurrentAudioDevices()
+{
+	ScopedLock locker(settings->lock);
+	var arrayVar;
+	ValueTree tree(settings->getAudioDevicesTree());
+	for (int i = 0; i < tree.getNumChildren(); ++i)
+	{
+		DynamicObject::Ptr indexObject(new DynamicObject());
+		indexObject->setProperty(Identifiers::Index, i);
+		arrayVar.append(var(indexObject));
+	}
+
+	return getProperty(Identifiers::CurrentAudioDevices, arrayVar);
+}
+
+void AudioPatchbayClient::handleGetCurrentAudioDevicesResponse( var currentPropertyVar )
+{
+	if (false == currentPropertyVar.isArray())
+		return;
+
+	ScopedLock locker(lock);
+
+	ValueTree tree(settings->getAudioDevicesTree());
+	for (int responseIndex = 0; responseIndex < currentPropertyVar.size(); responseIndex++)
+	{
+		var const &v(currentPropertyVar[responseIndex]);
+		DynamicObject::Ptr const d(v.getDynamicObject());
+		if (nullptr == d || false == d->hasProperty(Identifiers::Index))
+		{
+			continue;
+		}
+
+		int deviceIndex = d->getProperty(Identifiers::Index);
+		if (deviceIndex < 0 || deviceIndex >= tree.getNumChildren())
+		{
+			continue;
+		}
+
+		ValueTree deviceTree(tree.getChild(deviceIndex));
+
+		if (d->hasProperty(Identifiers::DeviceName))
+		{
+			deviceTree.setProperty(Identifiers::DeviceName, d->getProperty(Identifiers::DeviceName), nullptr);
+		}
+		if (d->hasProperty(Identifiers::Inputs))
+		{
+			deviceTree.setProperty(Identifiers::Inputs, d->getProperty(Identifiers::Inputs), nullptr);
+		}		
+		if (d->hasProperty(Identifiers::Outputs))
+		{
+			deviceTree.setProperty(Identifiers::Outputs, d->getProperty(Identifiers::Outputs), nullptr);
+		}
+		if (d->hasProperty(Identifiers::SampleRates))
+		{
+			deviceTree.setProperty(Identifiers::SampleRates, d->getProperty(Identifiers::SampleRates), nullptr);
+		}
+		if (d->hasProperty(Identifiers::SampleRate))
+		{
+			deviceTree.setProperty(Identifiers::SampleRate, d->getProperty(Identifiers::SampleRate), nullptr);
+		}
+
+		if (d->hasProperty(Identifiers::DeviceName) && d->hasProperty(Identifiers::Inputs) && d->hasProperty(Identifiers::Outputs))
+		{
+			settings->initializeAudioDevice(deviceIndex,
+				d->getProperty(Identifiers::Inputs),
+				d->getProperty(Identifiers::Outputs));
+		}
+	}
 }

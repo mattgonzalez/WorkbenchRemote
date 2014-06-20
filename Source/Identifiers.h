@@ -40,9 +40,12 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( PropertyChanged			) \
 						IDENTIFIER( FaultNotification		) \
 						IDENTIFIER( Input					) \
+						IDENTIFIER( Inputs					) \
 						IDENTIFIER( Output					) \
+						IDENTIFIER( Outputs					) \
 						IDENTIFIER( DeviceName				) \
 						IDENTIFIER( SampleRate				) \
+						IDENTIFIER( SampleRates				) \
 						IDENTIFIER( CurrentChannelCount		) \
 						IDENTIFIER( MaxChannelCount			) \
 						IDENTIFIER( Mode					) \
@@ -52,7 +55,12 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( ToneFrequency			) \
 						IDENTIFIER( SourceDeviceName		) \
 						IDENTIFIER( SourceDeviceIndex		) \
-						IDENTIFIER( SourceChannel			)
+						IDENTIFIER( SourceChannel			) \
+						IDENTIFIER( AudioDevices			) \
+						IDENTIFIER( AvailableAudioDevices	) \
+						IDENTIFIER( CurrentAudioDevices		) \
+						IDENTIFIER( Workbench				) \
+						IDENTIFIER( Port				) \
 
 namespace Identifiers
 {

@@ -25,6 +25,7 @@ void ChannelViewport::resized()
 void ChannelViewport::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
 	//DBG("ChannelViewport::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+#if 0
 	if (Identifiers::MaxChannelCount == property)
 	{
 		triggerAsyncUpdate();
@@ -36,6 +37,7 @@ void ChannelViewport::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasC
 		setChannelComponentsVisible();
 		return;
 	}
+#endif
 }
 
 void ChannelViewport::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
@@ -50,12 +52,12 @@ void ChannelViewport::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& c
 
 void ChannelViewport::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
 {
-	triggerAsyncUpdate();
+	//triggerAsyncUpdate();
 }
 
 void ChannelViewport::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged )
 {
-	triggerAsyncUpdate();
+	//triggerAsyncUpdate();
 }
 
 void ChannelViewport::handleAsyncUpdate()

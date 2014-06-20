@@ -15,15 +15,20 @@ public:
 	~Settings();
 
 	void storeAddress(IPAddress address);
-	void storePort( int port );
 	IPAddress getAddress();
+	ValueTree getStreamsTree();
+	ValueTree getAudioDevicesTree();
 
-	int getPort();
 	ScopedPointer<PropertiesFile> propfile;
 
 	void initializeStreams(int numTalkers,int numListeners);
+	void initializeAudioDevices(int numAudioDevices);
+	void initializeAudioDevice(int deviceIndex, int numInputs,int numOutputs);
 	void removeStreams();
+	void removeAudioDevices();
 
 	CriticalSection lock;
+
+protected:
 	ValueTree tree;
 };

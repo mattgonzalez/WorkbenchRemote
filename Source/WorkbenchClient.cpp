@@ -195,7 +195,7 @@ Result WorkbenchClient::getTalkerStreams()
 {
 	ScopedLock locker(settings->lock);
 	var arrayVar;
-	ValueTree talkersTree(settings->tree.getChildWithName(Identifiers::Talkers));
+	ValueTree talkersTree(settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
 	for (int i = 0; i < talkersTree.getNumChildren(); ++i)
 	{
 		DynamicObject::Ptr indexObject(new DynamicObject());
@@ -211,7 +211,7 @@ Result WorkbenchClient::getListenerStreams()
 {
 	ScopedLock locker(settings->lock);
 	var arrayVar;
-	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
+	ValueTree listenersTree(settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
 	for (int i = 0; i < listenersTree.getNumChildren(); ++i)
 	{
 		DynamicObject::Ptr indexObject(new DynamicObject());
@@ -309,7 +309,7 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 			DBG("Could not parse get talkers response");
 			return;
 		}
-		handleGetStreamsResponse(talkersPropertyVar, settings->tree.getChildWithName(Identifiers::Talkers));
+		handleGetStreamsResponse(talkersPropertyVar, settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
 		return;
 	}
 
@@ -321,7 +321,7 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 			DBG("Could not parse get listeners response");
 			return;
 		}
-		handleGetStreamsResponse(listenersPropertyVar, settings->tree.getChildWithName(Identifiers::Listeners));
+		handleGetStreamsResponse(listenersPropertyVar, settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
 		return;
 	}
 }

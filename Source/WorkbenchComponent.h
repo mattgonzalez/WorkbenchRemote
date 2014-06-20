@@ -54,6 +54,7 @@ private:
 	WorkbenchClient* client;
 	Settings *settings;
 	MainContentComponent *mainComponent;
+	ValueTree tree;
 
 	ScopedPointer<TextEditor> portEditor;
 	ScopedPointer<Label> portLabel;

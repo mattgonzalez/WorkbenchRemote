@@ -17,6 +17,8 @@ public:
 	~AudioPatchbayClient();
 
 	Result getSystemInfo();
+	Result getAvailableAudioDevices();
+	Result getCurrentAudioDevices();
 
 	ChangeBroadcaster changeBroadcaster;
 
@@ -36,6 +38,8 @@ protected:
 	void handleGetResponse( DynamicObject * messageObject );
 	void handleGetSystemResponse( DynamicObject * systemPropertyObject );
 	void handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage);
+	void handleGetAvailableAudioDevicesResponse(var availablePropertyVar);
+	void handleGetCurrentAudioDevicesResponse(var currentPropertyVar);
 
 	Result getProperty (Identifier const ID, var const parameter);
 

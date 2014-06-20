@@ -7,7 +7,8 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	client(client_),
 	settings(settings_),
 	talkerStreamsTab(nullptr),
-	listenerStreamsTab(nullptr)
+	listenerStreamsTab(nullptr),
+	tree(settings_->getStreamsTree())
 {
 	addAndMakeVisible (portEditor = new TextEditor ("portEditor"));
 	portEditor->setMultiLine (false);
@@ -21,7 +22,7 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	portEditor->setInputRestrictions(5, "0123456789");
 	portEditor->addListener(this);
 
-	portEditor->setText(String(settings->getPort()));
+	portEditor->setText(tree[Identifiers::Port].toString());
 
 	addAndMakeVisible (portLabel = new Label ("port label",
 		TRANS("Port")));
@@ -68,7 +69,7 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	addAndMakeVisible(tabs);
 
 	client->changeBroadcaster.addChangeListener(this);
-	settings->tree.addListener(this);
+	tree.addListener(this);
 
 	setSize (600, 400);
 }
@@ -86,7 +87,6 @@ WorkbenchComponent::~WorkbenchComponent()
 	client->lastMessageSent.removeListener(this);
 	client->lastMessageReceived.removeListener(this);
 	client->changeBroadcaster.removeChangeListener(this);
-	settings->tree.removeListener(this);
 }
 
 void WorkbenchComponent::paint (Graphics& g)
@@ -178,7 +178,7 @@ void WorkbenchComponent::textEditorEscapeKeyPressed( TextEditor& edit)
 
 	if (&edit == portEditor)
 	{
-		portEditor->setText(String(settings->getPort()));
+		portEditor->setText(tree[Identifiers::Port].toString());
 		return;
 	}
 }
@@ -197,8 +197,7 @@ void WorkbenchComponent::updatePort()
 	int port = portEditor->getText().getIntValue();
 	port = jlimit(0, 65535, port);
 	portEditor->setText(String(port));
-	settings->storePort(port);
-
+	tree.setProperty(Identifiers::Port, port, nullptr);
 }
 
 void WorkbenchComponent::actionListenerCallback( const String& message )
@@ -208,7 +207,7 @@ void WorkbenchComponent::actionListenerCallback( const String& message )
 
 void WorkbenchComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
-	//DBG("WorkbenchComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+	DBG("WorkbenchComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
 }
 
 void WorkbenchComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
@@ -243,8 +242,8 @@ void WorkbenchComponent::enableControls()
 	infoButton->setEnabled(connected);
 
 	ScopedLock locker(settings->lock);
-	ValueTree talkersTree(settings->tree.getChildWithName(Identifiers::Talkers));
-	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
+	ValueTree talkersTree(settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
+	ValueTree listenersTree(settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
 
 	getTalkersButton->setEnabled(talkersTree.isValid());
 	getListenersButton->setEnabled(listenersTree.isValid());
@@ -260,7 +259,7 @@ void WorkbenchComponent::updateStreamControls()
 {
 	ScopedLock locker(settings->lock);
 
-	ValueTree talkersTree(settings->tree.getChildWithName(Identifiers::Talkers));
+	ValueTree talkersTree(settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
 	if (talkersTree.getNumChildren() != 0)
 	{
 		if (nullptr == talkerStreamsTab)
@@ -275,7 +274,7 @@ void WorkbenchComponent::updateStreamControls()
 		talkerStreamsTab = nullptr;
 	}
 
-	ValueTree listenersTree(settings->tree.getChildWithName(Identifiers::Listeners));
+	ValueTree listenersTree(settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
 	if (listenersTree.getNumChildren() != 0)
 	{
 		if (nullptr == listenerStreamsTab)

@@ -19,9 +19,10 @@ public:
 
 	void timerCallback();
 
+	ValueTree deviceTree;
+
 private:
 	int deviceIndex;
-	ValueTree deviceTree;
 
 	AudioPatchbayClient* client;
 
