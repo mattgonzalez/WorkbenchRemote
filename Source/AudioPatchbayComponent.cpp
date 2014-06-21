@@ -51,6 +51,14 @@ AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainCompone
 	getCurrentAudioDevicesButton->addListener (this);
 	getCurrentAudioDevicesButton->setEnabled(false);
 
+	addAndMakeVisible (getInputButton = new TextButton ("Get Inputs"));
+	getInputButton->addListener (this);
+	getInputButton->setEnabled(false);
+
+	addAndMakeVisible (getOutputButton = new TextButton ("Get Outputs"));
+	getOutputButton->addListener (this);
+	getOutputButton->setEnabled(false);
+
 	addAndMakeVisible(&sendReadout);
 	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
 	sendReadout.setReadOnly(true);
@@ -103,13 +111,16 @@ void AudioPatchbayComponent::resized()
 	disconnectButton->setBounds(r.translated( r.getWidth() + 5, 0));
 
 	int y = portLabel->getBottom() + 10;
-	infoButton->setBounds(96, y, 150, 24);
+	infoButton->setBounds(20, y, 150, 24);
 	r = infoButton->getBounds();
 	getAvailableAudioDevicesButton->setBounds(r.translated( r.getWidth() + 5, 0));
 	r = getAvailableAudioDevicesButton->getBounds();
 	getCurrentAudioDevicesButton->setBounds(r.translated(r.getWidth() + 5, 0));
 	r = getCurrentAudioDevicesButton->getBounds();
-
+	getInputButton->setBounds(r.translated(r.getWidth() + 5, 0));
+	r = getInputButton->getBounds();
+	getOutputButton->setBounds(r.translated(r.getWidth() + 5, 0));
+	
 	y = infoButton->getBottom() + 10;
 	int w = getWidth()/2 - 20;
 	int h = getHeight() - y - 10;
@@ -135,6 +146,46 @@ void AudioPatchbayComponent::buttonClicked (Button* buttonThatWasClicked)
 	if (buttonThatWasClicked == getCurrentAudioDevicesButton)
 	{
 		client->getCurrentAudioDevices();	
+		return;
+	}
+
+	if (buttonThatWasClicked == getInputButton)
+	{
+		ValueTree audioDevicesTree(settings->getAudioDevicesTree());
+		for (int i = 0; i < audioDevicesTree.getNumChildren(); ++i)
+		{
+			ValueTree deviceTree(audioDevicesTree.getChild(i));
+			String name(deviceTree[Identifiers::DeviceName]);
+			if (name.isEmpty())
+				continue;
+
+			ValueTree inputsTree(deviceTree.getChildWithName(Identifiers::Input));
+			int channels = inputsTree[Identifiers::MaxChannelCount];
+			for (int channel = 0; channel < channels; ++channel)
+			{
+				client->getInputChannel(name, channel);
+			}
+		}
+		return;
+	}
+
+	if (buttonThatWasClicked == getOutputButton)
+	{
+		ValueTree audioDevicesTree(settings->getAudioDevicesTree());
+		for (int i = 0; i < audioDevicesTree.getNumChildren(); ++i)
+		{
+			ValueTree deviceTree(audioDevicesTree.getChild(i));
+			String name(deviceTree[Identifiers::DeviceName]);
+			if (name.isEmpty())
+				continue;
+
+			ValueTree outputsTree(deviceTree.getChildWithName(Identifiers::Output));
+			int channels = outputsTree[Identifiers::MaxChannelCount];
+			for (int channel = 0; channel < channels; ++channel)
+			{
+				client->getOutputChannel(name, channel);
+			}
+		}
 		return;
 	}
 
@@ -202,22 +253,28 @@ void AudioPatchbayComponent::actionListenerCallback( const String& message )
 
 void AudioPatchbayComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
-	DBG("AudioPatchbayComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+	//DBG("AudioPatchbayComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+
+	if (Identifiers::AvailableAudioDevices == property)
+	{
+		enableControls();
+		return;
+	}
 }
 
 void AudioPatchbayComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
 {
 	DBG("AudioPatchbayComponent::valueTreeChildAdded " << parentTree.getType().toString() << " " << childWhichHasBeenAdded.getType().toString());
 
-	//triggerAsyncUpdate();
 	if (Identifiers::AudioDevices == parentTree.getType())
 	{
 		int index = childWhichHasBeenAdded.getProperty(Identifiers::Index);
-		DeviceComponent* component = new DeviceComponent(childWhichHasBeenAdded, settings->lock, client);
-		tabs->addTab("Device " + String(index), Colours::white, component, false, index);
+		DeviceComponent* component = new DeviceComponent(childWhichHasBeenAdded, settings->lock);
+		tabs->addTab("Device " + String(index + 1), Colours::white, component, false, index);
 		deviceComponents.add(component);
-		return;
 	}
+	
+	enableControls();
 }
 
 void AudioPatchbayComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
@@ -236,6 +293,8 @@ void AudioPatchbayComponent::valueTreeChildRemoved( ValueTree& parentTree, Value
 			}
 		}
 	}
+
+	enableControls();
 }
 
 void AudioPatchbayComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
@@ -256,14 +315,15 @@ void AudioPatchbayComponent::enableControls()
 	infoButton->setEnabled(connected);
 
 	getAvailableAudioDevicesButton->setEnabled(connected);
-	getCurrentAudioDevicesButton->setEnabled(connected);
-}
 
-void AudioPatchbayComponent::handleAsyncUpdate()
-{
-	//enableControls();
-}
+	ValueTree audioDevicesTree(settings->getAudioDevicesTree());
+	bool enabled = audioDevicesTree.hasProperty(Identifiers::AvailableAudioDevices);
+	getCurrentAudioDevicesButton->setEnabled(enabled);
 
+	enabled = tabs->getNumTabs() != 0;
+	getInputButton->setEnabled(enabled);
+	getOutputButton->setEnabled(enabled);
+}
 
 
 void AudioPatchbayComponent::valueChanged( Value& value )

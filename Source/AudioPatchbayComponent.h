@@ -14,7 +14,6 @@ class AudioPatchbayComponent   : public Component,
 	public TextEditor::Listener,
 	public ActionListener,
 	public ValueTree::Listener,
-	public AsyncUpdater,
 	public Value::Listener
 {
 public:
@@ -47,7 +46,6 @@ private:
 	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
 	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
 	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
-	virtual void handleAsyncUpdate();
 
 	virtual void valueChanged( Value& value );
 	
@@ -63,6 +61,8 @@ private:
 	ScopedPointer<TextButton> infoButton;
 	ScopedPointer<TextButton> getAvailableAudioDevicesButton;
 	ScopedPointer<TextButton> getCurrentAudioDevicesButton;
+	ScopedPointer<TextButton> getInputButton;
+	ScopedPointer<TextButton> getOutputButton;
 
 	TextEditor sendReadout;
 	TextEditor receiveReadout;

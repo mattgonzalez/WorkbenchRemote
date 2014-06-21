@@ -4,8 +4,8 @@
 #include "InputChannelViewport.h"
 #include "InputChannelComponent.h"
 
-InputChannelViewport::InputChannelViewport(int const deviceIndex_, ValueTree channelsTree_ ) :
-	ChannelViewport(deviceIndex_, channelsTree_)
+InputChannelViewport::InputChannelViewport(int const deviceIndex_, ValueTree channelsTree_, CriticalSection &lock_) :
+	ChannelViewport(deviceIndex_, channelsTree_, lock_)
 {
 	channelsTree.addListener(this);
 }

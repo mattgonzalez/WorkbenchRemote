@@ -717,7 +717,7 @@ struct JavascriptEngine::RootObject   : public DynamicObject
             if (! (isFunc || classOrFunc.getDynamicObject() != nullptr))
                 return var::undefined();
 
-            DynamicObject::Ptr newObject (new DynamicObject());
+            DynamicObject::Ptr newObject (new DynamicObject);
 
             if (isFunc)
                 invokeFunction (s, classOrFunc, newObject.get());
@@ -734,7 +734,7 @@ struct JavascriptEngine::RootObject   : public DynamicObject
 
         var getResult (const Scope& s) const override
         {
-            DynamicObject::Ptr newObject (new DynamicObject());
+            DynamicObject::Ptr newObject (new DynamicObject);
 
             for (int i = 0; i < names.size(); ++i)
                 newObject->setProperty (names.getUnchecked(i), initialisers.getUnchecked(i)->getResult (s));
@@ -783,7 +783,7 @@ struct JavascriptEngine::RootObject   : public DynamicObject
 
         var invoke (const Scope& s, const var::NativeFunctionArgs& args) const
         {
-            DynamicObject::Ptr functionRoot (new DynamicObject());
+            DynamicObject::Ptr functionRoot (new DynamicObject);
 
             static const Identifier thisIdent ("this");
             functionRoot->setProperty (thisIdent, args.thisObject);

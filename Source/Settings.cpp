@@ -13,6 +13,58 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 const String addressKey ("Address");
 const String portKey ("Port");
 
+void dumpTree(ValueTree const &tree, const int depth)
+{
+	Identifier const id(tree.getType());
+	int index;
+	int const num_props = tree.getNumProperties();
+	int const num_children = tree.getNumChildren();
+	String indent( String::repeatedString("   ",depth) );
+
+	DBG(String::empty);
+	if (1 == depth)
+	{
+		DBG("==========================================================================");
+	}
+
+	DBG(indent + id.toString());
+
+	if (num_props)
+	{
+		DBG(indent + String::formatted("  properties:%d",num_props))
+			for (index = 0; index < num_props; index++)
+			{
+				Identifier id( tree.getPropertyName(index) );
+				var prop( tree[id] );
+
+				if (prop.isArray())
+				{
+					Array<var> *array = prop.getArray();
+
+					DBG(indent + indent + id.toString() + " (array)");
+					for (int array_index = 0; array_index < array->size(); array_index++)
+					{
+						DBG(indent + indent + id.toString() + "[" + String(array_index) + "]: " + (*array)[array_index].toString());
+					}
+				}
+				else
+				{
+					DBG(indent + indent + id.toString() + String("  ") + tree[id].toString());
+				}
+			}
+	}
+
+	if (num_children)
+	{
+		DBG(indent + String::formatted("  children:%d",num_children));
+		for (index = 0; index < num_children; index++)
+		{
+			ValueTree const child( tree.getChild(index) );
+			dumpTree( child, depth + 1);
+		}
+	}
+}
+
 Settings::Settings() :
 	tree("Settings")
 {
@@ -149,6 +201,7 @@ static void createChannels (ValueTree &  parent,int const numChannels)
 		String channelString(channel);
 		ValueTree channelTree("Channel_" + channelString);
 		channelTree.setProperty(Identifiers::Name, "Channel " + channelString, nullptr);
+		channelTree.setProperty(Identifiers::Channel, channel, nullptr);
 		parent.addChild(channelTree, -1, nullptr);
 		++channel;
 	}

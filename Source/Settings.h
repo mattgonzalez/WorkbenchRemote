@@ -32,3 +32,5 @@ public:
 protected:
 	ValueTree tree;
 };
+
+extern void dumpTree(ValueTree const &tree, const int depth = 0);

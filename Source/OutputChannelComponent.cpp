@@ -5,21 +5,16 @@
 #include "Identifiers.h"
 #include "OutputChannel.h"
 
-OutputChannelComponent::OutputChannelComponent(int deviceIndex_, ValueTree outputChannelTree_, int channelNumber_) :
+OutputChannelComponent::OutputChannelComponent(int deviceIndex_, ValueTree outputChannelTree_, int channelNumber_, CriticalSection &lock_) :
 	ChannelComponent(deviceIndex_, channelNumber_),
 	outputChannelTree(outputChannelTree_),
+	lock(lock_),
 	gainSlider(Slider:: LinearBar, Slider::TextBoxRight),
 	muteButton("M", "Mute this output channel"),
 	toneFrequencySlider (Slider::LinearBar, Slider::TextBoxRight)
 {
-#if 0
-	modeCombo.addListener(this);
-	addAndMakeVisible(&modeCombo);
-	fillModeCombo();
-#else
 	modeButton.addListener(this);
 	addAndMakeVisible(&modeButton);
-#endif
 
 	outputChannelTree.addListener(this);
 
@@ -42,9 +37,6 @@ OutputChannelComponent::OutputChannelComponent(int deviceIndex_, ValueTree outpu
 	addAndMakeVisible(&toneFrequencySlider);
 
 	updateMode();
-	
-	// Need to pull in tree
-	//devicesTree.addListener(this);
 }
 
 OutputChannelComponent::~OutputChannelComponent()
@@ -94,65 +86,12 @@ void OutputChannelComponent::valueTreeParentChanged( ValueTree& treeWhoseParentH
 {
 }
 
-void OutputChannelComponent::comboBoxChanged( ComboBox* comboBoxThatHasChanged )
-{
-#if 0
-	int mode = modeCombo.getSelectedId();
-	if (mode >= OutputChannel::MODE_INPUT)
-	{
-		int source = mode - OutputChannel::MODE_INPUT;
-		outputChannelTree.setProperty(Identifiers::Source, source, nullptr);
-		outputChannelTree.setProperty(Identifiers::Mode, OutputChannel::MODE_INPUT, nullptr);
-		return;
-	}
-
-	outputChannelTree.setProperty(Identifiers::Source, DeviceManager::NO_SELECTION, nullptr);
-	outputChannelTree.setProperty(Identifiers::Mode, mode, nullptr);
-#endif
-}
-
-void OutputChannelComponent::fillModeCombo()
-{
-#if 0
-	modeCombo.clear();
-	modeCombo.addItem("Muted", OutputChannel::MODE_MUTE);
-	modeCombo.addItem("Tone", OutputChannel::MODE_TONE);
-	ValueTree devicesTree(controller->settings.root.getChildWithName(Identifiers::AudioDevices));
-	for (int i = 0; i < devicesTree.getNumChildren(); i++)
-	{
-		ValueTree deviceTree(devicesTree.getChild(i));
-		ValueTree inputChannelsTree(deviceTree.getChildWithName(Identifiers::Input));
-		int channelCount = inputChannelsTree.getProperty(Identifiers::CurrentChannelCount, 0);
-		if (channelCount <= 0)
-		{
-			continue;
-		}
-		modeCombo.addSeparator();
-		modeCombo.addSectionHeading(deviceTree.getProperty(Identifiers::DeviceName));
-		for (int input = 0; input < channelCount; ++input)
-		{
-			ValueTree inputChannelTree(inputChannelsTree.getChild(input));
-			modeCombo.addItem(inputChannelTree[Identifiers::Name], OutputChannel::MODE_INPUT + input + (i * 1000));
-		}
-#if 0
-		int mode = outputChannelTree[Identifiers::Mode];
-		if (mode >= OutputChannel::MODE_INPUT)
-		{
-			int source = outputChannelTree[Identifiers::Source];
-			mode += source;
-		}
-		modeCombo.setSelectedId(mode, dontSendNotification);
-#endif
-	}
-#endif
-}
-
 void OutputChannelComponent::buttonClicked( Button* button)
 {
 	if (&muteButton == button)
 	{
-// 		outputChannelTree.setProperty(Identifiers::Mute, muteButton.getToggleState(), nullptr);
-// 		return;
+ 		outputChannelTree.setProperty(Identifiers::Mute, muteButton.getToggleState(), nullptr);
+ 		return;
 	}
 
 	if (&modeButton == button)
@@ -164,15 +103,17 @@ void OutputChannelComponent::buttonClicked( Button* button)
 
 void OutputChannelComponent::sliderValueChanged( Slider* slider )
 {
+	ScopedLock locker(lock);
+
 	if (&toneFrequencySlider == slider)
 	{
-// 		outputChannelTree.setProperty(Identifiers::ToneFrequency, slider->getValue(), nullptr);
-// 		return;
+ 		outputChannelTree.setProperty(Identifiers::ToneFrequency, slider->getValue(), nullptr);
+ 		return;
 	}
 	if (&gainSlider == slider)
 	{
-// 		outputChannelTree.setProperty(Identifiers::GainDecibels, slider->getValue(), nullptr);
-// 		return;
+ 		outputChannelTree.setProperty(Identifiers::GainDecibels, slider->getValue(), nullptr);
+ 		return;
 	}
 }
 
@@ -186,30 +127,19 @@ void OutputChannelComponent::resized()
 	juce::Rectangle<int> r(modeButton.getBounds());
 	r.reduce(0,2);
 	r.translate( r.getWidth() + 5, 0);
-	float w = 0.24f;
-	r.setWidth(proportionOfWidth(w));
+	r.setWidth(proportionOfWidth(0.24f));
 	toneFrequencySlider.setBounds(r);
 	r.translate( r.getWidth() + 5, 0);
+	r.setWidth( getWidth() - r.getX() - 5);
 	gainSlider.setBounds(r);
-	r.translate( r.getWidth() + 5, 0);
-	r.setWidth(30);
-	if (r.getRight() > getWidth() - 2)
-	{
-		r.setWidth(getWidth() - 2 - r.getX());
-	}
-	muteButton.setBounds(r);
+
+	int w = 20;
+	int y = (getHeight() / 2 - r.getHeight()) / 2;
+	muteButton.setBounds( getWidth() - w - 5, y, r.getHeight(), w);
 
 	updateMode();
 }
 
-void OutputChannelComponent::valueChanged( Value& value )
-{
-	if (value.refersToSameSourceAs(currentInputChannelCount))
-	{
-		fillModeCombo();
-		return;
-	}
-}
 
 int OutputChannelComponent::getDeviceIndexFromMenuID( int const menuID )
 {
@@ -235,8 +165,7 @@ void OutputChannelComponent::showModePopup()
 	menu.addItem( OutputChannel::MODE_MUTE, "Muted", true, OutputChannel::MODE_MUTE == mode);
 	menu.addItem( OutputChannel::MODE_TONE, "Tone", true, OutputChannel::MODE_TONE == mode);
 
-	#if 0
-	ValueTree devicesTree(controller->settings.root.getChildWithName(Identifiers::AudioDevices));
+	ValueTree devicesTree(outputChannelTree.getParent().getParent().getParent());
 	for (int i = 0; i < devicesTree.getNumChildren(); i++)
 	{
 		ValueTree otherDeviceTree(devicesTree.getChild(i));
@@ -247,8 +176,7 @@ void OutputChannelComponent::showModePopup()
 			continue;
 		}
 
-		var otherDeviceName (otherDeviceTree[Identifiers::DeviceName]);
-		String otherDeviceFriendlyName(controller->deviceManager.getFriendlyName(otherDeviceName));
+		String otherDeviceName(otherDeviceTree[Identifiers::DeviceName]);
 
 		PopupMenu deviceMenu;
 		bool submenuTicked = false;
@@ -257,7 +185,7 @@ void OutputChannelComponent::showModePopup()
 			ValueTree inputChannelTree(inputChannelsTree.getChild(input));
 			bool ticked = OutputChannel::MODE_INPUT == mode;
 			
-			ticked &= otherDeviceName == outputChannelTree[Identifiers::SourceDeviceName];
+			ticked &= otherDeviceName == outputChannelTree[Identifiers::SourceDeviceName].toString();
 			ticked &= input == (int)outputChannelTree[Identifiers::SourceChannel];
 			submenuTicked |= ticked;
 
@@ -266,9 +194,8 @@ void OutputChannelComponent::showModePopup()
 			deviceMenu.addItem(menuID, inputChannelTree[Identifiers::Name], true, ticked);
 		}
 
-		menu.addSubMenu(otherDeviceFriendlyName,deviceMenu, true, blank, submenuTicked);
+		menu.addSubMenu(otherDeviceName,deviceMenu, true, blank, submenuTicked);
 	}
-#endif
 
 	menu.showMenuAsync (PopupMenu::Options().withTargetComponent (&modeButton)
 		.withMinimumWidth (modeButton.getWidth())
@@ -294,21 +221,19 @@ void OutputChannelComponent::popupMenuFinishedCallback( int menuID, OutputChanne
 
 	default:
 		{
-// 			int sourceDeviceIndex;
-// 			ValueTree devicesTree(that->controller->settings.root.getChildWithName(Identifiers::AudioDevices));
-// 			
-// 			sourceDeviceIndex = getDeviceIndexFromMenuID(menuID);
-// 			if (sourceDeviceIndex >= 0)
-// 			{
-// 				int sourceChannel = getChannelFromMenuID(menuID);
-// 
-// 				String sourceDeviceFriendlyName(devicesTree.getChild(sourceDeviceIndex)[Identifiers::DeviceName]);
-// 				String sourceDeviceActualName(that->controller->deviceManager.getActualName(sourceDeviceFriendlyName));
-// 				that->outputChannelTree.setProperty(Identifiers::SourceDeviceName, sourceDeviceActualName, nullptr);
-// 				that->outputChannelTree.setProperty(Identifiers::SourceChannel, sourceChannel, nullptr);
-// 				that->outputChannelTree.setProperty(Identifiers::Mode, OutputChannel::MODE_INPUT, nullptr);
-// 				that->outputChannelTree.setProperty(Identifiers::SourceDeviceIndex, sourceDeviceIndex, nullptr);
-// 			}
+			int sourceDeviceIndex;
+			ValueTree devicesTree(that->outputChannelTree.getParent().getParent().getParent());
+			
+			sourceDeviceIndex = getDeviceIndexFromMenuID(menuID);
+			if (sourceDeviceIndex >= 0)
+			{
+				int sourceChannel = getChannelFromMenuID(menuID);
+
+				String sourceDeviceName(devicesTree.getChild(sourceDeviceIndex)[Identifiers::DeviceName]);
+				that->outputChannelTree.setProperty(Identifiers::SourceDeviceName, sourceDeviceName, nullptr);
+				that->outputChannelTree.setProperty(Identifiers::SourceChannel, sourceChannel, nullptr);
+				that->outputChannelTree.setProperty(Identifiers::Mode, OutputChannel::MODE_INPUT, nullptr);
+			}
 		}
 		break;
 	}
@@ -336,34 +261,47 @@ void OutputChannelComponent::setModeButtonText()
 
 	case OutputChannel::MODE_INPUT:
 		{
-// 			String inputDeviceActualName(outputChannelTree[Identifiers::SourceDeviceName]);
-// 			String inputDeviceFriendlyName(controller->deviceManager.getFriendlyName(inputDeviceActualName));
-// 			int inputChannel = outputChannelTree[Identifiers::SourceChannel];
-// 
-// 			ValueTree inputDeviceTree(controller->settings.getDeviceTree(inputDeviceActualName));
-// 			ValueTree inputDeviceInputsTree(inputDeviceTree.getChildWithName(Identifiers::Input));
-// 			ValueTree inputChannelTree(inputDeviceInputsTree.getChild(inputChannel));
-// 
-// 			//dumpTree(inputDeviceTree);
-// 
-// 			if (inputChannelTree.isValid())
-// 			{
-// 				tooltip = inputDeviceFriendlyName;
-// 				tooltip += "\n" + inputChannelTree[Identifiers::Name].toString();
-// 				text = inputDeviceFriendlyName + " / " + inputChannelTree[Identifiers::Name].toString();
-// 			}
-// 			else
-// 			{
-// 				text = modeButton.getButtonText();
-// 				c = Colours::grey;
-// 			}
+ 			String inputDeviceName(outputChannelTree[Identifiers::SourceDeviceName]);
+ 			int inputChannel = outputChannelTree[Identifiers::SourceChannel];
 
+			ValueTree deviceTree;
+			ValueTree devicesTree(outputChannelTree.getParent().getParent().getParent());
+			for (int deviceIndex = 0; deviceIndex < devicesTree.getNumChildren(); deviceIndex++)
+			{
+				if (devicesTree.getChild(deviceIndex).getProperty(Identifiers::DeviceName) == inputDeviceName)
+				{
+					deviceTree = devicesTree.getChild(deviceIndex);
+					break;
+				}
+			}
+			if (false == deviceTree.isValid())
+			{
+				break;
+			}
+
+			ValueTree inputChannelsTree(deviceTree.getChildWithName(Identifiers::Input));
+			ValueTree inputChannelTree(inputChannelsTree.getChild(inputChannel));
+
+			//dumpTree(inputDeviceTree);
+			
+			if (inputChannelTree.isValid())
+			{
+				tooltip = inputDeviceName;
+				tooltip += "\n" + inputChannelTree[Identifiers::Name].toString();
+				text = inputDeviceName + " / " + inputChannelTree[Identifiers::Name].toString();
+			}
+			else
+			{
+				text = modeButton.getButtonText();
+				c = Colours::grey;
+			}
+			
 			//DBG("MODE_INPUT " + text);
 		}
 		break;
 
 	default:
-		DBG("unknown mode " << mode);
+		//DBG("unknown mode " << mode);
 		//dumpTree(outputChannelTree);
 		break;
 	}

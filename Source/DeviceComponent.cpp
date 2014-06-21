@@ -2,15 +2,13 @@
 #include "DeviceComponent.h"
 #include "Identifiers.h"
 #include "BinaryData.h"
-#include "AudioPatchbayClient.h"
 
-DeviceComponent::DeviceComponent(ValueTree tree_, CriticalSection &lock_, AudioPatchbayClient* client_) :
+DeviceComponent::DeviceComponent(ValueTree tree_, CriticalSection &lock_) :
 	deviceTree(tree_),
 	lock(lock_),
-	client(client_),
-	header(tree_),
- 	inputChannelViewport(0, deviceTree.getChildWithName(Identifiers::Input)),
- 	outputChannelViewport(0, deviceTree.getChildWithName(Identifiers::Output))
+	header(tree_, lock_),
+ 	inputChannelViewport(0, deviceTree.getChildWithName(Identifiers::Input), lock_),
+ 	outputChannelViewport(0, deviceTree.getChildWithName(Identifiers::Output), lock_)
 {
 	addAndMakeVisible(&header);
 	addAndMakeVisible(&inputChannelViewport);

@@ -2,10 +2,12 @@
 #include "Identifiers.h"
 #include "ChannelViewport.h"
 #include "ChannelComponent.h"
+#include "Settings.h"
 
-ChannelViewport::ChannelViewport(int const deviceIndex_, ValueTree channelsTree_ ) :
+ChannelViewport::ChannelViewport(int const deviceIndex_, ValueTree channelsTree_, CriticalSection &lock_) :
 	deviceIndex(deviceIndex_),
-	channelsTree(channelsTree_)
+	channelsTree(channelsTree_),
+	lock(lock_)
 {
 	setViewedComponent(&content);
 
@@ -24,7 +26,23 @@ void ChannelViewport::resized()
 
 void ChannelViewport::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
-	//DBG("ChannelViewport::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+	//DBG("ChannelViewport::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString() << " " << treeWhosePropertyHasChanged[property].toString());
+
+	if(treeWhosePropertyHasChanged.isAChildOf(channelsTree))
+	{
+		ChannelComponent* channelComponent = content.channelComponents[treeWhosePropertyHasChanged[Identifiers::Channel]];
+		if (channelComponent == nullptr)
+		{
+			return;
+		}
+		if (Identifiers::Name == property)
+		{
+			channelComponent->channelNameLabel.setText(treeWhosePropertyHasChanged[property].toString(),dontSendNotification);
+			return;
+		}
+	}
+	
+
 #if 0
 	if (Identifiers::MaxChannelCount == property)
 	{

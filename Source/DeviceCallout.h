@@ -1,6 +1,5 @@
 #pragma once
 
-
 class DeviceCallout : public Component, 
 	public Timer, 
 	public Slider::Listener, 
@@ -8,7 +7,7 @@ class DeviceCallout : public Component,
 	public ValueTree::Listener
 {
 public:
-	DeviceCallout(ValueTree deviceTree_);
+	DeviceCallout(ValueTree deviceTree_, CriticalSection& lock_);
 
 	virtual void comboBoxChanged( ComboBox* comboBoxThatHasChanged );
 	virtual void paint( Graphics& g );
@@ -27,6 +26,7 @@ protected:
 	void fillSampleRateCombo();
 
 	ValueTree deviceTree;
+	CriticalSection& lock;
 
 	Label topLabel;
 	ComboBox deviceCombo;

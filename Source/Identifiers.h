@@ -38,29 +38,27 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( Index					) \
 						IDENTIFIER( Active					) \
 						IDENTIFIER( PropertyChanged			) \
-						IDENTIFIER( FaultNotification		) \
+						IDENTIFIER( EventNotification		) \
 						IDENTIFIER( Input					) \
-						IDENTIFIER( Inputs					) \
 						IDENTIFIER( Output					) \
-						IDENTIFIER( Outputs					) \
 						IDENTIFIER( DeviceName				) \
 						IDENTIFIER( SampleRate				) \
 						IDENTIFIER( SampleRates				) \
 						IDENTIFIER( CurrentChannelCount		) \
 						IDENTIFIER( MaxChannelCount			) \
+						IDENTIFIER( Channel					) \
 						IDENTIFIER( Mode					) \
 						IDENTIFIER( Source					) \
 						IDENTIFIER( GainDecibels			) \
 						IDENTIFIER( Mute					) \
 						IDENTIFIER( ToneFrequency			) \
 						IDENTIFIER( SourceDeviceName		) \
-						IDENTIFIER( SourceDeviceIndex		) \
 						IDENTIFIER( SourceChannel			) \
 						IDENTIFIER( AudioDevices			) \
 						IDENTIFIER( AvailableAudioDevices	) \
 						IDENTIFIER( CurrentAudioDevices		) \
 						IDENTIFIER( Workbench				) \
-						IDENTIFIER( Port				) \
+						IDENTIFIER( Port					) 
 
 namespace Identifiers
 {

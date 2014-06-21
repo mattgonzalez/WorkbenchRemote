@@ -4,20 +4,15 @@
 #include "BinaryData.h"
 #include "DeviceCallout.h"
 
-DeviceHeaderComponent::DeviceHeaderComponent(ValueTree tree_):
+
+DeviceHeaderComponent::DeviceHeaderComponent(ValueTree tree_, CriticalSection& lock_):
 	deviceTree(tree_),
-	audioDevicesTree(tree_.getParent())
+	audioDevicesTree(tree_.getParent()),
+	lock(lock_)
 {
-	//StringArray const device_names (controller_->deviceManager.getFriendlyDeviceNames());
-	deviceCombo.clear(dontSendNotification);
 	deviceCombo.addItem("None", -1);
-	//deviceCombo.addItemList(device_names, 1);
 	addAndMakeVisible(&deviceCombo);
 	deviceCombo.addListener(this);
-
-// 	deviceNameValue = deviceTree.getPropertyAsValue(Identifiers::DeviceName,nullptr);
-// 	valueChanged(deviceNameValue);
-// 	deviceNameValue.addListener(this);
 
 	addAndMakeVisible(&gearButton);
 	gearButton.addListener(this);
@@ -45,24 +40,12 @@ void DeviceHeaderComponent::comboBoxChanged( ComboBox* comboBoxThatHasChanged )
 {
 	if (comboBoxThatHasChanged == &deviceCombo)
 	{
-		//String actualName(controller->deviceManager.getActualName(deviceCombo.getText()));
-		//deviceTree.setProperty(Identifiers::DeviceName, actualName, nullptr);
+		ScopedLock locker(lock);
+		String deviceName(comboBoxThatHasChanged->getText());
+		deviceTree.setProperty(Identifiers::DeviceName, deviceName, nullptr);
 		return;
 	}
 }
-// 
-// void DeviceHeaderComponent::valueChanged( Value& value )
-// {
-// // 	if (value.refersToSameSourceAs(deviceNameValue))
-// // 	{
-// // 		//String friendlyName(controller->deviceManager.getFriendlyName(value.toString()));
-// // 
-// // 		//deviceCombo.setText(friendlyName, dontSendNotification);
-// // 		if (deviceCombo.getSelectedId() == 0)
-// // 			deviceCombo.setSelectedId(-1, dontSendNotification);
-// // 		return;
-// // 	}
-// }
 
 void DeviceHeaderComponent::paint( Graphics& g )
 {
@@ -75,7 +58,7 @@ void DeviceHeaderComponent::paint( Graphics& g )
 
 void DeviceHeaderComponent::buttonClicked( Button* )
 {
-	DeviceCallout* content = new DeviceCallout(deviceTree);
+	DeviceCallout* content = new DeviceCallout(deviceTree, lock);
 
 	juce::Rectangle<int> b(gearButton.getBounds());
 	Component* parent = getParentComponent()->getParentComponent();
@@ -104,8 +87,8 @@ void DeviceHeaderComponent::valueTreePropertyChanged( ValueTree& treeWhoseProper
 
 	if (Identifiers::DeviceName == property)
 	{
-		DBG("DeviceHeaderComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
-		DBG("   " << treeWhosePropertyHasChanged[property].toString());
+		//DBG("DeviceHeaderComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+		//DBG("   " << treeWhosePropertyHasChanged[property].toString());
 		deviceCombo.setText(treeWhosePropertyHasChanged[property],  dontSendNotification);
 		return;
 	}

@@ -6,12 +6,10 @@
 #include "InputChannelViewport.h"
 #include "OutputChannelViewport.h"
 
-class AudioPatchbayClient;
-
 class DeviceComponent : public Component, public Button::Listener, public ValueTree::Listener
 {
 public:
-	DeviceComponent(ValueTree tree_, CriticalSection &lock_, AudioPatchbayClient* client_);
+	DeviceComponent(ValueTree tree_, CriticalSection &lock_);
 	~DeviceComponent();
 
 	void paint (Graphics&);
@@ -24,8 +22,6 @@ public:
 private:
 	int deviceIndex;
 
-	AudioPatchbayClient* client;
-
 	CriticalSection& lock;
 	DeviceHeaderComponent header;
 	InputChannelViewport inputChannelViewport;
@@ -36,13 +32,8 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeviceComponent)
 
 	virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
-
 	virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
-
 	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
-
 	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
-
 	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
-
 };

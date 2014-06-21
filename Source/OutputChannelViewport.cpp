@@ -4,8 +4,8 @@
 #include "OutputChannelViewport.h"
 #include "OutputChannelComponent.h"
 
-OutputChannelViewport::OutputChannelViewport(int const deviceIndex_, ValueTree channelsTree_ ) :
-	ChannelViewport(deviceIndex_, channelsTree_)
+OutputChannelViewport::OutputChannelViewport(int const deviceIndex_, ValueTree channelsTree_, CriticalSection &lock_) :
+	ChannelViewport(deviceIndex_, channelsTree_, lock_)
 {
 	channelsTree.addListener(this);
 }
@@ -23,7 +23,7 @@ void OutputChannelViewport::buildChannelComponents()
 		ValueTree channelTree(channelsTree.getChild(i));
 		String name(channelTree[Identifiers::Name]);
 
-		OutputChannelComponent *icc = new OutputChannelComponent(deviceIndex, channelTree, i);
+		OutputChannelComponent *icc = new OutputChannelComponent(deviceIndex, channelTree, i, lock);
 		icc->channelNameLabel.setText(name,dontSendNotification);
 
 		content.channelComponents.add(icc);

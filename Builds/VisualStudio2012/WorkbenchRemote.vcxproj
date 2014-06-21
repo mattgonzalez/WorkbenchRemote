@@ -154,8 +154,10 @@
     <ClCompile Include="..\..\Source\OutputChannelCallout.cpp" />
     <ClCompile Include="..\..\Source\OutputChannelComponent.cpp" />
     <ClCompile Include="..\..\Source\OutputChannelViewport.cpp" />
+    <ClCompile Include="..\..\Source\RemoteClient.cpp" />
     <ClCompile Include="..\..\Source\Settings.cpp" />
     <ClCompile Include="..\..\Source\StaticStreamViewport.cpp" />
+    <ClCompile Include="..\..\Source\Strings.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchClient.cpp" />
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_CharacterFunctions.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
@@ -1000,8 +1002,10 @@
     <ClInclude Include="..\..\Source\OutputChannelCallout.h" />
     <ClInclude Include="..\..\Source\OutputChannelComponent.h" />
     <ClInclude Include="..\..\Source\OutputChannelViewport.h" />
+    <ClInclude Include="..\..\Source\RemoteClient.h" />
     <ClInclude Include="..\..\Source\Settings.h" />
     <ClInclude Include="..\..\Source\StaticStreamViewport.h" />
+    <ClInclude Include="..\..\Source\Strings.h" />
     <ClInclude Include="..\..\Source\WorkbenchClient.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_CharacterFunctions.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\text\juce_CharPointer_ASCII.h" />

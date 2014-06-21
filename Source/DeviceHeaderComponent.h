@@ -4,7 +4,7 @@
 class DeviceHeaderComponent: public Component, public ComboBox::Listener, public ValueTree::Listener, public Button::Listener
 {
 public:
-	DeviceHeaderComponent(ValueTree tree_);
+	DeviceHeaderComponent(ValueTree tree_, CriticalSection& lock_);
 	~DeviceHeaderComponent();	
 	
 	void resized();
@@ -15,6 +15,7 @@ protected:
 	int deviceIndex;
 	ValueTree audioDevicesTree;
 	ValueTree deviceTree;
+	CriticalSection& lock;
 
 	ComboBox deviceCombo;
 	GearButton gearButton;
@@ -24,12 +25,8 @@ protected:
 	virtual void paint( Graphics& g );
 
 	virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
-
 	virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
-
 	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
-
 	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
-
 	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
 };

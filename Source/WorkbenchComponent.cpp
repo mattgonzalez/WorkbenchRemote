@@ -105,7 +105,7 @@ void WorkbenchComponent::resized()
 	disconnectButton->setBounds(r.translated( r.getWidth() + 5, 0));
 
 	int y = portLabel->getBottom() + 10;
-	infoButton->setBounds(96, y, 104, 24);
+	infoButton->setBounds(20, y, 104, 24);
 	r = infoButton->getBounds();
 	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
 	r = getTalkersButton->getBounds();

@@ -218,7 +218,7 @@ private:
 
     static Result parseObject (String::CharPointerType& t, var& result)
     {
-        DynamicObject* const resultObject = new DynamicObject();
+        DynamicObject* const resultObject = new DynamicObject;
         result = resultObject;
         NamedValueSet& resultProperties = resultObject->getProperties();
 
@@ -594,7 +594,7 @@ public:
 
             case 7:
             {
-                DynamicObject* o = new DynamicObject();
+                DynamicObject* o = new DynamicObject;
 
                 for (int i = r.nextInt (30); --i >= 0;)
                     o->setProperty (createRandomIdentifier (r), createRandomVar (r, depth + 1));

@@ -2,8 +2,9 @@
 #include "DeviceCallout.h"
 #include "Identifiers.h"
 
-DeviceCallout::DeviceCallout(ValueTree deviceTree_ ):
+DeviceCallout::DeviceCallout(ValueTree deviceTree_, CriticalSection& lock_):
 	deviceTree(deviceTree_),
+	lock(lock_),
 	topLabel(String::empty,"Audio Device"),
 	minCallbackIntervalLabel(String::empty,"Minimum callback interval (msec)"),
 	averageCallbackIntervalLabel(String::empty,"Average callback interval (msec)"),
@@ -136,16 +137,17 @@ void DeviceCallout::comboBoxChanged( ComboBox* comboBoxThatHasChanged )
 {
 	if (comboBoxThatHasChanged == &deviceCombo)
 	{
-		//String actualName(controller->deviceManager.getActualName(deviceCombo.getText()));
-		//deviceTree.setProperty(Identifiers::DeviceName, actualName, nullptr);
+		ScopedLock locker(lock);
+		String deviceName(comboBoxThatHasChanged->getText());
+		deviceTree.setProperty(Identifiers::DeviceName, deviceName, nullptr);
 		return;
 	}
 
 	if (comboBoxThatHasChanged == &sampleRateCombo)
 	{
-		String text(sampleRateCombo.getText());
-		double rate = text.getDoubleValue();
-		deviceTree.setProperty(Identifiers::SampleRate, rate, nullptr);
+		ScopedLock locker(lock);
+		double sampleRate(comboBoxThatHasChanged->getText().getDoubleValue());
+		deviceTree.setProperty(Identifiers::SampleRate, sampleRate, nullptr);
 		return;
 	}
 }

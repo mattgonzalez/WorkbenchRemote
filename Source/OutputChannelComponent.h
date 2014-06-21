@@ -20,12 +20,10 @@ class OutputChannelComponent :
 	public ChannelComponent, 
 	public ValueTree::Listener,
 	public Slider::Listener, 
-	public ComboBox::Listener, 
-	public Button::Listener,
-	public Value::Listener
+	public Button::Listener
 {
 public:
-	OutputChannelComponent(int deviceIndex_, ValueTree outputChannelTree_, int channelNumber_);
+	OutputChannelComponent(int deviceIndex_, ValueTree outputChannelTree_, int channelNumber_, CriticalSection &lock_);
 	~OutputChannelComponent();
 
 	virtual void timerCallback();
@@ -35,25 +33,15 @@ public:
 
 	virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
 
-	virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
-	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
-	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
-	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
 
-	virtual void valueChanged( Value& value );
-
-	virtual void comboBoxChanged( ComboBox* comboBoxThatHasChanged );
 	virtual void sliderValueChanged( Slider* slider );	
 	virtual void buttonClicked( Button* );
 
 protected:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OutputChannelComponent)
 
-	void fillModeCombo();
-
 	ValueTree outputChannelTree;
-	ValueTree devicesTree;
-	Value currentInputChannelCount;
+	CriticalSection& lock;
 	Slider gainSlider;
 	TextButton muteButton;
 	Slider toneFrequencySlider;
@@ -75,6 +63,11 @@ protected:
 	static int makeMenuID(int const deviceIndex, int const channel);
 	void setModeButtonText();
 	void updateMode();
+
+	virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
+	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
+	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
+	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
 };
 
 

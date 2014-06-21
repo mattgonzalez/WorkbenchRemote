@@ -1131,6 +1131,12 @@
     <ClCompile Include="..\..\Source\MeterComponent.cpp">
       <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\RemoteClient.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Strings.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\AddressUtilities.h">
@@ -2212,6 +2218,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\MeterComponent.h">
       <Filter>WorkbenchRemote\Source\AudioPatchbay\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\RemoteClient.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Strings.h">
+      <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
