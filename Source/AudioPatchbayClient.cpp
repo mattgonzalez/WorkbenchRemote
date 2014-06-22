@@ -344,6 +344,10 @@ void AudioPatchbayClient::handleGetChannelsResponse( var channelsPropertyVar, Id
 
 		ValueTree channelsTree(deviceTree.getChildWithName(type));
 		ValueTree channelTree(channelsTree.getChild(channelObject->getProperty(Identifiers::Channel)));
+		if (false == channelTree.isValid())
+		{
+			continue;
+		}
 
 		if (channelObject->hasProperty(Identifiers::Name))
 		{
