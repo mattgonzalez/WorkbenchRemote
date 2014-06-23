@@ -14,7 +14,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 
 /*
 
-This class uses the JUCE InterprocessConnection class to send and receive data
+This class is a base class that uses the JUCE InterprocessConnection class to send and receive data
 over a socket.  The actual data sent over the socket consists of a four byte magic number, 
 followed by a four byte little-endian message length count in bytes, followed by the JSON string.
 
@@ -35,6 +35,8 @@ the following bytes are sent over the socket:
 
 Strings are sent without a zero terminator.
 
+Two classes are derived from this class, AudioPatchbayClient and WorkbenchClient respectively.
+
 */
 
 //============================================================================
@@ -44,8 +46,9 @@ Strings are sent without a zero terminator.
 //============================================================================
 
 //
-// The 'KROW' value is the magic number written to the start of the packet
-// that has to match at both ends of the connection
+// The uint32 variable 'magicNumber' is the magic number written to the start of the packet
+// that has to match at both ends of the connection. The derived classes have their own magic
+// numbers that they use for this purpose.
 //
 RemoteClient::RemoteClient( Settings* settings_, uint32 magicNumber ) :
 	InterprocessConnection( true, magicNumber),
@@ -71,7 +74,7 @@ RemoteClient::~RemoteClient()
 
 //---------------------------------------------------------------------------
 //
-// Callback indicating that the socket successfully connected
+// Callback indicating that the socket successfully connected:
 //
 void RemoteClient::connectionMade()
 {
@@ -81,7 +84,7 @@ void RemoteClient::connectionMade()
 
 //---------------------------------------------------------------------------
 //
-// Callback indicating that the socket has disconnected
+// Callback indicating that the socket has disconnected:
 //
 void RemoteClient::connectionLost()
 {
@@ -91,7 +94,7 @@ void RemoteClient::connectionLost()
 
 //---------------------------------------------------------------------------
 //
-// Callback indicating that the socket has received a message
+// Callback indicating that the socket has received a message:
 //
 void RemoteClient::messageReceived( const MemoryBlock& message )
 {
@@ -119,12 +122,6 @@ void RemoteClient::messageReceived( const MemoryBlock& message )
 		return;
 	}
 
-	if (messageObject->hasProperty(Identifiers::PropertyChanged))
-	{
-		handlePropertyChangedMessage(messageObject, Identifiers::PropertyChanged);
-		return;
-	}	
-
 // 	if (messageObject->hasProperty(Identifiers::FaultNotification))
 // 	{
 // 		handleFaultNotificationMessage(messageObject);
@@ -142,6 +139,14 @@ void RemoteClient::messageReceived( const MemoryBlock& message )
 	int responseSequence = messageObject->getProperty(Identifiers::Sequence);
 	if (!inflightCommandFound(responseSequence))
 	{
+		// The remote program can send these unsolicited, so if it's a PropertyChanged message,
+		// it doesn't have to match a previous sequence number.
+		if (messageObject->hasProperty(Identifiers::PropertyChanged))
+		{
+			handlePropertyChangedMessage(messageObject, Identifiers::PropertyChanged);
+			return;
+		}	
+
 		DBG ("Unexpected sequence number " << responseSequence);
 		return;
 	}
@@ -161,18 +166,18 @@ void RemoteClient::messageReceived( const MemoryBlock& message )
 		return;
 	}
 
+	if (messageObject->hasProperty(Identifiers::PropertyChanged))
+	{
+		handlePropertyChangedMessage(messageObject, Identifiers::PropertyChanged);
+		return;
+	}	
+
 	// See if this is a GetResponse message
 	if (messageObject->hasProperty(Identifiers::GetResponse))
 	{
 		handlePropertyChangedMessage(messageObject, Identifiers::GetResponse);
 		return;
 	}
-
-// 	if (messageObject->hasProperty(Identifiers::SetResponse))
-// 	{
-// 		handlePropertyChangedMessage(messageObject, Identifiers::SetResponse);
-// 		return;
-// 	}
 }
 
 //============================================================================
@@ -181,11 +186,19 @@ void RemoteClient::messageReceived( const MemoryBlock& message )
 //
 //============================================================================
 
+//---------------------------------------------------------------------------
+//
+// Sends a command to request the system info from the remote program:
+//
 Result RemoteClient::getSystemInfo()
 {
 	return getProperty(Identifiers::System, new DynamicObject);
 }
 
+//---------------------------------------------------------------------------
+//
+// Sends a command to request a specific property value from the remote program:
+//
 Result RemoteClient::getProperty( Identifier const ID, var const parameter )
 {
 	DynamicObject messageObject;
@@ -197,6 +210,10 @@ Result RemoteClient::getProperty( Identifier const ID, var const parameter )
 	return sendJSONToSocket(messageObject);
 }
 
+//---------------------------------------------------------------------------
+//
+// Sends the command to the remote program:
+//
 Result RemoteClient::sendJSONToSocket( DynamicObject &messageObject )
 {
 	// Convert the DynamicObject to a JSON string
@@ -223,6 +240,10 @@ Result RemoteClient::sendJSONToSocket( DynamicObject &messageObject )
 	return Result::fail("InterprocessConnection::sendMessage failed");
 }
 
+//---------------------------------------------------------------------------
+//
+// Checks to see if an incoming response matches a previous outgoing command:
+//
 bool RemoteClient::inflightCommandFound( int responseSequence )
 {
 	ScopedLock locker(lock);
