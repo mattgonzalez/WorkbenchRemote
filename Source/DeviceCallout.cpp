@@ -14,7 +14,7 @@ DeviceCallout::DeviceCallout(ValueTree deviceTree_, CriticalSection& lock_):
 	inputChannelCountSlider (Slider:: LinearHorizontal, Slider:: TextBoxRight),
 	outputChannelCountSlider (Slider:: LinearHorizontal, Slider:: TextBoxRight)
 {
-	setSize(500, 280);
+	setSize(350, 280);
 
 	topLabel.setJustificationType (Justification::centred);
 	Font f(topLabel.getFont());
