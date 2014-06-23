@@ -29,7 +29,7 @@ public:
 	void paint (Graphics&);
 
 	Label channelNameLabel;
-	MeterComponent meter;
+	//MeterComponent meter;
 
 protected:
 	int const deviceIndex;

@@ -28,6 +28,7 @@ void ChannelViewport::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasC
 {
 	//DBG("ChannelViewport::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString() << " " << treeWhosePropertyHasChanged[property].toString());
 
+#if 1
 	if(treeWhosePropertyHasChanged.isAChildOf(channelsTree))
 	{
 		ChannelComponent* channelComponent = content.channelComponents[treeWhosePropertyHasChanged[Identifiers::Channel]];
@@ -41,25 +42,30 @@ void ChannelViewport::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasC
 			return;
 		}
 	}
-	
+#endif
 
-#if 0
-	if (Identifiers::MaxChannelCount == property)
+#if 1
+	if (treeWhosePropertyHasChanged == channelsTree)
 	{
-		triggerAsyncUpdate();
-		return;
+		if (Identifiers::MaxChannelCount == property)
+		{
+			triggerAsyncUpdate();
+			return;
+		}
+
+		if (Identifiers::CurrentChannelCount == property)
+		{
+			setChannelComponentsVisible();
+			return;
+		}
 	}
 
-	if (Identifiers::CurrentChannelCount == property)
-	{
-		setChannelComponentsVisible();
-		return;
-	}
 #endif
 }
 
 void ChannelViewport::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
 {
+	DBG("ChannelViewport::valueTreeChildAdded " << parentTree.getType().toString() << " " << childWhichHasBeenAdded.getType().toString());
 	triggerAsyncUpdate();
 }
 
@@ -80,6 +86,8 @@ void ChannelViewport::valueTreeParentChanged( ValueTree& treeWhoseParentHasChang
 
 void ChannelViewport::handleAsyncUpdate()
 {
+	DBG("ChannelViewport::handleAsyncUpdate()");
+
 	buildChannelComponents();
 	setChannelComponentsVisible();
 	resized();

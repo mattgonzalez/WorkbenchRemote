@@ -20,5 +20,5 @@ void InputChannelComponent::timerCallback()
 void InputChannelComponent::resized()
 {
 	channelNameLabel.setBoundsRelative(0.05f, 0.025f, 0.9f, 0.45f);
-	meter.setBoundsRelative(0.05f, 0.525f, 0.8f, 0.45f);
+	//meter.setBoundsRelative(0.05f, 0.525f, 0.8f, 0.45f);
 }

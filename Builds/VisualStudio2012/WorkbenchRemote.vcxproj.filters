@@ -2254,4 +2254,9 @@
       <Filter>WorkbenchRemote\Juce Library Code</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\..\..\..\Users\Matt\AppData\Roaming\EchoAVB\WorkbenchRemote.xml">
+      <Filter>WorkbenchRemote\Source\AudioPatchbay</Filter>
+    </Xml>
+  </ItemGroup>
 </Project>

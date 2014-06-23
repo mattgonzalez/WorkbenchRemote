@@ -21,7 +21,7 @@ ChannelComponent::ChannelComponent(int deviceIndex_, int channelNumber_) :
 	//addAndMakeVisible(&meter);
 
 	channelNameLabel.setInterceptsMouseClicks(false,false);
-	meter.setInterceptsMouseClicks(false,false);
+	//meter.setInterceptsMouseClicks(false,false);
 }
 
 ChannelComponent::~ChannelComponent()

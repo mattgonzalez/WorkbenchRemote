@@ -120,7 +120,7 @@ void OutputChannelComponent::sliderValueChanged( Slider* slider )
 void OutputChannelComponent::resized()
 {
 	channelNameLabel.setBoundsRelative(0.05f, 0.025f, 0.45f, 0.45f);
-	meter.setBoundsRelative(0.5f, 0.025f, 0.45f, 0.45f);
+	//meter.setBoundsRelative(0.5f, 0.025f, 0.45f, 0.45f);
 
 	modeButton.setBoundsRelative(0.05f, 0.525f, 0.35f, 0.45f);
 	

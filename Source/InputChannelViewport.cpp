@@ -29,8 +29,11 @@ void InputChannelViewport::buildChannelComponents()
 		content.channelComponents.add(icc);
 		content.addAndMakeVisible(icc);
 	}
-
+	
+	//DBG("calling resized...");
 	content.resized();
+
+	//DBG("    InputChannelViewport::buildChannelComponents() done");
 }
 
 void InputChannelViewport::timerCallback()
