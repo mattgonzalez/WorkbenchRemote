@@ -165,7 +165,6 @@ void WorkbenchComponent::textEditorTextChanged( TextEditor& )
 
 void WorkbenchComponent::textEditorReturnKeyPressed( TextEditor& edit)
 {
-
 	if (&edit == portEditor)
 	{
 		updatePort();
@@ -175,7 +174,6 @@ void WorkbenchComponent::textEditorReturnKeyPressed( TextEditor& edit)
 
 void WorkbenchComponent::textEditorEscapeKeyPressed( TextEditor& edit)
 {
-
 	if (&edit == portEditor)
 	{
 		portEditor->setText(tree[Identifiers::Port].toString());
@@ -208,6 +206,13 @@ void WorkbenchComponent::actionListenerCallback( const String& message )
 void WorkbenchComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
 	DBG("WorkbenchComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+
+	if (Identifiers::Active == property)
+	{
+		listenerStreamsTab->streamActiveStateChanged();
+		talkerStreamsTab->streamActiveStateChanged();
+		return;
+	}
 }
 
 void WorkbenchComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )

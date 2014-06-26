@@ -101,6 +101,7 @@ void RemoteClient::messageReceived( const MemoryBlock& message )
 	ScopedLock locker(lock);
 
 	DBG("WorkbenchClient::messageReceived  bytes:" << (int)message.getSize());
+	DBG(message.toString());
 
 	// The MemoryBlock parameter is just the JSON string without the magic number or byte count
 	// Parse the MemoryBlock as a JSON String

@@ -16,6 +16,8 @@ public:
 	StaticStreamViewport(ValueTree tree_, CriticalSection &lock_, WorkbenchClient* client_);
 	~StaticStreamViewport();
 
+	void streamActiveStateChanged();
+
 protected:
 
 	class StaticStreamComponent;
@@ -30,6 +32,7 @@ protected:
 		virtual void resized();
 		virtual void paint( Graphics& g );
 		void positionStaticStreamComponents();
+		void streamActiveStateChanged();
 
 		ValueTree tree;
 		CriticalSection &lock;
@@ -59,7 +62,6 @@ protected:
 		TextButton startButton;
 		TextButton stopButton;
 		TextButton faultButton;
-
 		ToggleButton clockReferenceButton;
 
 		Label streamIdLabel;
@@ -72,6 +74,8 @@ protected:
 			MetricsButton();
 			virtual void paintButton( Graphics& g, bool isMouseOverButton, bool isButtonDown );
 		} metricsButton;
+
+		void enableClockReferenceButton();
 
 	protected:
 		void userInputMulticastAddress();

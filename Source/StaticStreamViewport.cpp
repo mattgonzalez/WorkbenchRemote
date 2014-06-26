@@ -42,6 +42,11 @@ void StaticStreamViewport::resized()
 	Viewport::resized();
 }
 
+void StaticStreamViewport::streamActiveStateChanged()
+{
+	content->streamActiveStateChanged();
+}
+
 
 StaticStreamViewport::ContentComponent::ContentComponent(ValueTree tree_,CriticalSection &lock_, WorkbenchClient* client_) :
 tree(tree_),
@@ -91,6 +96,14 @@ void StaticStreamViewport::ContentComponent::positionStaticStreamComponents()
 	{
 		streamBoxes[i]->setBounds(r);
 		r.translate(0, r.getHeight() + gap);
+	}
+}
+
+void StaticStreamViewport::ContentComponent::streamActiveStateChanged()
+{
+	for (int i = 0; i < streamBoxes.size(); i++)
+	{
+		streamBoxes[i]->enableClockReferenceButton();
 	}
 }
 
@@ -323,6 +336,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 
 	if (& startButton == button)
 	{
+		tree.setProperty(Identifiers::Active, true, nullptr);
 		client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::Active, true);
 		enableControls(true);
 		return;
@@ -340,6 +354,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 
 	if (& stopButton == button)
 	{
+		tree.setProperty(Identifiers::Active, false, nullptr);
 		client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::Active, false);
 		enableControls(false);
 		return;
@@ -363,17 +378,19 @@ void StaticStreamViewport::StaticStreamComponent::enableControls( bool started )
 	channelsCombo.setEnabled(!started);
 	startButton.setEnabled(!started);
 	stopButton.setEnabled(started);
+	enableClockReferenceButton();
 	setChannelsVisible();
 
 	repaint();
 }
 
 
-
 void StaticStreamViewport::StaticStreamComponent::setChannelsVisible()
 {
 	bool crs = clockReferenceButton.getToggleState();
 	channelsCombo.setVisible(!crs);
+	int channels = tree[Identifiers::ChannelCount];
+	channelsCombo.setSelectedId(channels, dontSendNotification);
 	channelsLabel.setVisible(!crs);
 }
 
@@ -439,6 +456,29 @@ void StaticStreamViewport::StaticStreamComponent::valueTreeChildOrderChanged( Va
 
 void StaticStreamViewport::StaticStreamComponent::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged )
 {
+}
+
+void StaticStreamViewport::StaticStreamComponent::enableClockReferenceButton()
+{
+	ValueTree streamsTree(tree.getParent().getParent());
+	ScopedLock locker(lock);
+	bool anyStreamActive = false;
+
+	ValueTree talkersTree(streamsTree.getChildWithName(Identifiers::Talkers));
+	for (int i = 0; i < talkersTree.getNumChildren(); ++i)
+	{
+		ValueTree streamTree(talkersTree.getChild(i));
+		anyStreamActive |= (bool) streamTree[Identifiers::Active];
+	}
+
+	ValueTree listenersTree(streamsTree.getChildWithName(Identifiers::Listeners));
+	for (int i = 0; i < listenersTree.getNumChildren(); ++i)
+	{
+		ValueTree streamTree(listenersTree.getChild(i));
+		anyStreamActive |= (bool) streamTree[Identifiers::Active];
+	}
+
+	clockReferenceButton.setEnabled(!anyStreamActive);
 }
 
 StaticStreamViewport::StaticStreamComponent::MetricsButton::MetricsButton() : Button("Metrics Button")
