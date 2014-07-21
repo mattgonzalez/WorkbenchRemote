@@ -82,6 +82,8 @@ AudioPatchbayComponent::AudioPatchbayComponent(MainContentComponent* mainCompone
 
 AudioPatchbayComponent::~AudioPatchbayComponent()
 {
+	updatePort();
+
 	tabs = nullptr;
 	portEditor = nullptr;
 	portLabel = nullptr;
@@ -244,6 +246,7 @@ void AudioPatchbayComponent::updatePort()
 	port = jlimit(0, 65535, port);
 	portEditor->setText(String(port));
 	tree.setProperty(Identifiers::Port, port, nullptr);
+	DBG("AudioPatchbayComponent::updatePort() " << port);
 }
 
 void AudioPatchbayComponent::actionListenerCallback( const String& message )

@@ -194,7 +194,7 @@ ValueTree Settings::getStreamsTree()
 static void createChannels (ValueTree &  parent,int const numChannels)
 {
 	int channel = 0;
-	
+
 	parent.removeAllChildren(nullptr);
 	while (channel < numChannels)
 	{

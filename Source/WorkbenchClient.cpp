@@ -15,7 +15,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 /*
 
 This class uses the JUCE InterprocessConnection class to send and receive data
-over a socket.  The actual data sent over the socket consists of a four byte magic number, 
+over a socket.  The actual data sent over the socket consists of a four byte magic number,
 followed by a four byte little-endian message length count in bytes, followed by the JSON string.
 
 For example, to transmit this 45 byte JSON string:
@@ -58,7 +58,6 @@ WorkbenchClient::~WorkbenchClient()
 	//DBG("WorkbenchClient::~WorkbenchClient()");
 }
 
-
 //============================================================================
 //
 // Callbacks
@@ -90,7 +89,6 @@ void WorkbenchClient::connectionLost()
 	RemoteClient::connectionLost();
 }
 
-
 //============================================================================
 //
 // Commands sent to Workbench
@@ -101,6 +99,9 @@ Result WorkbenchClient::getTalkerStreams()
 	ScopedLock locker(settings->lock);
 	var arrayVar;
 	ValueTree talkersTree(settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
+
+	arrayVar.resize(0); // force the var to become a zero-length array
+
 	for (int i = 0; i < talkersTree.getNumChildren(); ++i)
 	{
 		DynamicObject::Ptr indexObject(new DynamicObject);
@@ -111,12 +112,14 @@ Result WorkbenchClient::getTalkerStreams()
 	return getProperty(Identifiers::Talkers, arrayVar);
 }
 
-
 Result WorkbenchClient::getListenerStreams()
 {
 	ScopedLock locker(settings->lock);
 	var arrayVar;
 	ValueTree listenersTree(settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
+
+	arrayVar.resize(0); // force the var to become a zero-length array
+
 	for (int i = 0; i < listenersTree.getNumChildren(); ++i)
 	{
 		DynamicObject::Ptr indexObject(new DynamicObject);
@@ -133,6 +136,8 @@ Result WorkbenchClient::setStreamProperty( Identifier const type, int const stre
 	DynamicObject::Ptr commandObject(new DynamicObject);
 	var arrayVar;
 	DynamicObject::Ptr streamObject(new DynamicObject);
+
+	arrayVar.resize(0); // force the var to become a zero-length array
 
 	streamObject->setProperty(Identifiers::Index, streamIndex);
 	streamObject->setProperty(ID, parameter);
@@ -165,7 +170,7 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 	{
 		var systemPropertyVar(propertyObject->getProperty(Identifiers::System));
 		DynamicObject *systemPropertyObject = systemPropertyVar.getDynamicObject();
-		
+
 		if (nullptr == systemPropertyObject)
 		{
 			DBG("Could not parse get system response");
@@ -295,12 +300,10 @@ void WorkbenchClient::handleGetStreamsResponse( var streamsPropertyVar, ValueTre
 					corruptTree.setProperty(Identifiers::Percent, corruptObject->getProperty(Identifiers::Percent), nullptr);
 				}
 			}
-
 		}
 	}
 }
 
 void WorkbenchClient::handleFaultNotificationMessage( DynamicObject * messageObject )
 {
-
 }

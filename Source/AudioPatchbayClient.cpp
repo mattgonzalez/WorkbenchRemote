@@ -16,7 +16,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 /*
 
 This class uses the JUCE InterprocessConnection class to send and receive data
-over a socket.  The actual data sent over the socket consists of a four byte magic number, 
+over a socket.  The actual data sent over the socket consists of a four byte magic number,
 followed by a four byte little-endian message length count in bytes, followed by the JSON string.
 
 For example, to transmit this 45 byte JSON string:
@@ -62,7 +62,6 @@ AudioPatchbayClient::~AudioPatchbayClient()
 	//DBG("AudioPatchbayClient::~AudioPatchbayClient()");
 }
 
-
 //============================================================================
 //
 // Callbacks
@@ -90,10 +89,9 @@ void AudioPatchbayClient::connectionLost()
 
 	// Remove all the stream information from the settings tree
 	settings->removeAudioDevices();
-	
+
 	RemoteClient::connectionMade();
 }
-
 
 //============================================================================
 //
@@ -184,7 +182,6 @@ void AudioPatchbayClient::handlePropertyChangedMessage(DynamicObject * messageOb
 		handleGetOutputsResponse(propertyVar);
 		return;
 	}
-
 }
 
 void AudioPatchbayClient::handleGetSystemResponse( DynamicObject * systemPropertyObject )
@@ -212,6 +209,9 @@ Result AudioPatchbayClient::getCurrentAudioDevices()
 	ScopedLock locker(settings->lock);
 	var arrayVar;
 	ValueTree tree(settings->getAudioDevicesTree());
+
+	arrayVar.resize(0); // force the var to become a zero-length array
+
 	for (int i = 0; i < tree.getNumChildren(); ++i)
 	{
 		DynamicObject::Ptr indexObject(new DynamicObject);
@@ -246,19 +246,31 @@ void AudioPatchbayClient::handleGetCurrentAudioDevicesResponse( var currentPrope
 		}
 
 		ValueTree deviceTree(tree.getChild(deviceIndex));
+		var inputVar(d->getProperty(Identifiers::Input));
+		var outputVar(d->getProperty(Identifiers::Output));
+		int numInputs = inputVar.size();
+		int numOutputs = outputVar.size();
 
 		if (d->hasProperty(Identifiers::DeviceName))
 		{
 			deviceTree.setProperty(Identifiers::DeviceName, d->getProperty(Identifiers::DeviceName), nullptr);
 		}
-		if (d->hasProperty(Identifiers::Input))
+		if (d->hasProperty(Identifiers::DeviceName)
+			&& inputVar.isArray()
+			&& outputVar.isArray())
 		{
-			deviceTree.setProperty(Identifiers::Input, d->getProperty(Identifiers::Input), nullptr);
-		}		
-		if (d->hasProperty(Identifiers::Output))
-		{
-			deviceTree.setProperty(Identifiers::Output, d->getProperty(Identifiers::Output), nullptr);
+			settings->initializeAudioDevice(deviceIndex,
+				numInputs,
+				numOutputs);
 		}
+		else
+		{
+			continue;
+		}
+
+		handleGetInputsResponse(inputVar);
+		handleGetOutputsResponse(outputVar);
+
 		if (d->hasProperty(Identifiers::SampleRates))
 		{
 			deviceTree.setProperty(Identifiers::SampleRates, d->getProperty(Identifiers::SampleRates), nullptr);
@@ -267,13 +279,6 @@ void AudioPatchbayClient::handleGetCurrentAudioDevicesResponse( var currentPrope
 		{
 			deviceTree.setProperty(Identifiers::SampleRate, (double)d->getProperty(Identifiers::SampleRate), nullptr);
 		}
-
-		if (d->hasProperty(Identifiers::DeviceName) && d->hasProperty(Identifiers::Input) && d->hasProperty(Identifiers::Output))
-		{
-			settings->initializeAudioDevice(deviceIndex,
-				d->getProperty(Identifiers::Input),
-				d->getProperty(Identifiers::Output));
-		}
 	}
 }
 
@@ -281,6 +286,8 @@ Result AudioPatchbayClient::getInputChannel( String const deviceName, int const 
 {
 	var arrayVar;
 	DynamicObject::Ptr channelObject(new DynamicObject);
+
+	arrayVar.resize(0); // force the var to become a zero-length array
 
 	channelObject->setProperty(Identifiers::DeviceName, deviceName);
 	channelObject->setProperty(Identifiers::Channel, channel);
@@ -293,6 +300,8 @@ Result AudioPatchbayClient::getOutputChannel( String const deviceName, int const
 {
 	var arrayVar;
 	DynamicObject::Ptr channelObject(new DynamicObject);
+
+	arrayVar.resize(0); // force the var to become a zero-length array
 
 	channelObject->setProperty(Identifiers::DeviceName, deviceName);
 	channelObject->setProperty(Identifiers::Channel, channel);
@@ -409,6 +418,8 @@ Result AudioPatchbayClient::setDeviceProperty( int const deviceIndex, Identifier
 	var deviceArrayVar;
 	DynamicObject::Ptr deviceObject(new DynamicObject);
 
+	deviceArrayVar.resize(0); // force the var to become a zero-length array
+
 	deviceObject->setProperty(Identifiers::Index, deviceIndex);
 	deviceObject->setProperty(identifier, value);
 	deviceArrayVar.append(var(deviceObject));
@@ -441,11 +452,11 @@ void AudioPatchbayClient::valueTreePropertyChanged( ValueTree& treeWhoseProperty
 		return;
 	}
 
-	if (Identifiers::GainDecibels == property || 
-		Identifiers::Mute == property || 
+	if (Identifiers::GainDecibels == property ||
+		Identifiers::Mute == property ||
 		Identifiers::ToneFrequency == property ||
-		Identifiers::Mode == property || 
-		Identifiers::SourceDeviceName == property || 
+		Identifiers::Mode == property ||
+		Identifiers::SourceDeviceName == property ||
 		Identifiers::SourceChannel == property)
 	{
 		sendChannelProperty(treeWhosePropertyHasChanged);
@@ -481,6 +492,8 @@ Result AudioPatchbayClient::sendChannelProperty( ValueTree channelTree )
 	DynamicObject::Ptr commandObject(new DynamicObject);
 	DynamicObject::Ptr channelObject(new DynamicObject);
 	var channelArrayVar;
+
+	channelArrayVar.resize(0); // force the var to become a zero-length array
 
 	channelObject->setProperty(Identifiers::DeviceName, deviceTree[Identifiers::DeviceName]);
 	channelObject->setProperty(Identifiers::Channel, channelTree[Identifiers::Channel]);

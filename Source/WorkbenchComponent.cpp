@@ -76,6 +76,8 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 
 WorkbenchComponent::~WorkbenchComponent()
 {
+	updatePort();
+
 	tabs = nullptr;
 	portEditor = nullptr;
 	portLabel = nullptr;
@@ -92,7 +94,6 @@ WorkbenchComponent::~WorkbenchComponent()
 void WorkbenchComponent::paint (Graphics& g)
 {
 	g.fillAll (Colours::white);
-
 }
 
 void WorkbenchComponent::resized()
