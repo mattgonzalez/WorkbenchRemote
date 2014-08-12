@@ -156,6 +156,7 @@
     <ClCompile Include="..\..\Source\OutputChannelViewport.cpp" />
     <ClCompile Include="..\..\Source\RemoteClient.cpp" />
     <ClCompile Include="..\..\Source\Settings.cpp" />
+    <ClCompile Include="..\..\Source\SettingsComponent.cpp" />
     <ClCompile Include="..\..\Source\StaticStreamViewport.cpp" />
     <ClCompile Include="..\..\Source\Strings.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchClient.cpp" />
@@ -1004,6 +1005,7 @@
     <ClInclude Include="..\..\Source\OutputChannelViewport.h" />
     <ClInclude Include="..\..\Source\RemoteClient.h" />
     <ClInclude Include="..\..\Source\Settings.h" />
+    <ClInclude Include="..\..\Source\SettingsComponent.h" />
     <ClInclude Include="..\..\Source\StaticStreamViewport.h" />
     <ClInclude Include="..\..\Source\Strings.h" />
     <ClInclude Include="..\..\Source\WorkbenchClient.h" />

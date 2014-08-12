@@ -4,6 +4,7 @@
 #include "WorkbenchClient.h"
 #include "Settings.h"
 #include "StaticStreamViewport.h"
+#include "SettingsComponent.h"
 
 class MainContentComponent;
 
@@ -70,10 +71,11 @@ private:
 	ScopedPointer<TabbedComponent> tabs;
 	StaticStreamViewport *talkerStreamsTab;
 	StaticStreamViewport *listenerStreamsTab;
-
+	SettingsComponent *settingsTab;
 	enum
 	{
 		TALKERS_TAB,
-		LISTENERS_TAB
+		LISTENERS_TAB,
+		SETTINGS_TAB
 	};
 };

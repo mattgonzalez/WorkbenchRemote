@@ -162,7 +162,7 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 
 	if (nullptr == propertyObject)
 	{
-		DBG("Could not parse get system response");
+		DBG("propertyObject is null");
 		return;
 	}
 

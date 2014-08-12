@@ -8,6 +8,7 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	settings(settings_),
 	talkerStreamsTab(nullptr),
 	listenerStreamsTab(nullptr),
+	settingsTab(nullptr),
 	tree(settings_->getStreamsTree())
 {
 	addAndMakeVisible (portEditor = new TextEditor ("portEditor"));
@@ -293,6 +294,17 @@ void WorkbenchComponent::updateStreamControls()
 	{
 		tabs->removeTab(LISTENERS_TAB);
 		listenerStreamsTab = nullptr;
+	}
+
+	if (talkerStreamsTab != nullptr || listenerStreamsTab != nullptr)
+	{
+		settingsTab = new SettingsComponent(tree, client);
+		tabs->addTab("Settings", Colours::white, settingsTab, true, SETTINGS_TAB);
+	}
+	else
+	{
+		tabs->removeTab(SETTINGS_TAB);
+		settingsTab = nullptr;
 	}
 }
 
