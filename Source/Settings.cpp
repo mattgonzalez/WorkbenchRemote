@@ -89,6 +89,16 @@ Settings::Settings() :
 		String key (audioDevicesTree.getType().toString() + portKey);
 		audioDevicesTree.setProperty(Identifiers::Port, propfile->getIntValue(key,0xecc1), nullptr);
 	}
+
+	{
+		ValueTree linkStateTree(Identifiers::LinkState);
+		getStreamsTree().addChild(linkStateTree, -1, nullptr);
+	}
+
+	{
+		ValueTree workbenchSettingsTree(Identifiers::WorkbenchSettings);
+		getStreamsTree().addChild(workbenchSettingsTree, -1, nullptr);
+	}
 }
 
 Settings::~Settings()
@@ -142,6 +152,12 @@ void Settings::initializeStreams( int numTalkers,int numListeners )
 		child.setProperty(Identifiers::Index, i, nullptr);
 		listenersTree.addChild(child,-1,nullptr);
 	}
+
+	ValueTree linkStateTree(workbenchTree.getChildWithName(Identifiers::LinkState));
+	linkStateTree.removeAllProperties(nullptr);
+
+	ValueTree workbenchSettingsTree(workbenchTree.getChildWithName(Identifiers::WorkbenchSettings));
+	workbenchSettingsTree.removeAllProperties(nullptr);
 }
 
 void Settings::removeStreams()
@@ -153,6 +169,10 @@ void Settings::removeStreams()
 	workbenchTree.removeChild(talkersTree,nullptr);
 	ValueTree listenersTree(workbenchTree.getChildWithName(Identifiers::Listeners));
 	workbenchTree.removeChild(listenersTree,nullptr);
+	ValueTree linkStateTree(workbenchTree.getChildWithName(Identifiers::LinkState));
+	linkStateTree.removeAllProperties(nullptr);
+	ValueTree workbenchSettingsTree(workbenchTree.getChildWithName(Identifiers::WorkbenchSettings));
+	workbenchSettingsTree.removeAllProperties(nullptr);
 }
 
 void Settings::initializeAudioDevices( int numAudioDevices )
@@ -186,9 +206,18 @@ ValueTree Settings::getAudioDevicesTree()
 	return tree.getChildWithName(Identifiers::AudioDevices);
 }
 
+ValueTree Settings::getLinkStateTree()
+{
+	return getStreamsTree().getChildWithName(Identifiers::LinkState);
+}
 ValueTree Settings::getStreamsTree()
 {
 	return tree.getChildWithName(Identifiers::Workbench);
+}
+
+ValueTree Settings::getWorkbenchSettingsTree()
+{
+	return getStreamsTree().getChildWithName(Identifiers::WorkbenchSettings);
 }
 
 static void createChannels (ValueTree &  parent,int const numChannels)

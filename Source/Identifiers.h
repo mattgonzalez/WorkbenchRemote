@@ -67,7 +67,14 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( TalkerTimestampOffsetMsec	) \
 						IDENTIFIER( ListenerTimestampOffsetMsec	) \
 						IDENTIFIER( TimestampTolerancePercent	) \
+						IDENTIFIER( LinkState					) \
+						IDENTIFIER( ConnectState				) \
+						IDENTIFIER( DuplexState					) \
+						IDENTIFIER( TransmitSpeed				) \
+						IDENTIFIER( ReceiveSpeed				) \
+						IDENTIFIER( AutoNegotiation				) \
 						IDENTIFIER( EthernetMode				) \
+						IDENTIFIER( WorkbenchSettings			) \
 
 namespace Identifiers
 {

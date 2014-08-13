@@ -64,7 +64,9 @@ private:
 	ScopedPointer<TextButton> infoButton;
 	ScopedPointer<TextButton> getTalkersButton;
 	ScopedPointer<TextButton> getListenersButton;
-	
+	ScopedPointer<TextButton> getLinkStateButton;
+	ScopedPointer<TextButton> getSettingsButton;
+
 	TextEditor sendReadout;
 	TextEditor receiveReadout;
 
@@ -72,10 +74,47 @@ private:
 	StaticStreamViewport *talkerStreamsTab;
 	StaticStreamViewport *listenerStreamsTab;
 	SettingsComponent *settingsTab;
+
+	class StatusBarComponent : public Component, ValueTree::Listener
+	{
+	public:
+		StatusBarComponent(Settings* settings_);
+		~StatusBarComponent();
+		void paint(Graphics &g);
+		void resized();
+
+		void updateLinkStateLabel();
+
+		virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
+		virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
+		virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
+		virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
+		virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
+		String toString();
+
+		Label linkStateLabel;
+	protected:
+		Settings* settings;
+		String speedToString(uint64 speed) const;
+		ValueTree tree;
+	} statusBar;
 	enum
 	{
 		TALKERS_TAB,
 		LISTENERS_TAB,
-		SETTINGS_TAB
+		SETTINGS_TAB,
+
+		MediaDuplexStateUnknown = 0,
+		MediaDuplexStateHalf,
+		MediaDuplexStateFull,
+
+		MediaConnectStateUnknown = 0,
+		MediaConnectStateConnected,
+		MediaConnectStateDisconnected,
+
+		ANALYZERBR_USB_ETHERNET_MODE_STANDARD = 1,
+		ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER,
+		ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE,
+		ANALYZERBR_USB_ETHERNET_MODE_BR	
 	};
 };

@@ -12,7 +12,6 @@ This source code is considered to be proprietary and confidential information.
 #include "BinaryData.h"
 #include "Identifiers.h"
 
-#if WORKBENCH
 class LabelPropertyComponent : public PropertyComponent
 {
 public:
@@ -34,7 +33,6 @@ public:
 
 	Label label;
 };
-#endif
 
 SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_):
 	tree(tree_),
@@ -46,8 +44,6 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 	// PTP settings
 	//
 	{
-		BooleanPropertyComponent *toggle;
-		ChoicePropertyComponent *choice;
 		StringArray choices;
 		Array<var> temp;
 		Array<PropertyComponent *> time_controls;
@@ -59,40 +55,26 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		temp.add(CONFIG_GRANDMASTER);
 		temp.add(CONFIG_BMCA);
 
-		choice = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::StaticPTPRole, nullptr),
+		staticPTPRoleChoicePropertyComponent = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::StaticPTPRole, nullptr),
 			"PTP role",
 			choices,
 			temp);
-		choice->refresh();
-		choice->getProperties().set(Identifiers::HelpText,
-			"PTP Grandmaster: Workbench will send PTP Sync and Follow_Up messages\n\n"
-			"PTP Follower: Workbench will wait to receive PTP Sync and Follow_Up messages\n\n"
-			"BMCA mode: Workbench will automatically select a master clock using the 802.1AS best master clock algorithm");
-		time_controls.add(choice);
+		time_controls.add(staticPTPRoleChoicePropertyComponent);
 	
-		toggle = new BooleanPropertyComponent(tree.getPropertyAsValue(Identifiers::PTPSendFollowupTLV, nullptr),
+		followupTLVPropertyComponent = new BooleanPropertyComponent(tree.getPropertyAsValue(Identifiers::PTPSendFollowupTLV, nullptr),
 			"Follow_Up TLV",
 			"Send Follow_Up messages with TLV");
-		toggle->getProperties().set(Identifiers::HelpText,
-			"\nPTP Follow_Up messages may be sent with or without the TLV data at the end.\n\n"
-			"TLV enabled: Follow_Up messages will be 90 bytes with messageLength set to 72.\n\n"
-			"TLV disabled: Follow_Up messages will be 60 bytes with messageLength set to 44.");
-		time_controls.add(toggle);
+		time_controls.add(followupTLVPropertyComponent);
 	
 		announceBooleanPropertyComponent = new BooleanPropertyComponent(tree.getPropertyAsValue(Identifiers::PTPSendAnnounce, nullptr),
 			"Announce",
 			"Send Announce messages");
-		announceBooleanPropertyComponent->getProperties().set(Identifiers::HelpText,
-			"\nWorkbench can optionally send PTP Announce messages.");
-		announceBooleanPropertyComponent->setEnabled((int)tree.getProperty(Identifiers::StaticPTPRole) != CONFIG_BMCA);
 		time_controls.add(announceBooleanPropertyComponent);
 
-		toggle = new BooleanPropertyComponent(tree.getPropertyAsValue(Identifiers::PTPSendSignalingFlag, nullptr),
+		sendSignalingFlagPropertyComponent = new BooleanPropertyComponent(tree.getPropertyAsValue(Identifiers::PTPSendSignalingFlag, nullptr),
 			"Send Signaling",
-			"Send Signaling message once PTP is locked");
-		toggle->getProperties().set(Identifiers::HelpText,
-			"\nIf Workbench is in PTP Follower mode, Workbench can send a Signaling message to the grandmaster once PTP is locked.");
-		time_controls.add(toggle);
+			"Send Signaling once PTP locked");
+		time_controls.add(sendSignalingFlagPropertyComponent);
 
 		choices.clearQuick();
 		temp.clearQuick();
@@ -105,14 +87,11 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 			choices.add("Every " + String(msec) + " milliseconds");
 			temp.add(msec);
 		}
-		choice = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::PTPDelayRequestIntervalMsec, nullptr),
+		delayRequestIntervalMsecPropertyComponent = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::PTPDelayRequestIntervalMsec, nullptr),
 			"Send PDelay_Req",
 			choices,
 			temp);
-		choice->refresh();
-		choice->getProperties().set(Identifiers::HelpText,
-			"\nSet how often Workbench will generate PDelay_Req messages.");
-		time_controls.add(choice);
+		time_controls.add(delayRequestIntervalMsecPropertyComponent);
 	
 		panel.addSection("PTP", time_controls);
 	}
@@ -131,9 +110,6 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 			0.1,
 			1.0,
 			msec);	
-		slider->getProperties().set(Identifiers::HelpText,
-			"\nStream packets are sent before the embedded presentation time.  This sets the offset between the launch time and the presentation time.\n\n"
-			"This setting may only be changed if all the streams are stopped.");
 		avtp_controls.add(slider);
 		talkerTimestampOffsetPropertyComponent = slider;
 
@@ -144,10 +120,9 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 			0.01,
 			1.0,
 			msec);	
-		slider->getProperties().set(Identifiers::HelpText,
-			"\nWorkbench adds this amount to incoming stream packet AVTP timestamps.");
 		avtp_controls.add(slider);
-		
+		listenerTimestampOffsetPropertyComponent = slider;
+
 		panel.addSection("AVTP", avtp_controls);
 	}
 
@@ -165,14 +140,13 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		slider->getProperties().set(Identifiers::HelpText,
 			"\nDifferences between AVTP timestamps beyond this tolerance will be logged as errors.");
 		faultLoggingControls.add(slider);
+		timestampTolerancePercentPropertyComponent = slider;
 
 		panel.addSection("AVTP fault logging", faultLoggingControls);
 	}
 
 	{
-#if ANALYZERBR_USB
 
-		ChoicePropertyComponent *choice;
 		StringArray choices;
 		Array<var> temp;
 		Array<PropertyComponent *> analyzerControls;
@@ -184,35 +158,22 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		temp.add(ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER);
 		temp.add(ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE);
 
-		USBDevice *device = controller->usb.getDevice();
-		bool enabled = device != nullptr;
+		
 
-		ethernetModeValue = tree.getPropertyAsValue(Identifiers::EthernetMode, nullptr);
-		choice = new ChoicePropertyComponent(ethernetModeValue,
+		analyzerBREthernetMode = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::EthernetMode, nullptr),
 			"Ethernet mode",
 			choices,
 			temp);
-		choice->refresh();
-		choice->getProperties().set(Identifiers::HelpText,
-			"Set Analyzer BR Ethernet mode.");
-		choice->setEnabled(enabled);
-		analyzerControls.add(choice);
+		analyzerBREthernetMode->setEnabled(false);
+		analyzerControls.add(analyzerBREthernetMode);
 
 		spdifLockComp = new LabelPropertyComponent("S/PDIF input lock");
-		spdifLockComp->setEnabled(enabled);
+		spdifLockComp->setEnabled(false);
 		analyzerControls.add(spdifLockComp);
 
 		panel.addSection("Analyzer BR", analyzerControls);
-		
-		if (enabled)
-		{
-			startTimer(1000);
-		}
-#endif
 	}
 
-	//addAndMakeVisible(&tabs);
-	//tabs.setCurrentTabIndex(1, false);
 	addAndMakeVisible(&panel);
 
 	lf.setColour(Slider::thumbColourId, /*JUCE_LIVE_CONSTANT*/(Colour(0xc01a53ff)));
@@ -222,9 +183,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 	lf.setColour(TextEditor::focusedOutlineColourId, Colour(0xffE80000));
 	setLookAndFeel(&lf);
 
-	addAndMakeVisible(&helpTextDisplay.label);
-	helpTextDisplay.label.setColour(Label::outlineColourId, Colours::lightgrey);
-	helpTextDisplay.label.setJustificationType(Justification::centredLeft);
+	initialize();
 }
 
 SettingsComponent::~SettingsComponent()
@@ -234,12 +193,7 @@ SettingsComponent::~SettingsComponent()
 
 void SettingsComponent::resized()
 {
-	panel.setBounds(proportionOfWidth(0.05f), proportionOfHeight(0.05f), 350, proportionOfHeight(0.8f));
-	helpTextDisplay.label.setBounds(proportionOfWidth(0.05f), panel.getBottom() - 75, 350, 135);
-}
-
-void SettingsComponent::changeListenerCallback( ChangeBroadcaster* source )
-{
+	panel.setBounds(proportionOfWidth(0.02f), proportionOfHeight(0.05f), 365, proportionOfHeight(0.8f));
 }
 
 void SettingsComponent::paint( Graphics& g )
@@ -247,56 +201,14 @@ void SettingsComponent::paint( Graphics& g )
 	g.fillAll(Colours::white);
 }
 
-void SettingsComponent::visibilityChanged()
+void SettingsComponent::initialize()
 {
-	if (isVisible())
-	{
-		Desktop::getInstance().addGlobalMouseListener(&helpTextDisplay);
-	}
-	else
-	{
-		Desktop::getInstance().removeGlobalMouseListener(&helpTextDisplay);
-	}
-}
-
-SettingsComponent::HelpTextDisplay::HelpTextDisplay() :
-	currentHelpComponent(nullptr)
-{
-
-}
-
-void SettingsComponent::HelpTextDisplay::mouseMove( const MouseEvent& event )
-{
-	Component *c = event.eventComponent;
-
-	while (c != nullptr)
-	{
-		NamedValueSet& properties(c->getProperties());
-
-		if (properties.contains(Identifiers::HelpText))
-		{
-			break;
-		}
-
-		c = c->getParentComponent();
-	}
-
-	if (nullptr == c)
-	{
-		currentHelpComponent = c;
-		label.setText(String::empty, dontSendNotification);
-		return;
-	}
-
-	if (c != currentHelpComponent)
-	{
-		NamedValueSet& properties(c->getProperties());
-		Font f(14);
-		label.setText(properties[Identifiers::HelpText], dontSendNotification);
-		label.setFont(f);
-		label.setJustificationType(Justification::topLeft);
-		currentHelpComponent = c;
-	}
+	talkerTimestampOffsetPropertyComponent->setValue(0);
+	listenerTimestampOffsetPropertyComponent->setValue(0);
+	timestampTolerancePercentPropertyComponent->setValue(0);
+	tree.setProperty(Identifiers::StaticPTPRole, CONFIG_FOLLOWER, nullptr);
+	tree.setProperty(Identifiers::PTPDelayRequestIntervalMsec, MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS, nullptr);
+	tree.setProperty(Identifiers::EthernetMode, ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
 }
 
 void SettingsComponent::LocalLookAndFeel::drawPropertyPanelSectionHeader( Graphics&g, const String& name, bool isOpen, int width, int height )

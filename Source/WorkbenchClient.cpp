@@ -48,9 +48,11 @@ Strings are sent without a zero terminator.
 // that has to match at both ends of the connection
 //
 WorkbenchClient::WorkbenchClient(Settings* settings_):
-	RemoteClient(settings_,'KROW')
+	RemoteClient(settings_,'KROW'),
+	workbenchSettingsTree(settings_->getWorkbenchSettingsTree())
 {
 	//DBG("WorkbenchClient::WorkbenchClient()");
+	workbenchSettingsTree.addListener(this);
 }
 
 WorkbenchClient::~WorkbenchClient()
@@ -130,6 +132,16 @@ Result WorkbenchClient::getListenerStreams()
 	return getProperty(Identifiers::Listeners, arrayVar);
 }
 
+Result WorkbenchClient::getLinkState()
+{
+	return getProperty(Identifiers::LinkState, new DynamicObject);
+}
+
+Result WorkbenchClient::getSettings()
+{
+	return getProperty(Identifiers::WorkbenchSettings, new DynamicObject);
+}
+
 Result WorkbenchClient::setStreamProperty( Identifier const type, int const streamIndex, Identifier const &ID, var const parameter )
 {
 	DynamicObject messageObject;
@@ -204,6 +216,30 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 		handleGetStreamsResponse(listenersPropertyVar, settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
 		return;
 	}
+
+	if (propertyObject->hasProperty(Identifiers::LinkState))
+	{
+		var linkStatePropertyVar(propertyObject->getProperty(Identifiers::LinkState));
+		DynamicObject* linkStatePropertyObject = linkStatePropertyVar.getDynamicObject();
+		if (nullptr == linkStatePropertyObject)
+		{
+			DBG("Could not parse get linkstate response");
+			return;
+		}
+		handleGetLinkStateResponse(linkStatePropertyObject);
+	}
+
+	if (propertyObject->hasProperty(Identifiers::WorkbenchSettings))
+	{
+		var workbenchSettingsPropertyVar(propertyObject->getProperty(Identifiers::WorkbenchSettings));
+		DynamicObject* workbenchSettingsPropertyObject = workbenchSettingsPropertyVar.getDynamicObject();
+		if (nullptr == workbenchSettingsPropertyObject)
+		{
+			DBG("Could not parse get settings response");
+		}
+		handleGetWorkbenchSettingsResponse(workbenchSettingsPropertyObject);
+		return;
+	}
 }
 
 void WorkbenchClient::handleGetSystemResponse( DynamicObject * systemPropertyObject )
@@ -228,7 +264,7 @@ void WorkbenchClient::handleGetStreamsResponse( var streamsPropertyVar, ValueTre
 
 		if (nullptr == d || false == d->hasProperty(Identifiers::Index))
 		{
-			DBG("Invalid response for get talkers");
+			DBG("Invalid response for get talkers/listeners");
 			continue;
 		}
 
@@ -241,7 +277,7 @@ void WorkbenchClient::handleGetStreamsResponse( var streamsPropertyVar, ValueTre
 		ValueTree streamTree(streamsTree.getChild(streamIndex));
 		if (false == streamTree.isValid())
 		{
-			DBG("Invalid stream index for get talkers");
+			DBG("Invalid stream index for get talkers/listeners");
 			continue;
 		}
 
@@ -307,3 +343,132 @@ void WorkbenchClient::handleGetStreamsResponse( var streamsPropertyVar, ValueTre
 void WorkbenchClient::handleFaultNotificationMessage( DynamicObject * messageObject )
 {
 }
+
+void WorkbenchClient::handleGetLinkStateResponse( DynamicObject* linkStatePropertyObject )
+{
+	ScopedLock locker(settings->lock);
+
+	ValueTree linkStateTree(settings->getLinkStateTree());
+	
+	if (linkStatePropertyObject->hasProperty(Identifiers::ConnectState))
+	{
+		linkStateTree.setProperty(Identifiers::ConnectState, linkStatePropertyObject->getProperty(Identifiers::ConnectState), nullptr);
+	}
+
+	if (linkStatePropertyObject->hasProperty(Identifiers::DuplexState))
+	{
+		linkStateTree.setProperty(Identifiers::DuplexState, linkStatePropertyObject->getProperty(Identifiers::DuplexState), nullptr);
+	}
+
+	if (linkStatePropertyObject->hasProperty(Identifiers::TransmitSpeed))
+	{
+		linkStateTree.setProperty(Identifiers::TransmitSpeed, linkStatePropertyObject->getProperty(Identifiers::TransmitSpeed), nullptr);
+	}
+
+	if (linkStatePropertyObject->hasProperty(Identifiers::ReceiveSpeed))
+	{
+		linkStateTree.setProperty(Identifiers::ReceiveSpeed, linkStatePropertyObject->getProperty(Identifiers::ReceiveSpeed), nullptr);
+	}
+
+	if (linkStatePropertyObject->hasProperty(Identifiers::AutoNegotiation))
+	{
+		linkStateTree.setProperty(Identifiers::AutoNegotiation, linkStatePropertyObject->getProperty(Identifiers::AutoNegotiation), nullptr);
+	}
+
+	if (linkStatePropertyObject->hasProperty(Identifiers::EthernetMode))
+	{
+		linkStateTree.setProperty(Identifiers::EthernetMode, linkStatePropertyObject->getProperty(Identifiers::EthernetMode), nullptr);
+	}
+}
+
+void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workbenchSettingsPropertyObject )
+{
+	ScopedValueSetter<bool> setter(hostCurrentlyChangingProperty, true);
+	ScopedLock locker(settings->lock);
+	
+	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
+
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::StaticPTPRole))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, workbenchSettingsPropertyObject->getProperty(Identifiers::StaticPTPRole), nullptr);
+	}
+
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendFollowupTLV))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPSendFollowupTLV, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendFollowupTLV), nullptr);
+	}
+	
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendAnnounce))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPSendAnnounce, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendAnnounce), nullptr);
+	}
+	
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendSignalingFlag))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPSendSignalingFlag, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendSignalingFlag), nullptr);
+	}
+	
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPDelayRequestIntervalMsec))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequestIntervalMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPDelayRequestIntervalMsec), nullptr);
+	}
+	
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TalkerTimestampOffsetMsec))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::TalkerTimestampOffsetMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::TalkerTimestampOffsetMsec), nullptr);
+	}
+	
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::ListenerTimestampOffsetMsec))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::ListenerTimestampOffsetMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::ListenerTimestampOffsetMsec), nullptr);
+	}
+	
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TimestampTolerancePercent))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::TimestampTolerancePercent, workbenchSettingsPropertyObject->getProperty(Identifiers::TimestampTolerancePercent), nullptr);
+	}
+}
+
+Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const parameter )
+{
+	DynamicObject messageObject;
+	DynamicObject::Ptr commandObject(new DynamicObject);
+	DynamicObject::Ptr settingsObject(new DynamicObject);
+
+	settingsObject->setProperty(ID, parameter);
+	commandObject->setProperty(Identifiers::WorkbenchSettings, var(settingsObject));
+	messageObject.setProperty(Identifiers::SetCommand, var(commandObject));
+	messageObject.setProperty(Identifiers::Sequence, commandSequence++);
+
+	return sendJSONToSocket(messageObject);
+}
+
+void WorkbenchClient::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
+{
+	if (hostCurrentlyChangingProperty) // this only works because callbacksOnMessageThread is true in the InterprocessConnection c-tor
+		return;
+
+	if (treeWhosePropertyHasChanged.getType() == Identifiers::WorkbenchSettings)
+	{
+		setSettingsProperty(property, treeWhosePropertyHasChanged.getProperty(property));
+		return;
+	}
+}
+
+void WorkbenchClient::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
+{
+}
+
+void WorkbenchClient::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+{
+}
+
+void WorkbenchClient::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+{
+}
+
+void WorkbenchClient::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged )
+{
+}
+
+

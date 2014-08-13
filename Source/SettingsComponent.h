@@ -23,7 +23,7 @@ public:
 };
 
 class LabelPropertyComponent;
-class SettingsComponent : public Component, public ChangeListener
+class SettingsComponent : public Component
 {
 public:
 	SettingsComponent(ValueTree tree_, WorkbenchClient * client_);
@@ -33,11 +33,9 @@ public:
 protected:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsComponent);
 
-	virtual void changeListenerCallback( ChangeBroadcaster* source );
-
 	virtual void paint( Graphics& g );
 
-	virtual void visibilityChanged();
+	void initialize();
 
 	enum 
 	{
@@ -46,20 +44,26 @@ protected:
 		CONFIG_BMCA,
 		CONFIG_DELAY_REQUESTS_DISABLED = -1,
 		MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS = 125,
-		MAX_DELAY_REQUEST_INTERVAL_MILLISECONDS = 4000
+		MAX_DELAY_REQUEST_INTERVAL_MILLISECONDS = 4000,
 
+		ANALYZERBR_USB_ETHERNET_MODE_STANDARD,
+		ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER,
+		ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE
 
 	};
-#if WORKBENCH && ANALYZERBR_USB
 	LabelPropertyComponent * spdifLockComp;
-#endif
 
 	SliderWithUnitsPropertyComponent *talkerTimestampOffsetPropertyComponent;
-	SliderWithUnitsPropertyComponent *renderStreamsDisplayComponent;
-	SliderWithUnitsPropertyComponent *captureStreamsDisplayComponent;
+	SliderWithUnitsPropertyComponent *listenerTimestampOffsetPropertyComponent;
+	SliderWithUnitsPropertyComponent *timestampTolerancePercentPropertyComponent;
+	
+	ChoicePropertyComponent *staticPTPRoleChoicePropertyComponent;
+	ChoicePropertyComponent *delayRequestIntervalMsecPropertyComponent;
+	ChoicePropertyComponent *analyzerBREthernetMode;
 
-	ChoicePropertyComponent *streamClassPropertyComponent;
+	BooleanPropertyComponent *followupTLVPropertyComponent;
 	BooleanPropertyComponent *announceBooleanPropertyComponent;
+	BooleanPropertyComponent *sendSignalingFlagPropertyComponent;
 	PropertyPanel panel;
 	ValueTree tree;
 	WorkbenchClient* client;
@@ -87,13 +91,4 @@ protected:
 		void positionComboBoxText( ComboBox& box, Label& label );
 		void drawComboBox( Graphics& g, int width, int height, bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box );
 	}lf;
-
-	class HelpTextDisplay : public MouseListener
-	{
-	public:
-		HelpTextDisplay();
-		virtual void mouseMove( const MouseEvent& event );
-		Component* currentHelpComponent;
-		Label label;
-	} helpTextDisplay;
 };

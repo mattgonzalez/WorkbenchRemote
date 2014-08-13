@@ -18,6 +18,8 @@ public:
 	IPAddress getAddress();
 	ValueTree getStreamsTree();
 	ValueTree getAudioDevicesTree();
+	ValueTree getLinkStateTree();
+	ValueTree getWorkbenchSettingsTree();
 
 	ScopedPointer<PropertiesFile> propfile;
 
@@ -26,7 +28,6 @@ public:
 	void initializeAudioDevice(int deviceIndex, int numInputs,int numOutputs);
 	void removeStreams();
 	void removeAudioDevices();
-
 	CriticalSection lock;
 
 protected:

@@ -9,7 +9,8 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	talkerStreamsTab(nullptr),
 	listenerStreamsTab(nullptr),
 	settingsTab(nullptr),
-	tree(settings_->getStreamsTree())
+	tree(settings_->getStreamsTree()),
+	statusBar(settings_)
 {
 	addAndMakeVisible (portEditor = new TextEditor ("portEditor"));
 	portEditor->setMultiLine (false);
@@ -54,6 +55,14 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	getListenersButton->addListener (this);
 	getListenersButton->setEnabled(false);
 
+	addAndMakeVisible (getLinkStateButton = new TextButton ("Get LinkState Info"));
+	getLinkStateButton->addListener (this);
+	getLinkStateButton->setEnabled(false);
+
+	addAndMakeVisible(getSettingsButton = new TextButton("Get Settings Info"));
+	getSettingsButton->addListener(this);
+	getSettingsButton->setEnabled(false);
+
 	addAndMakeVisible(&sendReadout);
 	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
 	sendReadout.setReadOnly(true);
@@ -72,6 +81,8 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	client->changeBroadcaster.addChangeListener(this);
 	tree.addListener(this);
 
+	addAndMakeVisible(&statusBar);
+	
 	setSize (600, 400);
 }
 
@@ -87,6 +98,8 @@ WorkbenchComponent::~WorkbenchComponent()
 	infoButton = nullptr;
 	getTalkersButton = nullptr;
 	getListenersButton = nullptr;
+	getLinkStateButton = nullptr;
+	getSettingsButton = nullptr;
 	client->lastMessageSent.removeListener(this);
 	client->lastMessageReceived.removeListener(this);
 	client->changeBroadcaster.removeChangeListener(this);
@@ -113,6 +126,9 @@ void WorkbenchComponent::resized()
 	r = getTalkersButton->getBounds();
 	getListenersButton->setBounds(r.translated(r.getWidth() + 5, 0));
 	r = getListenersButton->getBounds();
+	getLinkStateButton->setBounds(r.translated(r.getWidth() + 5, 0));
+	r = getLinkStateButton->getBounds();
+	getSettingsButton->setBounds(r.translated(r.getWidth() + 5, 0));
 
 	y = infoButton->getBottom() + 10;
 	int w = getWidth()/2 - 20;
@@ -121,6 +137,8 @@ void WorkbenchComponent::resized()
 	h /= 2;
 	sendReadout.setBounds(tabs->getRight() + 20, y, w, h);
 	receiveReadout.setBounds(sendReadout.getBounds().translated(0, h));
+
+	statusBar.setBounds(tabs->getRight(), connectButton->getY(), 320, 25);
 }
 
 void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
@@ -140,6 +158,18 @@ void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
 	if (buttonThatWasClicked == getListenersButton)
 	{
 		client->getListenerStreams();
+		return;
+	}
+
+	if (buttonThatWasClicked == getLinkStateButton)
+	{
+		client->getLinkState();
+		return;
+	}
+
+	if (buttonThatWasClicked == getSettingsButton)
+	{
+		client->getSettings();
 		return;
 	}
 
@@ -247,6 +277,8 @@ void WorkbenchComponent::enableControls()
 	connectButton->setEnabled(!connected);
 	disconnectButton->setEnabled(connected);
 	infoButton->setEnabled(connected);
+	getLinkStateButton->setEnabled(connected);
+	getSettingsButton->setEnabled(connected);
 
 	ScopedLock locker(settings->lock);
 	ValueTree talkersTree(settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
@@ -296,12 +328,12 @@ void WorkbenchComponent::updateStreamControls()
 		listenerStreamsTab = nullptr;
 	}
 
-	if (talkerStreamsTab != nullptr || listenerStreamsTab != nullptr)
+	if (getSettingsButton->isEnabled() && settingsTab == nullptr)
 	{
-		settingsTab = new SettingsComponent(tree, client);
+		settingsTab = new SettingsComponent(tree.getChildWithName(Identifiers::WorkbenchSettings), client);
 		tabs->addTab("Settings", Colours::white, settingsTab, true, SETTINGS_TAB);
 	}
-	else
+	if (!getSettingsButton->isEnabled())
 	{
 		tabs->removeTab(SETTINGS_TAB);
 		settingsTab = nullptr;
@@ -327,4 +359,135 @@ void WorkbenchComponent::valueChanged( Value& value )
 
 	var json(JSON::parse(value.toString()));
 	editor->setText(JSON::toString(json));
+}
+
+WorkbenchComponent::StatusBarComponent::StatusBarComponent(Settings* settings_):
+	settings(settings_)
+{
+	linkStateLabel.setJustificationType(Justification::centred);
+	addAndMakeVisible(&linkStateLabel);
+	updateLinkStateLabel();
+	tree = settings->getLinkStateTree();
+	tree.addListener(this);
+}
+
+WorkbenchComponent::StatusBarComponent::~StatusBarComponent()
+{
+	tree.removeListener(this);
+}
+
+void WorkbenchComponent::StatusBarComponent::paint( Graphics &g )
+{
+	g.fillAll(Colours::white);
+	g.setColour(Colours::lightgrey);
+	g.drawRect(getLocalBounds());
+}
+
+void WorkbenchComponent::StatusBarComponent::resized()
+{
+	int w = 300;
+	int x = getWidth() - w - 10;
+	int h = getHeight() - 6;
+	linkStateLabel.setBounds(x, 3, w, h);
+}
+
+void WorkbenchComponent::StatusBarComponent::updateLinkStateLabel()
+{
+	String text(toString());
+	linkStateLabel.setText(text, dontSendNotification);
+
+	Colour outlineColor(Colours::lightgrey);
+	Colour backgroundColor(Colours::white);
+
+	linkStateLabel.setColour(Label::outlineColourId,outlineColor);
+	linkStateLabel.setColour(Label::backgroundColourId,backgroundColor);
+}
+
+void WorkbenchComponent::StatusBarComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
+{
+	if (treeWhosePropertyHasChanged.getType() == Identifiers::LinkState)
+	{
+		updateLinkStateLabel();
+		return;
+	}
+}
+
+void WorkbenchComponent::StatusBarComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded )
+{
+}
+
+void WorkbenchComponent::StatusBarComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+{
+}
+
+void WorkbenchComponent::StatusBarComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+{
+}
+
+void WorkbenchComponent::StatusBarComponent::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged )
+{
+}
+
+String WorkbenchComponent::StatusBarComponent::toString()
+{
+	String text("AVB link ");
+	ScopedLock locker(settings->lock);
+	ValueTree linkStateTree(settings->getLinkStateTree());
+
+	if (linkStateTree.isValid() == false)
+	{
+		return String::empty;
+	}
+
+	switch ((int)linkStateTree.getProperty(Identifiers::EthernetMode))
+	{
+	case ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER :
+		text = "BR master link ";
+		break;
+
+	case ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE :
+		text = "BR slave link ";
+		break;
+	}
+
+	if (false == (int)linkStateTree.getProperty(Identifiers::ConnectState))
+	{
+		return text + "down";
+	}
+
+	text += "up: ";
+	text += speedToString((int64)linkStateTree.getProperty(Identifiers::TransmitSpeed));
+
+	switch ((int)linkStateTree.getProperty(Identifiers::DuplexState))
+	{
+	case MediaDuplexStateHalf:
+		text += " half duplex";
+		break;
+
+	case MediaDuplexStateFull:
+		text += " full duplex";
+		break;
+
+	default:
+		text += " unknown duplex state";
+		break;
+	}
+
+	if ((int)linkStateTree.getProperty(Identifiers::AutoNegotiation) != 0)
+	{
+		text += " auto";
+	}
+
+	return text;
+}
+
+String WorkbenchComponent::StatusBarComponent::speedToString(uint64 speed) const
+{
+	if (0 == speed)
+		return "(no link)";
+
+	if (speed >= 1000000000)
+		return String(speed/1000000000) + "Gbps";
+
+	return String(speed/1000000) + "Mbps";
 }
