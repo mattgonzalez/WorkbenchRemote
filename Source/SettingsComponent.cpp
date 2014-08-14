@@ -137,8 +137,6 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 			0.1,
 			1.0,
 			"%");
-		slider->getProperties().set(Identifiers::HelpText,
-			"\nDifferences between AVTP timestamps beyond this tolerance will be logged as errors.");
 		faultLoggingControls.add(slider);
 		timestampTolerancePercentPropertyComponent = slider;
 
@@ -146,7 +144,6 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 	}
 
 	{
-
 		StringArray choices;
 		Array<var> temp;
 		Array<PropertyComponent *> analyzerControls;
@@ -157,14 +154,13 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		temp.add(ANALYZERBR_USB_ETHERNET_MODE_STANDARD);
 		temp.add(ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER);
 		temp.add(ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE);
-
 		
-
-		analyzerBREthernetMode = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::EthernetMode, nullptr),
+		broadRReachSupportedValue.referTo(tree.getPropertyAsValue(Identifiers::BroadRReachSupported, nullptr));
+		analyzerBREthernetMode = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::BroadRReachMode, nullptr),
 			"Ethernet mode",
 			choices,
 			temp);
-		analyzerBREthernetMode->setEnabled(false);
+		analyzerBREthernetMode->setEnabled((bool)broadRReachSupportedValue.getValue());
 		analyzerControls.add(analyzerBREthernetMode);
 
 		spdifLockComp = new LabelPropertyComponent("S/PDIF input lock");
@@ -206,9 +202,15 @@ void SettingsComponent::initialize()
 	talkerTimestampOffsetPropertyComponent->setValue(0);
 	listenerTimestampOffsetPropertyComponent->setValue(0);
 	timestampTolerancePercentPropertyComponent->setValue(0);
-	tree.setProperty(Identifiers::StaticPTPRole, CONFIG_FOLLOWER, nullptr);
-	tree.setProperty(Identifiers::PTPDelayRequestIntervalMsec, MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS, nullptr);
-	tree.setProperty(Identifiers::EthernetMode, ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+	broadRReachSupportedValue.addListener(this);
+}
+
+void SettingsComponent::valueChanged( Value& value )
+{
+	if (value.refersToSameSourceAs(broadRReachSupportedValue))
+	{
+		analyzerBREthernetMode->setEnabled((bool)broadRReachSupportedValue.getValue());
+	}
 }
 
 void SettingsComponent::LocalLookAndFeel::drawPropertyPanelSectionHeader( Graphics&g, const String& name, bool isOpen, int width, int height )

@@ -75,6 +75,8 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 						IDENTIFIER( AutoNegotiation				) \
 						IDENTIFIER( EthernetMode				) \
 						IDENTIFIER( WorkbenchSettings			) \
+						IDENTIFIER( BroadRReachMode				) \
+						IDENTIFIER( BroadRReachSupported		) \
 
 namespace Identifiers
 {

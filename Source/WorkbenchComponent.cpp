@@ -439,15 +439,13 @@ String WorkbenchComponent::StatusBarComponent::toString()
 		return String::empty;
 	}
 
-	switch ((int)linkStateTree.getProperty(Identifiers::EthernetMode))
+	if ((int)linkStateTree.getProperty(Identifiers::BroadRReachMode) == ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER)
 	{
-	case ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER :
 		text = "BR master link ";
-		break;
-
-	case ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE :
+	}
+	if ((int)linkStateTree.getProperty(Identifiers::BroadRReachMode) == ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE)
+	{
 		text = "BR slave link ";
-		break;
 	}
 
 	if (false == (int)linkStateTree.getProperty(Identifiers::ConnectState))
@@ -458,19 +456,17 @@ String WorkbenchComponent::StatusBarComponent::toString()
 	text += "up: ";
 	text += speedToString((int64)linkStateTree.getProperty(Identifiers::TransmitSpeed));
 
-	switch ((int)linkStateTree.getProperty(Identifiers::DuplexState))
+	if (linkStateTree.getProperty(Identifiers::DuplexState) == "half duplex")
 	{
-	case MediaDuplexStateHalf:
 		text += " half duplex";
-		break;
-
-	case MediaDuplexStateFull:
+	}
+	if (linkStateTree.getProperty(Identifiers::DuplexState) == "full duplex")
+	{
 		text += " full duplex";
-		break;
-
-	default:
+	}
+	if (linkStateTree.getProperty(Identifiers::DuplexState) == "unknown duplex state")
+	{
 		text += " unknown duplex state";
-		break;
 	}
 
 	if ((int)linkStateTree.getProperty(Identifiers::AutoNegotiation) != 0)

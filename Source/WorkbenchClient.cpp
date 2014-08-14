@@ -11,6 +11,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "Settings.h"
 #include "Identifiers.h"
 #include "Strings.h"
+#include "SettingsComponent.h"
 
 /*
 
@@ -169,6 +170,8 @@ Result WorkbenchClient::setStreamProperty( Identifier const type, int const stre
 
 void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage)
 {
+	ScopedValueSetter<bool> setter(hostCurrentlyChangingProperty, true);
+
 	var propertyVar(messageObject->getProperty(expectedMessage));
 	DynamicObject * propertyObject = propertyVar.getDynamicObject();
 
@@ -246,6 +249,12 @@ void WorkbenchClient::handleGetSystemResponse( DynamicObject * systemPropertyObj
 {
 	int numTalkers = systemPropertyObject->getProperty(Identifiers::Talkers);
 	int numListeners = systemPropertyObject->getProperty(Identifiers::Listeners);
+	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
+
+	if (systemPropertyObject->hasProperty(Identifiers::BroadRReachSupported))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::BroadRReachSupported, systemPropertyObject->getProperty(Identifiers::BroadRReachSupported), nullptr);
+	}
 
 	settings->initializeStreams(numTalkers, numListeners);
 }
@@ -375,22 +384,55 @@ void WorkbenchClient::handleGetLinkStateResponse( DynamicObject* linkStateProper
 		linkStateTree.setProperty(Identifiers::AutoNegotiation, linkStatePropertyObject->getProperty(Identifiers::AutoNegotiation), nullptr);
 	}
 
+	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
+
 	if (linkStatePropertyObject->hasProperty(Identifiers::EthernetMode))
 	{
+		if (linkStatePropertyObject->getProperty(Identifiers::EthernetMode).toString() == "Ethernet")
+		{
+			linkStateTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+		}
 		linkStateTree.setProperty(Identifiers::EthernetMode, linkStatePropertyObject->getProperty(Identifiers::EthernetMode), nullptr);
+	}
+
+	if (linkStatePropertyObject->hasProperty(Identifiers::BroadRReachMode))
+	{
+		var property(linkStatePropertyObject->getProperty(Identifiers::BroadRReachMode));
+		if (property.toString() == "Master")
+		{
+			linkStateTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+		}
+		if (property.toString() == "Slave")
+		{
+			linkStateTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+		}
 	}
 }
 
 void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workbenchSettingsPropertyObject )
 {
-	ScopedValueSetter<bool> setter(hostCurrentlyChangingProperty, true);
 	ScopedLock locker(settings->lock);
-	
+
 	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
 
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::StaticPTPRole))
 	{
-		workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, workbenchSettingsPropertyObject->getProperty(Identifiers::StaticPTPRole), nullptr);
+		var property(workbenchSettingsPropertyObject->getProperty(Identifiers::StaticPTPRole));
+		if (property.toString() == "PTP Follower")
+		{
+			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
+		}
+		if (property.toString() == "PTP Grandmaster")
+		{
+			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_GRANDMASTER, nullptr);
+		}
+		if (property.toString() == "Use best master clock algorithm (BMCA)")
+		{
+			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_BMCA, nullptr);
+		}
 	}
 
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendFollowupTLV))
@@ -427,6 +469,27 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 	{
 		workbenchSettingsTree.setProperty(Identifiers::TimestampTolerancePercent, workbenchSettingsPropertyObject->getProperty(Identifiers::TimestampTolerancePercent), nullptr);
 	}
+
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::EthernetMode))
+	{
+		if (workbenchSettingsPropertyObject->getProperty(Identifiers::EthernetMode).toString() == "Ethernet")
+		{
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+		}
+	}
+
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::BroadRReachMode))
+	{
+		var property(workbenchSettingsPropertyObject->getProperty(Identifiers::BroadRReachMode));
+		if (property.toString() == "Master")
+		{
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+		}
+		if (property.toString() == "Slave")
+		{
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+		}
+	}
 }
 
 Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const parameter )
@@ -434,6 +497,71 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 	DynamicObject messageObject;
 	DynamicObject::Ptr commandObject(new DynamicObject);
 	DynamicObject::Ptr settingsObject(new DynamicObject);
+
+	if (ID == Identifiers::StaticPTPRole)
+	{
+		switch ((int)parameter)
+		{
+		case SettingsComponent::CONFIG_FOLLOWER:
+			{
+				settingsObject->setProperty(Identifiers::StaticPTPRole, "PTP Follower");
+				break;
+			}
+		case SettingsComponent::CONFIG_GRANDMASTER:
+			{
+				settingsObject->setProperty(Identifiers::StaticPTPRole, "PTP Grandmaster");
+				break;
+			}
+		case SettingsComponent::CONFIG_BMCA:
+			{
+				settingsObject->setProperty(Identifiers::StaticPTPRole, "Use best master clock algorithm (BMCA)");
+				break;
+			}
+		}
+	}
+
+	if (ID == Identifiers::PTPSendFollowupTLV && parameter)
+	{
+		settingsObject->setProperty(Identifiers::PTPSendFollowupTLV, true);
+	}
+	else
+	{
+		settingsObject->setProperty(Identifiers::PTPSendFollowupTLV, false);
+	}
+
+	if ( ID == Identifiers::PTPSendAnnounce && parameter)
+	{
+		settingsObject->setProperty(Identifiers::PTPSendAnnounce, true);
+	}
+	else
+	{
+		settingsObject->setProperty(Identifiers::PTPSendAnnounce, false);
+	}
+
+	if (ID == Identifiers::PTPSendSignalingFlag && parameter)
+	{
+		settingsObject->setProperty(Identifiers::PTPSendSignalingFlag, true);
+	}
+	else
+	{
+		settingsObject->setProperty(Identifiers::PTPSendSignalingFlag, false);
+	}
+
+	if (ID == Identifiers::BroadRReachMode)
+	{
+		if ((int)parameter == SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD)
+		{
+			settingsObject->setProperty(Identifiers::EthernetMode, "Ethernet");
+		}
+		if ((int)parameter == SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER)
+		{
+			settingsObject->setProperty(Identifiers::BroadRReachMode, "Master");
+		}
+		if ((int)parameter == SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE)
+		{
+			settingsObject->setProperty(Identifiers::BroadRReachMode, "Slave");
+		}
+	}
 
 	settingsObject->setProperty(ID, parameter);
 	commandObject->setProperty(Identifiers::WorkbenchSettings, var(settingsObject));
@@ -470,5 +598,3 @@ void WorkbenchClient::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChil
 void WorkbenchClient::valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged )
 {
 }
-
-

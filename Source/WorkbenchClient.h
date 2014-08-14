@@ -52,6 +52,5 @@ protected:
 	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
 
 	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
-
 };
 

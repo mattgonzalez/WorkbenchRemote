@@ -9,6 +9,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "base.h"
 #include "Settings.h"
 #include "Identifiers.h"
+#include "SettingsComponent.h"
 
 const String addressKey ("Address");
 const String portKey ("Port");
@@ -97,6 +98,10 @@ Settings::Settings() :
 
 	{
 		ValueTree workbenchSettingsTree(Identifiers::WorkbenchSettings);
+		workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
+		workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequestIntervalMsec, SettingsComponent::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS, nullptr);
+		workbenchSettingsTree.setProperty(Identifiers::EthernetMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+		workbenchSettingsTree.setProperty(Identifiers::BroadRReachSupported, false, nullptr);
 		getStreamsTree().addChild(workbenchSettingsTree, -1, nullptr);
 	}
 }
@@ -152,12 +157,6 @@ void Settings::initializeStreams( int numTalkers,int numListeners )
 		child.setProperty(Identifiers::Index, i, nullptr);
 		listenersTree.addChild(child,-1,nullptr);
 	}
-
-	ValueTree linkStateTree(workbenchTree.getChildWithName(Identifiers::LinkState));
-	linkStateTree.removeAllProperties(nullptr);
-
-	ValueTree workbenchSettingsTree(workbenchTree.getChildWithName(Identifiers::WorkbenchSettings));
-	workbenchSettingsTree.removeAllProperties(nullptr);
 }
 
 void Settings::removeStreams()
@@ -171,8 +170,6 @@ void Settings::removeStreams()
 	workbenchTree.removeChild(listenersTree,nullptr);
 	ValueTree linkStateTree(workbenchTree.getChildWithName(Identifiers::LinkState));
 	linkStateTree.removeAllProperties(nullptr);
-	ValueTree workbenchSettingsTree(workbenchTree.getChildWithName(Identifiers::WorkbenchSettings));
-	workbenchSettingsTree.removeAllProperties(nullptr);
 }
 
 void Settings::initializeAudioDevices( int numAudioDevices )

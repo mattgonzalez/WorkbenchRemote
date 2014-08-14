@@ -23,20 +23,13 @@ public:
 };
 
 class LabelPropertyComponent;
-class SettingsComponent : public Component
+class SettingsComponent : public Component, public Value::Listener
 {
 public:
 	SettingsComponent(ValueTree tree_, WorkbenchClient * client_);
 	~SettingsComponent();
 	void resized();
-
-protected:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsComponent);
-
-	virtual void paint( Graphics& g );
-
-	void initialize();
-
+	
 	enum 
 	{
 		CONFIG_FOLLOWER = 100,
@@ -46,11 +39,22 @@ protected:
 		MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS = 125,
 		MAX_DELAY_REQUEST_INTERVAL_MILLISECONDS = 4000,
 
-		ANALYZERBR_USB_ETHERNET_MODE_STANDARD,
+		ANALYZERBR_USB_ETHERNET_MODE_STANDARD = 1,
 		ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER,
 		ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE
 
 	};
+protected:
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SettingsComponent);
+
+	virtual void paint( Graphics& g );
+
+	void initialize();
+
+	virtual void valueChanged( Value& value );
+
+	Value broadRReachSupportedValue;
+
 	LabelPropertyComponent * spdifLockComp;
 
 	SliderWithUnitsPropertyComponent *talkerTimestampOffsetPropertyComponent;
