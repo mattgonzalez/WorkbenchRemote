@@ -520,32 +520,21 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 		}
 	}
 
-	if (ID == Identifiers::PTPSendFollowupTLV && parameter)
+	if (ID == Identifiers::PTPSendFollowupTLV)
 	{
-		settingsObject->setProperty(Identifiers::PTPSendFollowupTLV, true);
-	}
-	else
-	{
-		settingsObject->setProperty(Identifiers::PTPSendFollowupTLV, false);
+		settingsObject->setProperty(Identifiers::PTPSendFollowupTLV, (bool)parameter);
 	}
 
-	if ( ID == Identifiers::PTPSendAnnounce && parameter)
+	if ( ID == Identifiers::PTPSendAnnounce)
 	{
-		settingsObject->setProperty(Identifiers::PTPSendAnnounce, true);
+		settingsObject->setProperty(Identifiers::PTPSendAnnounce, (bool)parameter);
 	}
-	else
+	
+	if (ID == Identifiers::PTPSendSignalingFlag)
 	{
-		settingsObject->setProperty(Identifiers::PTPSendAnnounce, false);
+		settingsObject->setProperty(Identifiers::PTPSendSignalingFlag, (bool)parameter);
 	}
-
-	if (ID == Identifiers::PTPSendSignalingFlag && parameter)
-	{
-		settingsObject->setProperty(Identifiers::PTPSendSignalingFlag, true);
-	}
-	else
-	{
-		settingsObject->setProperty(Identifiers::PTPSendSignalingFlag, false);
-	}
+	
 
 	if (ID == Identifiers::BroadRReachMode)
 	{
@@ -574,8 +563,12 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 void WorkbenchClient::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
 	if (hostCurrentlyChangingProperty) // this only works because callbacksOnMessageThread is true in the InterprocessConnection c-tor
+	{
+		DBG("hostCurrentlychangingProperty is set.");
 		return;
+	}
 
+	DBG("hostCurrentlychangingProperty is not set.");
 	if (treeWhosePropertyHasChanged.getType() == Identifiers::WorkbenchSettings)
 	{
 		setSettingsProperty(property, treeWhosePropertyHasChanged.getProperty(property));
