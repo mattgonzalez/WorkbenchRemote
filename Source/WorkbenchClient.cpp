@@ -496,6 +496,8 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 	DynamicObject::Ptr commandObject(new DynamicObject);
 	DynamicObject::Ptr settingsObject(new DynamicObject);
 
+	settingsObject->setProperty(ID, parameter);
+
 	if (ID == Identifiers::StaticPTPRole)
 	{
 		switch ((int)parameter)
@@ -550,7 +552,6 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 		}
 	}
 
-	settingsObject->setProperty(ID, parameter);
 	commandObject->setProperty(Identifiers::WorkbenchSettings, var(settingsObject));
 	messageObject.setProperty(Identifiers::SetCommand, var(commandObject));
 	messageObject.setProperty(Identifiers::Sequence, commandSequence++);
