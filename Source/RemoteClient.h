@@ -26,7 +26,6 @@ public:
 protected:
 	CriticalSection lock;
 	int commandSequence;
-	bool hostCurrentlyChangingProperty;
 
 	Settings* settings;
 

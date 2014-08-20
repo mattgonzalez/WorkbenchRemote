@@ -170,8 +170,6 @@ Result WorkbenchClient::setStreamProperty( Identifier const type, int const stre
 
 void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage)
 {
-	ScopedValueSetter<bool> setter(hostCurrentlyChangingProperty, true);
-
 	var propertyVar(messageObject->getProperty(expectedMessage));
 	DynamicObject * propertyObject = propertyVar.getDynamicObject();
 
@@ -455,14 +453,14 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 		workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequestIntervalMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPDelayRequestIntervalMsec), nullptr);
 	}
 	
-	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TalkerTimestampOffsetMsec))
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TalkerPresentationOffsetMsec))
 	{
-		workbenchSettingsTree.setProperty(Identifiers::TalkerTimestampOffsetMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::TalkerTimestampOffsetMsec), nullptr);
+		workbenchSettingsTree.setProperty(Identifiers::TalkerPresentationOffsetMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::TalkerPresentationOffsetMsec), nullptr);
 	}
 	
-	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::ListenerTimestampOffsetMsec))
+	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::ListenerPresentationOffsetMsec))
 	{
-		workbenchSettingsTree.setProperty(Identifiers::ListenerTimestampOffsetMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::ListenerTimestampOffsetMsec), nullptr);
+		workbenchSettingsTree.setProperty(Identifiers::ListenerPresentationOffsetMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::ListenerPresentationOffsetMsec), nullptr);
 	}
 	
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TimestampTolerancePercent))
@@ -562,13 +560,6 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 
 void WorkbenchClient::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
-	if (hostCurrentlyChangingProperty) // this only works because callbacksOnMessageThread is true in the InterprocessConnection c-tor
-	{
-		DBG("hostCurrentlychangingProperty is set.");
-		return;
-	}
-
-	DBG("hostCurrentlychangingProperty is not set.");
 	if (treeWhosePropertyHasChanged.getType() == Identifiers::WorkbenchSettings)
 	{
 		setSettingsProperty(property, treeWhosePropertyHasChanged.getProperty(property));

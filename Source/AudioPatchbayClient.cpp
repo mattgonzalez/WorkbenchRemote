@@ -101,8 +101,6 @@ void AudioPatchbayClient::connectionLost()
 
 void AudioPatchbayClient::handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage)
 {
-	ScopedValueSetter<bool> setter(hostCurrentlyChangingProperty, true);
-
 	var propertyVar(messageObject->getProperty(expectedMessage));
 	DynamicObject * propertyObject = propertyVar.getDynamicObject();
 
@@ -438,9 +436,6 @@ void AudioPatchbayClient::handleSetResponse( DynamicObject * messageObject )
 void AudioPatchbayClient::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
 	DBG("AudioPatchbayClient::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
-
-	if (hostCurrentlyChangingProperty) // this only works because callbacksOnMessageThread is true in the InterprocessConnection c-tor
-		return;
 
 	if (Identifiers::DeviceName == property || Identifiers::SampleRate == property)
 	{
