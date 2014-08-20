@@ -142,6 +142,9 @@ void Settings::initializeStreams( int numTalkers,int numListeners )
 	{
 		ValueTree child("Talker" + String(i));
 		child.setProperty(Identifiers::Index, i, nullptr);
+        child.setProperty(Identifiers::StreamID, 0, nullptr);
+        child.setProperty(Identifiers::DestinationAddress, 0, nullptr);
+        child.setProperty(Identifiers::ChannelCount, 1, nullptr);
 		ValueTree fault(child.getOrCreateChildWithName(Identifiers::FaultInjection, nullptr));
 		ValueTree corrupt(fault.getOrCreateChildWithName(Identifiers::CorruptPackets, nullptr));
 		corrupt.setProperty(Identifiers::Enabled, false, nullptr);
@@ -155,6 +158,9 @@ void Settings::initializeStreams( int numTalkers,int numListeners )
 	{
 		ValueTree child("Listener" + String(i));
 		child.setProperty(Identifiers::Index, i, nullptr);
+		child.setProperty(Identifiers::StreamID, 0, nullptr);
+		child.setProperty(Identifiers::DestinationAddress, 0, nullptr);
+		child.setProperty(Identifiers::ChannelCount, 1, nullptr);
 		listenersTree.addChild(child,-1,nullptr);
 	}
 }

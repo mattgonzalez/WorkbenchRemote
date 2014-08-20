@@ -54,7 +54,7 @@ RemoteClient::RemoteClient( Settings* settings_, uint32 magicNumber ) :
 	InterprocessConnection( true, magicNumber),
 	settings(settings_),
 	commandSequence(0),
-	hostCurrentlyChangingProperty(false)
+    remoteCacheTree(settings_->getStreamsTree().createCopy())
 {
 
 }

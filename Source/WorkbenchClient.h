@@ -52,5 +52,6 @@ protected:
 	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
 
 	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
+	void clonePropertyChange( ValueTree& mainTree, Identifier id, var property, int index = -1 );
 };
 

@@ -103,7 +103,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		SliderWithUnitsPropertyComponent *slider;
 		Array<PropertyComponent *> avtp_controls;
 
-		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::TalkerTimestampOffsetMsec, nullptr),
+		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::TalkerPresentationOffsetMsec, nullptr),
 			"Talker transit time",
 			0, 
 			20, 
@@ -113,7 +113,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		avtp_controls.add(slider);
 		talkerTimestampOffsetPropertyComponent = slider;
 
-		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::ListenerTimestampOffsetMsec, nullptr),
+		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::ListenerPresentationOffsetMsec, nullptr),
 			"Listener timestamp adjust",
 			-20.0, 
 			20.0, 

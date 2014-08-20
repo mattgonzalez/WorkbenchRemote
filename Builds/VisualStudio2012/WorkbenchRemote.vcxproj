@@ -1356,7 +1356,9 @@
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\..\..\..\Users\Matt\AppData\Roaming\EchoAVB\WorkbenchRemote.xml" />
+    <Xml Include="..\..\..\..\..\Users\Matt\AppData\Roaming\EchoAVB\WorkbenchRemote.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
