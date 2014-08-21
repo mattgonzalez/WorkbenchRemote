@@ -7,7 +7,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 */
 #pragma once
 
-#define IDENTIFIER_LIST IDENTIFIER( Name						    ) \
+#define IDENTIFIER_LIST IDENTIFIER( Name		) \
 	IDENTIFIER( StreamID					    ) \
 	IDENTIFIER( DestinationAddress			    ) \
 	IDENTIFIER( ChannelCount				    ) \
@@ -63,7 +63,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 	IDENTIFIER( PTPSendFollowupTLV			    ) \
 	IDENTIFIER( PTPSendAnnounce				    ) \
 	IDENTIFIER( PTPSendSignalingFlag		    ) \
-	IDENTIFIER( PTPDelayRequestIntervalMsec     ) \
+	IDENTIFIER( PTPDelayRequest				    ) \
 	IDENTIFIER( TalkerPresentationOffsetMsec   	) \
 	IDENTIFIER( ListenerPresentationOffsetMsec	) \
 	IDENTIFIER( TimestampTolerancePercent	    ) \
@@ -77,6 +77,8 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 	IDENTIFIER( WorkbenchSettings			    ) \
 	IDENTIFIER( BroadRReachMode				    ) \
 	IDENTIFIER( BroadRReachSupported		    ) \
+	IDENTIFIER( SpdifLocked						) \
+	IDENTIFIER( Milliseconds					) \
 
 namespace Identifiers
 {

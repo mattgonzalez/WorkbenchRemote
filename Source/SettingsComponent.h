@@ -54,6 +54,7 @@ protected:
 	virtual void valueChanged( Value& value );
 
 	Value broadRReachSupportedValue;
+	Value SpdifLockedValue;
 
 	LabelPropertyComponent * spdifLockComp;
 

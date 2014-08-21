@@ -99,7 +99,7 @@ Settings::Settings() :
 	{
 		ValueTree workbenchSettingsTree(Identifiers::WorkbenchSettings);
 		workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
-		workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequestIntervalMsec, SettingsComponent::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS, nullptr);
+		workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, SettingsComponent::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS, nullptr);
 		workbenchSettingsTree.setProperty(Identifiers::EthernetMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
 		workbenchSettingsTree.setProperty(Identifiers::BroadRReachSupported, false, nullptr);
 		getStreamsTree().addChild(workbenchSettingsTree, -1, nullptr);

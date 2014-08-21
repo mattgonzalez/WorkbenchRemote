@@ -87,7 +87,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 			choices.add("Every " + String(msec) + " milliseconds");
 			temp.add(msec);
 		}
-		delayRequestIntervalMsecPropertyComponent = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::PTPDelayRequestIntervalMsec, nullptr),
+		delayRequestIntervalMsecPropertyComponent = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::PTPDelayRequest, nullptr),
 			"Send PDelay_Req",
 			choices,
 			temp);
@@ -104,7 +104,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		Array<PropertyComponent *> avtp_controls;
 
 		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::TalkerPresentationOffsetMsec, nullptr),
-			"Talker transit time",
+			"Talker presentation offset",
 			0, 
 			20, 
 			0.1,
@@ -114,10 +114,10 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		talkerTimestampOffsetPropertyComponent = slider;
 
 		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::ListenerPresentationOffsetMsec, nullptr),
-			"Listener timestamp adjust",
-			-20.0, 
-			20.0, 
-			0.01,
+			"Listener presentation offset",
+			0, 
+			20, 
+			0.1,
 			1.0,
 			msec);	
 		avtp_controls.add(slider);
@@ -162,9 +162,11 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 			temp);
 		analyzerBREthernetMode->setEnabled((bool)broadRReachSupportedValue.getValue());
 		analyzerControls.add(analyzerBREthernetMode);
+		SpdifLockedValue.referTo(tree.getPropertyAsValue(Identifiers::SpdifLocked, nullptr));
 
 		spdifLockComp = new LabelPropertyComponent("S/PDIF input lock");
 		spdifLockComp->setEnabled(false);
+		spdifLockComp->label.setText(SpdifLockedValue.getValue(), dontSendNotification);
 		analyzerControls.add(spdifLockComp);
 
 		panel.addSection("Analyzer BR", analyzerControls);
@@ -203,6 +205,7 @@ void SettingsComponent::initialize()
 	listenerTimestampOffsetPropertyComponent->setValue(0);
 	timestampTolerancePercentPropertyComponent->setValue(0);
 	broadRReachSupportedValue.addListener(this);
+	SpdifLockedValue.addListener(this);
 }
 
 void SettingsComponent::valueChanged( Value& value )
@@ -210,6 +213,11 @@ void SettingsComponent::valueChanged( Value& value )
 	if (value.refersToSameSourceAs(broadRReachSupportedValue))
 	{
 		analyzerBREthernetMode->setEnabled((bool)broadRReachSupportedValue.getValue());
+	}
+
+	if (value.refersToSameSourceAs(SpdifLockedValue))
+	{
+		spdifLockComp->label.setText(SpdifLockedValue.getValue(), dontSendNotification);
 	}
 }
 
