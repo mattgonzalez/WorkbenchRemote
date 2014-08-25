@@ -244,30 +244,28 @@ void AudioPatchbayClient::handleGetCurrentAudioDevicesResponse( var currentPrope
 		}
 
 		ValueTree deviceTree(tree.getChild(deviceIndex));
-		var inputVar(d->getProperty(Identifiers::Input));
-		var outputVar(d->getProperty(Identifiers::Output));
-		int numInputs = inputVar.size();
-		int numOutputs = outputVar.size();
+		int numInputs(d->getProperty(Identifiers::Input));
+		int numOutputs(d->getProperty(Identifiers::Output));
 
 		if (d->hasProperty(Identifiers::DeviceName))
 		{
 			deviceTree.setProperty(Identifiers::DeviceName, d->getProperty(Identifiers::DeviceName), nullptr);
 		}
-		if (d->hasProperty(Identifiers::DeviceName)
-			&& inputVar.isArray()
-			&& outputVar.isArray())
+// 		if (d->hasProperty(Identifiers::DeviceName)
+// 			&& inputVar.isArray()
+// 			|| outputVar.isArray())
 		{
 			settings->initializeAudioDevice(deviceIndex,
 				numInputs,
 				numOutputs);
 		}
-		else
+		//else
 		{
-			continue;
+			//continue;
 		}
 
-		handleGetInputsResponse(inputVar);
-		handleGetOutputsResponse(outputVar);
+		//handleGetInputsResponse(numInputs);
+		//handleGetOutputsResponse(numOutputs);
 
 		if (d->hasProperty(Identifiers::SampleRates))
 		{
