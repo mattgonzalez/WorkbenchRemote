@@ -36,6 +36,7 @@ protected:
 	void handleGetInputsResponse(var inputsPropertyVar);
 	void handleGetOutputsResponse(var outputsPropertyVar);
 	void handleGetChannelsResponse(var channelsPropertyVar, Identifier const type);
+	void handleCurrentAudioDevicesChangeNotification( var currentPropertyVar );
 	Result setDeviceProperty(int const deviceIndex, Identifier const identifier, var const value);
 	Result sendChannelProperty(ValueTree channelTree);
 
@@ -44,6 +45,5 @@ protected:
 	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved );
 	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved );
 	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
-
 	ValueTree audioDevicesTree;
 };
