@@ -1137,6 +1137,9 @@
     <ClCompile Include="..\..\Source\Strings.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SettingsComponent.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\AddressUtilities.h">
@@ -2223,6 +2226,9 @@
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Strings.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SettingsComponent.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
   </ItemGroup>
