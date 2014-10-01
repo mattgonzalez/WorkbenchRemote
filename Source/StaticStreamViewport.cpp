@@ -14,7 +14,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "WorkbenchClient.h"
 
 static const int MARGIN = 10;
-static const int STREAM_H = 100;
+static const int STREAM_H = 120;
 static const int STREAM_GAP = 5;
 static const int MIN_CHANNELS = 1;
 static const int MAX_CHANNELS = 8;
@@ -47,7 +47,6 @@ void StaticStreamViewport::streamActiveStateChanged()
 	content->streamActiveStateChanged();
 }
 
-
 StaticStreamViewport::ContentComponent::ContentComponent(ValueTree tree_,CriticalSection &lock_, WorkbenchClient* client_) :
 tree(tree_),
 lock(lock_)
@@ -73,7 +72,6 @@ void StaticStreamViewport::ContentComponent::resized()
 	positionStaticStreamComponents();
 }
 
-
 void StaticStreamViewport::ContentComponent::paint( Graphics& g )
 {
 	g.fillAll(Colours::darkgrey);
@@ -81,7 +79,6 @@ void StaticStreamViewport::ContentComponent::paint( Graphics& g )
 	g.setColour(Colour::greyLevel(0.5f));
 	g.drawRect(getLocalBounds(), 5);
 }
-
 
 void StaticStreamViewport::ContentComponent::positionStaticStreamComponents()
 {
@@ -107,8 +104,6 @@ void StaticStreamViewport::ContentComponent::streamActiveStateChanged()
 	}
 }
 
-
-
 StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tree_, CriticalSection &lock_,ContentComponent* parent_, WorkbenchClient* client_ ):
 	tree(tree_),
 	lock(lock_),
@@ -118,6 +113,7 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	stopButton("Stop"),
 	faultButton("Inject"),
 	clockReferenceButton("CRS"),
+	autoStartButton("Auto-start"),
 	streamIdLabel(String::empty,"Stream ID"),
 	multicastAddressLabel(String::empty,"Multicast address"),
 	channelsLabel(String::empty,"Channels")
@@ -139,19 +135,22 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	addAndMakeVisible(&channelsLabel);
 	addAndMakeVisible(&startButton);
 	addAndMakeVisible(&stopButton);
+	addAndMakeVisible(&autoStartButton);
 
 	if(tree.getParent().getType() == Identifiers::Talkers)
 	{
 		addAndMakeVisible(&faultButton);
 		faultButton.addListener(this);
 	}
-	
+
 	addAndMakeVisible(&clockReferenceButton);
 	startButton.setEnabled(false);
 	stopButton.setEnabled(false);
 
 	clockReferenceButton.setToggleState(AVTP_SUBTYPE_CRS == (int)tree_[Identifiers::Subtype], dontSendNotification);
 	setChannelsVisible();
+
+	autoStartButton.setToggleState((bool)tree_[Identifiers::AutoStart], dontSendNotification);
 
 	addAndMakeVisible(&metricsButton);
 
@@ -169,13 +168,13 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	startButton.addListener(this);
 	stopButton.addListener(this);
 	clockReferenceButton.addListener(this);
+	autoStartButton.addListener(this);
 
 	tree.addListener(this);
 }
 
 StaticStreamViewport::StaticStreamComponent::~StaticStreamComponent()
 {
-	
 }
 
 void StaticStreamViewport::StaticStreamComponent::paint( Graphics& g )
@@ -199,22 +198,25 @@ void StaticStreamViewport::StaticStreamComponent::paint( Graphics& g )
 
 void StaticStreamViewport::StaticStreamComponent::resized()
 {
+	float const editorY = 0.45f;
+	float const buttonY = /*JUCE_LIVE_CONSTANT*/(0.68f);
+
 	streamIdEditor.setSize(120,20);
-	streamIdEditor.setCentreRelative(0.18f,0.5f);
+	streamIdEditor.setCentreRelative(0.18f,editorY);
 	{
 		juce::Rectangle<int> r(streamIdEditor.getBounds());
 		streamIdLabel.setBounds(r.translated(0, -r.getHeight()));
 	}
 
 	multicastAddressEditor.setSize(120,20);
-	multicastAddressEditor.setCentreRelative(0.54f,0.5f);
+	multicastAddressEditor.setCentreRelative(0.54f,editorY);
 	{
 		juce::Rectangle<int> r(multicastAddressEditor.getBounds());
 		multicastAddressLabel.setBounds(r.translated(0, -r.getHeight()));
 	}
 
 	channelsCombo.setSize(60,20);
-	channelsCombo.setCentreRelative(0.82f,0.5f);
+	channelsCombo.setCentreRelative(0.82f,editorY);
 	{
 		juce::Rectangle<int> r(channelsCombo.getBounds());
 		channelsLabel.setBounds(r.translated(0, -r.getHeight()));
@@ -224,16 +226,19 @@ void StaticStreamViewport::StaticStreamComponent::resized()
 	stopButton.setSize(40,25);
 	faultButton.setSize(80, 25);
 	clockReferenceButton.setSize(60,25);
-	startButton.setCentreRelative(0.4f,0.8f);
-	stopButton.setCentreRelative(0.6f,0.8f);
-	faultButton.setCentreRelative(0.2f,0.8f);
-	clockReferenceButton.setCentreRelative(0.85f,0.8f);
+	startButton.setCentreRelative(0.4f,buttonY);
+	stopButton.setCentreRelative(0.6f,buttonY);
+	faultButton.setCentreRelative(0.2f,buttonY);
+	clockReferenceButton.setCentreRelative(0.85f,buttonY);
+
+	autoStartButton.setSize(78,25);
+	autoStartButton.setCentreRelative(0.5f, 0.9f);
 
 	if (tree.getParent().getType() == Identifiers::Talkers)
 	{
-		streamIdEditor.setCentreRelative(0.3f,0.5f);
-		multicastAddressEditor.setCentreRelative(0.6f,0.5f);
-		channelsCombo.setCentreRelative(0.85f,0.5f);
+		streamIdEditor.setCentreRelative(0.3f,editorY);
+		multicastAddressEditor.setCentreRelative(0.6f,editorY);
+		channelsCombo.setCentreRelative(0.85f,editorY);
 		{
 			juce::Rectangle<int> r(streamIdEditor.getBounds());
 			streamIdLabel.setBounds(r.translated(0, -r.getHeight()));
@@ -246,11 +251,11 @@ void StaticStreamViewport::StaticStreamComponent::resized()
 			juce::Rectangle<int> r(channelsCombo.getBounds());
 			channelsLabel.setBounds(r.translated(0, -r.getHeight()));
 		}
-		metricsButton.setCentreRelative(0.1f, 0.5f);
+		metricsButton.setCentreRelative(0.1f, editorY);
 	}
 	else
 	{
-		metricsButton.setCentreRelative(0.9f, 0.5f);
+		metricsButton.setCentreRelative(0.9f, editorY);
 	}
 }
 
@@ -334,7 +339,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 {
 	ScopedLock locker(lock);
 
-	if (& startButton == button)
+	if (&startButton == button)
 	{
 		tree.setProperty(Identifiers::Active, true, nullptr);
 		client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::Active, true);
@@ -342,7 +347,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 		return;
 	}
 
-	if (& faultButton == button)
+	if (&faultButton == button)
 	{
 		if (tree.getParent().isValid())
 		{
@@ -352,7 +357,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 		return;
 	}
 
-	if (& stopButton == button)
+	if (&stopButton == button)
 	{
 		tree.setProperty(Identifiers::Active, false, nullptr);
 		client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::Active, false);
@@ -360,16 +365,22 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 		return;
 	}
 
-	if (& clockReferenceButton == button)
+	if (&clockReferenceButton == button)
 	{
 		int subtype = (button->getToggleState()) ? AVTP_SUBTYPE_CRS : AVTP_SUBTYPE_AUDIO;
 		tree.setProperty(Identifiers::Subtype, subtype, nullptr);
 		client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::Subtype, subtype);
 		return;
 	}
+
+	if (&autoStartButton == button)
+	{
+		bool autostart = button->getToggleState();
+		tree.setProperty(Identifiers::AutoStart, autostart, nullptr);
+		client->setStreamProperty(tree.getParent().getType(), tree[Identifiers::Index], Identifiers::AutoStart, autostart);\
+		return;
+	}
 }
-
-
 
 void StaticStreamViewport::StaticStreamComponent::enableControls( bool started )
 {
@@ -383,7 +394,6 @@ void StaticStreamViewport::StaticStreamComponent::enableControls( bool started )
 
 	repaint();
 }
-
 
 void StaticStreamViewport::StaticStreamComponent::setChannelsVisible()
 {
@@ -438,6 +448,12 @@ void StaticStreamViewport::StaticStreamComponent::valueTreePropertyChanged( Valu
 	if (Identifiers::Active == property)
 	{
 		enableControls(treeWhosePropertyHasChanged.getProperty(property));
+		return;
+	}
+
+	if (Identifiers::AutoStart == property)
+	{
+		autoStartButton.setToggleState(treeWhosePropertyHasChanged[property],dontSendNotification);
 		return;
 	}
 }
@@ -501,4 +517,3 @@ void StaticStreamViewport::StaticStreamComponent::MetricsButton::paintButton( Gr
 	g.drawImageAt(metrics,0,0);
 #endif
 }
-

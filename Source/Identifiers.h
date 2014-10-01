@@ -37,6 +37,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 	IDENTIFIER( Status						    ) \
 	IDENTIFIER( Index						    ) \
 	IDENTIFIER( Active						    ) \
+	IDENTIFIER( AutoStart						) \
 	IDENTIFIER( PropertyChanged				    ) \
 	IDENTIFIER( EventNotification			    ) \
 	IDENTIFIER( Input						    ) \

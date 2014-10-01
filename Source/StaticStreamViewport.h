@@ -40,9 +40,9 @@ protected:
 
 	ScopedPointer<ContentComponent> content;
 
-	class StaticStreamComponent : 
-		public Component, 
-		public TextEditor::Listener, 
+	class StaticStreamComponent :
+		public Component,
+		public TextEditor::Listener,
 		public ComboBox::Listener,
 		public Button::Listener,
 		public ValueTree::Listener
@@ -63,6 +63,7 @@ protected:
 		TextButton stopButton;
 		TextButton faultButton;
 		ToggleButton clockReferenceButton;
+		ToggleButton autoStartButton;
 
 		Label streamIdLabel;
 		Label multicastAddressLabel;

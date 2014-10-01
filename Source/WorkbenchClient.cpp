@@ -322,6 +322,11 @@ void WorkbenchClient::handleGetStreamsResponse( var streamsPropertyVar, ValueTre
 			streamTree.setProperty(Identifiers::Active, d->getProperty(Identifiers::Active), nullptr);
 		}
 
+		if (d->hasProperty(Identifiers::AutoStart))
+		{
+			streamTree.setProperty(Identifiers::AutoStart, d->getProperty(Identifiers::AutoStart), nullptr);
+		}
+
 		if (d->hasProperty(Identifiers::FaultInjection) && Identifiers::Talkers == streamsTree.getType())
 		{
 			ValueTree faultTree(streamTree.getChildWithName(Identifiers::FaultInjection));
@@ -356,7 +361,7 @@ void WorkbenchClient::handleGetLinkStateResponse( DynamicObject* linkStateProper
 	ScopedLock locker(settings->lock);
 
 	ValueTree linkStateTree(settings->getLinkStateTree());
-	
+
 	if (linkStatePropertyObject->hasProperty(Identifiers::ConnectState))
 	{
 		linkStateTree.setProperty(Identifiers::ConnectState, linkStatePropertyObject->getProperty(Identifiers::ConnectState), nullptr);
@@ -437,17 +442,17 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 	{
 		workbenchSettingsTree.setProperty(Identifiers::PTPSendFollowupTLV, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendFollowupTLV), nullptr);
 	}
-	
+
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendAnnounce))
 	{
 		workbenchSettingsTree.setProperty(Identifiers::PTPSendAnnounce, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendAnnounce), nullptr);
 	}
-	
+
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendSignalingFlag))
 	{
 		workbenchSettingsTree.setProperty(Identifiers::PTPSendSignalingFlag, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendSignalingFlag), nullptr);
 	}
-	
+
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPDelayRequest))
 	{
 		var delayRequestVar(workbenchSettingsPropertyObject->getProperty(Identifiers::PTPDelayRequest));
@@ -469,17 +474,17 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 			}
 		}
 	}
-	
+
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TalkerPresentationOffsetMsec))
 	{
 		workbenchSettingsTree.setProperty(Identifiers::TalkerPresentationOffsetMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::TalkerPresentationOffsetMsec), nullptr);
 	}
-	
+
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::ListenerPresentationOffsetMsec))
 	{
 		workbenchSettingsTree.setProperty(Identifiers::ListenerPresentationOffsetMsec, workbenchSettingsPropertyObject->getProperty(Identifiers::ListenerPresentationOffsetMsec), nullptr);
 	}
-	
+
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TimestampTolerancePercent))
 	{
 		workbenchSettingsTree.setProperty(Identifiers::TimestampTolerancePercent, workbenchSettingsPropertyObject->getProperty(Identifiers::TimestampTolerancePercent), nullptr);
@@ -563,12 +568,12 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 	{
 		settingsObject->setProperty(Identifiers::PTPSendAnnounce, (bool)parameter);
 	}
-	
+
 	if (ID == Identifiers::PTPSendSignalingFlag)
 	{
 		settingsObject->setProperty(Identifiers::PTPSendSignalingFlag, (bool)parameter);
 	}
-	
+
 	if (ID == Identifiers::PTPDelayRequest)
 	{
 		DynamicObject::Ptr delayRequestObject(new DynamicObject);
