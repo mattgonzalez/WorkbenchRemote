@@ -1140,6 +1140,9 @@
     <ClCompile Include="..\..\Source\SettingsComponent.cpp">
       <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\PTPComponent.cpp">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\AddressUtilities.h">
@@ -2229,6 +2232,9 @@
       <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SettingsComponent.h">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPComponent.h">
       <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
     </ClInclude>
   </ItemGroup>

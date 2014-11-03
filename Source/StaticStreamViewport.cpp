@@ -234,29 +234,29 @@ void StaticStreamViewport::StaticStreamComponent::resized()
 	autoStartButton.setSize(78,25);
 	autoStartButton.setCentreRelative(0.5f, 0.9f);
 
-	if (tree.getParent().getType() == Identifiers::Talkers)
-	{
-		streamIdEditor.setCentreRelative(0.3f,editorY);
-		multicastAddressEditor.setCentreRelative(0.6f,editorY);
-		channelsCombo.setCentreRelative(0.85f,editorY);
-		{
-			juce::Rectangle<int> r(streamIdEditor.getBounds());
-			streamIdLabel.setBounds(r.translated(0, -r.getHeight()));
-		}
-		{
-			juce::Rectangle<int> r(multicastAddressEditor.getBounds());
-			multicastAddressLabel.setBounds(r.translated(0, -r.getHeight()));
-		}
-		{
-			juce::Rectangle<int> r(channelsCombo.getBounds());
-			channelsLabel.setBounds(r.translated(0, -r.getHeight()));
-		}
-		metricsButton.setCentreRelative(0.1f, editorY);
-	}
-	else
-	{
-		metricsButton.setCentreRelative(0.9f, editorY);
-	}
+// 	if (tree.getParent().getType() == Identifiers::Talkers)
+// 	{
+// 		streamIdEditor.setCentreRelative(0.3f,editorY);
+// 		multicastAddressEditor.setCentreRelative(0.6f,editorY);
+// 		channelsCombo.setCentreRelative(0.85f,editorY);
+// 		{
+// 			juce::Rectangle<int> r(streamIdEditor.getBounds());
+// 			streamIdLabel.setBounds(r.translated(0, -r.getHeight()));
+// 		}
+// 		{
+// 			juce::Rectangle<int> r(multicastAddressEditor.getBounds());
+// 			multicastAddressLabel.setBounds(r.translated(0, -r.getHeight()));
+// 		}
+// 		{
+// 			juce::Rectangle<int> r(channelsCombo.getBounds());
+// 			channelsLabel.setBounds(r.translated(0, -r.getHeight()));
+// 		}
+// 		metricsButton.setCentreRelative(0.1f, editorY);
+// 	}
+// 	else
+// 	{
+// 		metricsButton.setCentreRelative(0.9f, editorY);
+// 	}
 }
 
 void StaticStreamViewport::StaticStreamComponent::textEditorTextChanged( TextEditor&)

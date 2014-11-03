@@ -9,6 +9,7 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	talkerStreamsTab(nullptr),
 	listenerStreamsTab(nullptr),
 	settingsTab(nullptr),
+	ptpTab(nullptr),
 	tree(settings_->getStreamsTree()),
 	statusBar(settings_)
 {
@@ -328,6 +329,17 @@ void WorkbenchComponent::updateStreamControls()
 		listenerStreamsTab = nullptr;
 	}
 
+	if (getSettingsButton->isEnabled() && ptpTab == nullptr)
+	{
+		ptpTab = new PTPComponent(tree, client);
+		tabs->addTab("PTP", Colours::white, ptpTab, true, PTP_TAB);
+	}
+	if (!getSettingsButton->isEnabled())
+	{
+		tabs->removeTab(PTP_TAB);
+		ptpTab = nullptr;
+	}
+
 	if (getSettingsButton->isEnabled() && settingsTab == nullptr)
 	{
 		settingsTab = new SettingsComponent(tree.getChildWithName(Identifiers::WorkbenchSettings), client);
@@ -338,6 +350,8 @@ void WorkbenchComponent::updateStreamControls()
 		tabs->removeTab(SETTINGS_TAB);
 		settingsTab = nullptr;
 	}
+
+	
 }
 
 void WorkbenchComponent::valueChanged( Value& value )

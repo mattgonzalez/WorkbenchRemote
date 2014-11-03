@@ -9,6 +9,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "base.h"
 #include "MainComponent.h"
 #include "Settings.h"
+#include "LookAndFeel.h"
 
 
 //==============================================================================
