@@ -16,6 +16,6 @@ namespace Strings
 	extern const String slave("Slave");
 	extern const String locked("Locked");
 	extern const String unlocked("Unlocked");
-
+	extern const String decChars("0123456789");
 };
 

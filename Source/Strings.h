@@ -15,6 +15,6 @@ namespace Strings
 	extern const String slave;
 	extern const String locked;
 	extern const String unlocked;
-
+	extern const String decChars;
 };
 

@@ -217,6 +217,9 @@
     <Filter Include="WorkbenchRemote\Source\Workbench\GUI">
       <UniqueIdentifier>{c706f0ac-b7a8-4b65-980d-fd913be27547}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WorkbenchRemote\Source\Workbench\GUI\PTP">
+      <UniqueIdentifier>{5e94badb-8bb7-4216-9fdf-3d4bcc309f7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\AddressUtilities.cpp">
@@ -1140,8 +1143,11 @@
     <ClCompile Include="..\..\Source\SettingsComponent.cpp">
       <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\GrandmasterComponent.cpp">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\PTPComponent.cpp">
-      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+      <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2234,8 +2240,11 @@
     <ClInclude Include="..\..\Source\SettingsComponent.h">
       <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\GrandmasterComponent.h">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\PTPComponent.h">
-      <Filter>WorkbenchRemote\Source\Workbench\GUI</Filter>
+      <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

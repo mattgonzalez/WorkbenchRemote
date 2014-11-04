@@ -7,6 +7,7 @@ This source code is considered to be proprietary and confidential information.
 ==============================================================================
 */
 #pragma once
+#include "GrandmasterComponent.h"
 
 class WorkbenchClient;
 
@@ -41,9 +42,10 @@ protected:
 
 	ValueTree workbenchSettingsTree;
 
-	PropertyPanel panel;
-
 	Label ptpRoleLabel;
+
+	GrandmasterComponent grandmasterComponent;
+
 	ComboBox ptpRoleComboBox;
 
 	WorkbenchClient *client;

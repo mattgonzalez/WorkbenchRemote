@@ -142,6 +142,7 @@
     <ClCompile Include="..\..\Source\FaultInjection.cpp" />
     <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp" />
     <ClCompile Include="..\..\Source\GearButton.cpp" />
+    <ClCompile Include="..\..\Source\GrandmasterComponent.cpp" />
     <ClCompile Include="..\..\Source\Identifiers.cpp" />
     <ClCompile Include="..\..\Source\InputChannel.cpp" />
     <ClCompile Include="..\..\Source\InputChannelComponent.cpp" />
@@ -993,6 +994,7 @@
     <ClInclude Include="..\..\Source\FaultInjection.h" />
     <ClInclude Include="..\..\Source\FaultInjectionCallout.h" />
     <ClInclude Include="..\..\Source\GearButton.h" />
+    <ClInclude Include="..\..\Source\GrandmasterComponent.h" />
     <ClInclude Include="..\..\Source\Identifiers.h" />
     <ClInclude Include="..\..\Source\InputChannel.h" />
     <ClInclude Include="..\..\Source\InputChannelComponent.h" />
