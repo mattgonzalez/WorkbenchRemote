@@ -6,7 +6,8 @@
 PTPComponent::PTPComponent(ValueTree tree, WorkbenchClient * client_):
 client(client_),
 workbenchSettingsTree(tree.getChildWithName(Identifiers::WorkbenchSettings)),
-ptpRoleLabel(String::empty, "PTP Role")
+ptpRoleLabel(String::empty, "PTP Role"),
+delayMeasurementComponent(workbenchSettingsTree)
 {
 	addAndMakeVisible(&ptpRoleLabel);
 	ptpRoleComboBox.addItem("PTP Follower", CONFIG_FOLLOWER);
@@ -16,7 +17,10 @@ ptpRoleLabel(String::empty, "PTP Role")
 	addAndMakeVisible(&ptpRoleComboBox);
 	ptpRoleLabel.attachToComponent(&ptpRoleComboBox, true);
 
-	addAndMakeVisible(&grandmasterComponent);
+	addChildComponent(&grandmasterComponent);
+	addAndMakeVisible(&followerComponent);
+	addAndMakeVisible(&delayMeasurementComponent);
+
 	workbenchSettingsTree.addListener(this);
 	}
 
@@ -29,13 +33,32 @@ void PTPComponent::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChang
 {
 	if (property == Identifiers::StaticPTPRole)
 	{
-		if ((int)treeWhosePropertyHasChanged.getProperty(property) == CONFIG_GRANDMASTER)
+		switch ((int)treeWhosePropertyHasChanged.getProperty(property))
+		{
+		case CONFIG_GRANDMASTER:
 		{
 			grandmasterComponent.setVisible(true);
+			followerComponent.setVisible(false);
+			return;
 		}
-		else
+		case CONFIG_FOLLOWER:
 		{
 			grandmasterComponent.setVisible(false);
+			followerComponent.setVisible(true);
+			return;
+		}
+		case CONFIG_BMCA:
+		{
+			grandmasterComponent.setVisible(false);
+			followerComponent.setVisible(false);
+			return;
+		}
+		default:
+		{
+			grandmasterComponent.setVisible(false);
+			followerComponent.setVisible(false);
+			return;
+		}
 		}
 	}
 }
@@ -61,4 +84,6 @@ void PTPComponent::resized()
 	juce::Rectangle<int>r(70, 20, 200, 20);
 	ptpRoleComboBox.setBounds(r);
 	grandmasterComponent.setBounds(10, 50, 350, 150);
+	followerComponent.setBounds(10, 50, 350, 150);
+	delayMeasurementComponent.setBounds(10, 200, 350, 150);
 }

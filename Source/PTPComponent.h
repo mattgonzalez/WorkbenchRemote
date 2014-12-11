@@ -8,6 +8,8 @@ This source code is considered to be proprietary and confidential information.
 */
 #pragma once
 #include "GrandmasterComponent.h"
+#include "FollowerComponent.h"
+#include "DelayMeasurementComponent.h"
 
 class WorkbenchClient;
 
@@ -45,6 +47,8 @@ protected:
 	Label ptpRoleLabel;
 
 	GrandmasterComponent grandmasterComponent;
+	FollowerComponent followerComponent;
+	DelayMeasurementComponent delayMeasurementComponent;
 
 	ComboBox ptpRoleComboBox;
 

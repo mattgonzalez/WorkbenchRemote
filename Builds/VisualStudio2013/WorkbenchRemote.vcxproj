@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="PaceFixLogs" AssemblyFile="$(PACE_FUSION_HOME)PaceFusionUi2013.dll" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -136,11 +137,13 @@
     <ClCompile Include="..\..\Source\Channel.cpp" />
     <ClCompile Include="..\..\Source\ChannelComponent.cpp" />
     <ClCompile Include="..\..\Source\ChannelViewport.cpp" />
+    <ClCompile Include="..\..\Source\DelayMeasurementComponent.cpp" />
     <ClCompile Include="..\..\Source\DeviceCallout.cpp" />
     <ClCompile Include="..\..\Source\DeviceComponent.cpp" />
     <ClCompile Include="..\..\Source\DeviceHeaderComponent.cpp" />
     <ClCompile Include="..\..\Source\FaultInjection.cpp" />
     <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp" />
+    <ClCompile Include="..\..\Source\FollowerComponent.cpp" />
     <ClCompile Include="..\..\Source\GearButton.cpp" />
     <ClCompile Include="..\..\Source\GrandmasterComponent.cpp" />
     <ClCompile Include="..\..\Source\Identifiers.cpp" />
@@ -988,11 +991,13 @@
     <ClInclude Include="..\..\Source\Channel.h" />
     <ClInclude Include="..\..\Source\ChannelComponent.h" />
     <ClInclude Include="..\..\Source\ChannelViewport.h" />
+    <ClInclude Include="..\..\Source\DelayMeasurementComponent.h" />
     <ClInclude Include="..\..\Source\DeviceCallout.h" />
     <ClInclude Include="..\..\Source\DeviceComponent.h" />
     <ClInclude Include="..\..\Source\DeviceHeaderComponent.h" />
     <ClInclude Include="..\..\Source\FaultInjection.h" />
     <ClInclude Include="..\..\Source\FaultInjectionCallout.h" />
+    <ClInclude Include="..\..\Source\FollowerComponent.h" />
     <ClInclude Include="..\..\Source\GearButton.h" />
     <ClInclude Include="..\..\Source\GrandmasterComponent.h" />
     <ClInclude Include="..\..\Source\Identifiers.h" />
@@ -1363,4 +1368,7 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
+  <Target Name="AfterBuild">
+    <PaceFixLogs Condition="Exists('$(PACE_FUSION_HOME)PaceFusionUi2013.dll')" LogDirectory="$(IntDir)" />
+  </Target>
 </Project>
