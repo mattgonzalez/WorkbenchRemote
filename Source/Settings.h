@@ -16,7 +16,7 @@ public:
 
 	void storeAddress(IPAddress address);
 	IPAddress getAddress();
-	ValueTree getStreamsTree();
+	ValueTree getWorkbenchTree();
 	ValueTree getAudioDevicesTree();
 	ValueTree getLinkStateTree();
 	ValueTree getWorkbenchSettingsTree();

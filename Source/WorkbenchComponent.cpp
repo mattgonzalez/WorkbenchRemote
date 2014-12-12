@@ -10,7 +10,7 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	listenerStreamsTab(nullptr),
 	settingsTab(nullptr),
 	ptpTab(nullptr),
-	tree(settings_->getStreamsTree()),
+	tree(settings_->getWorkbenchTree()),
 	statusBar(settings_)
 {
 	addAndMakeVisible (portEditor = new TextEditor ("portEditor"));
@@ -64,6 +64,10 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	getSettingsButton->addListener(this);
 	getSettingsButton->setEnabled(false);
 
+	addAndMakeVisible(getPTPInfoButton = new TextButton("Get PTP Info"));
+	getPTPInfoButton->addListener(this);
+	getPTPInfoButton->setEnabled(false);
+
 	addAndMakeVisible(&sendReadout);
 	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
 	sendReadout.setReadOnly(true);
@@ -101,6 +105,7 @@ WorkbenchComponent::~WorkbenchComponent()
 	getListenersButton = nullptr;
 	getLinkStateButton = nullptr;
 	getSettingsButton = nullptr;
+	getPTPInfoButton = nullptr;
 	client->lastMessageSent.removeListener(this);
 	client->lastMessageReceived.removeListener(this);
 	client->changeBroadcaster.removeChangeListener(this);
@@ -123,6 +128,8 @@ void WorkbenchComponent::resized()
 	int y = portLabel->getBottom() + 10;
 	infoButton->setBounds(20, y, 104, 24);
 	r = infoButton->getBounds();
+	getPTPInfoButton->setBounds(r.translated(r.getWidth() + 5, 0));
+	r = getPTPInfoButton->getBounds();
 	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
 	r = getTalkersButton->getBounds();
 	getListenersButton->setBounds(r.translated(r.getWidth() + 5, 0));
@@ -173,6 +180,13 @@ void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
 		client->getSettings();
 		return;
 	}
+
+	if (buttonThatWasClicked == getPTPInfoButton)
+	{
+		client->getPTPInfo();
+		return;
+	}
+
 
 	if (buttonThatWasClicked == connectButton)
 	{
@@ -280,10 +294,11 @@ void WorkbenchComponent::enableControls()
 	infoButton->setEnabled(connected);
 	getLinkStateButton->setEnabled(connected);
 	getSettingsButton->setEnabled(connected);
+	getPTPInfoButton->setEnabled(connected);
 
 	ScopedLock locker(settings->lock);
-	ValueTree talkersTree(settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
-	ValueTree listenersTree(settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
+	ValueTree talkersTree(settings->getWorkbenchTree().getChildWithName(Identifiers::Talkers));
+	ValueTree listenersTree(settings->getWorkbenchTree().getChildWithName(Identifiers::Listeners));
 
 	getTalkersButton->setEnabled(talkersTree.isValid());
 	getListenersButton->setEnabled(listenersTree.isValid());
@@ -299,7 +314,7 @@ void WorkbenchComponent::updateStreamControls()
 {
 	ScopedLock locker(settings->lock);
 
-	ValueTree talkersTree(settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
+	ValueTree talkersTree(settings->getWorkbenchTree().getChildWithName(Identifiers::Talkers));
 	if (talkersTree.getNumChildren() != 0)
 	{
 		if (nullptr == talkerStreamsTab)
@@ -314,7 +329,7 @@ void WorkbenchComponent::updateStreamControls()
 		talkerStreamsTab = nullptr;
 	}
 
-	ValueTree listenersTree(settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
+	ValueTree listenersTree(settings->getWorkbenchTree().getChildWithName(Identifiers::Listeners));
 	if (listenersTree.getNumChildren() != 0)
 	{
 		if (nullptr == listenerStreamsTab)

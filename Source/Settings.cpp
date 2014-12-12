@@ -77,6 +77,9 @@ Settings::Settings() :
 
 	propfile = new PropertiesFile (options);
 
+	//
+	// Workbench default Valuetree 
+	//
 	{
 		ValueTree workbenchTree (Identifiers::Workbench);
 		tree.addChild(workbenchTree,-1,nullptr);
@@ -84,6 +87,9 @@ Settings::Settings() :
 		workbenchTree.setProperty(Identifiers::Port, propfile->getIntValue(key,0xecc0), nullptr);
 	}
 
+	//
+	// Audio Patchbay default Valuetree 
+	//
 	{
 		ValueTree audioDevicesTree (Identifiers::AudioDevices);
 		tree.addChild(audioDevicesTree,-1,nullptr);
@@ -91,25 +97,102 @@ Settings::Settings() :
 		audioDevicesTree.setProperty(Identifiers::Port, propfile->getIntValue(key,0xecc1), nullptr);
 	}
 
+	//
+	// Linkstate default Valuetree 
+	//
 	{
 		ValueTree linkStateTree(Identifiers::LinkState);
-		getStreamsTree().addChild(linkStateTree, -1, nullptr);
+		getWorkbenchTree().addChild(linkStateTree, -1, nullptr);
 	}
 
+	//
+	// Workbench settings default Valuetree 
+	//
 	{
 		ValueTree workbenchSettingsTree(Identifiers::WorkbenchSettings);
 		workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
 		workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, SettingsComponent::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS, nullptr);
 		workbenchSettingsTree.setProperty(Identifiers::EthernetMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
 		workbenchSettingsTree.setProperty(Identifiers::BroadRReachSupported, false, nullptr);
-		getStreamsTree().addChild(workbenchSettingsTree, -1, nullptr);
+		getWorkbenchTree().addChild(workbenchSettingsTree, -1, nullptr);
 	}
+
+	//
+	// PTP info default Valuetree 
+	//
+	{
+		//fixme Commented out so it still compiles; needs to be modified from Workbench version.
+		/*
+		ValueTree ptpInfoTree(Identifiers::PTPInfo);
+		ptpInfoTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
+		
+		ValueTree PTPFaultTree(ptpInfoTree.getOrCreateChildWithName(Identifiers::FaultInjection, nullptr));
+		PTPFaultTree.setProperty(Identifiers::Enabled, false, nullptr);
+		PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleMode, PTPFaultInjection::ONCE, nullptr);
+		PTPFaultTree.setProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle, 0, nullptr);
+		PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleLengthPackets, 1, nullptr);
+		PTPFaultTree.setProperty(Identifiers::PTPNumFaultInjectionCycles, 1, nullptr);
+		//
+		// Sync packet corruption
+		//
+		{
+			ValueTree syncFaultTree(PTPFaultTree.getOrCreateChildWithName(Identifiers::Sync, nullptr));
+			ValueTree syncCorruptionTree(syncFaultTree.getOrCreateChildWithName(Identifiers::CorruptPackets, nullptr));
+			for (int fieldIndex = 0; fieldIndex < PacketSync::NUM_FIELDS; ++fieldIndex)
+			{
+				PacketPTP::Field field;
+				field.index = fieldIndex;
+				PacketSync::getField(field, Guid64(int64(0)));
+
+				ValueTree fieldTree(syncCorruptionTree.getOrCreateChildWithName(field.identifier, nullptr));
+				fieldTree.setProperty(Identifiers::Enabled, false, nullptr);
+
+				if (PacketPTP::sourcePortIdentity == fieldIndex)
+				{
+					// do this one later once the adapter MAC address is loaded
+					continue;
+				}
+
+				var v(field.correctValueBigEndian);
+				fieldTree.setProperty(Identifiers::Value, v, nullptr);
+			}
+		}
+
+		//
+		// Followup packet corruption
+		//
+	{
+		ValueTree followupFaultTree(PTPFaultTree.getOrCreateChildWithName(Identifiers::Followup, nullptr));
+		ValueTree followupCorruptionTree(followupFaultTree.getOrCreateChildWithName(Identifiers::CorruptPackets, nullptr));
+		for (int fieldIndex = 0; fieldIndex < PacketFollowUp::NUM_FIELDS; ++fieldIndex)
+		{
+			PacketPTP::Field field;
+			field.index = fieldIndex;
+			PacketFollowUp::getField(field, Guid64(int64(0)));
+
+			ValueTree fieldTree(followupCorruptionTree.getOrCreateChildWithName(field.identifier, nullptr));
+			fieldTree.setProperty(Identifiers::Enabled, false, nullptr);
+
+			if (PacketPTP::sourcePortIdentity == fieldIndex)
+			{
+				// do this one later once the adapter MAC address is loaded
+				continue;
+			}
+
+			var v(field.correctValueBigEndian);
+			fieldTree.setProperty(Identifiers::Value, v, nullptr);
+			*/
+		}
+	}
+	}
+	}
+
 }
 
 Settings::~Settings()
 {
 	{
-		ValueTree workbenchTree (getStreamsTree());
+		ValueTree workbenchTree (getWorkbenchTree());
 		String key (workbenchTree.getType().toString() + portKey);
 		propfile->setValue(key, (int)workbenchTree[Identifiers::Port]);
 	}
@@ -205,16 +288,16 @@ ValueTree Settings::getAudioDevicesTree()
 
 ValueTree Settings::getLinkStateTree()
 {
-	return getStreamsTree().getChildWithName(Identifiers::LinkState);
+	return getWorkbenchTree().getChildWithName(Identifiers::LinkState);
 }
-ValueTree Settings::getStreamsTree()
+ValueTree Settings::getWorkbenchTree()
 {
 	return tree.getChildWithName(Identifiers::Workbench);
 }
 
 ValueTree Settings::getWorkbenchSettingsTree()
 {
-	return getStreamsTree().getChildWithName(Identifiers::WorkbenchSettings);
+	return getWorkbenchTree().getChildWithName(Identifiers::WorkbenchSettings);
 }
 
 static void createChannels (ValueTree &  parent,int const numChannels)

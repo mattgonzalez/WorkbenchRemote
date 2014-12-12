@@ -101,7 +101,7 @@ Result WorkbenchClient::getTalkerStreams()
 {
 	ScopedLock locker(settings->lock);
 	var arrayVar;
-	ValueTree talkersTree(settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
+	ValueTree talkersTree(settings->getWorkbenchTree().getChildWithName(Identifiers::Talkers));
 
 	arrayVar.resize(0); // force the var to become a zero-length array
 
@@ -119,7 +119,7 @@ Result WorkbenchClient::getListenerStreams()
 {
 	ScopedLock locker(settings->lock);
 	var arrayVar;
-	ValueTree listenersTree(settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
+	ValueTree listenersTree(settings->getWorkbenchTree().getChildWithName(Identifiers::Listeners));
 
 	arrayVar.resize(0); // force the var to become a zero-length array
 
@@ -141,6 +141,11 @@ Result WorkbenchClient::getLinkState()
 Result WorkbenchClient::getSettings()
 {
 	return getProperty(Identifiers::WorkbenchSettings, new DynamicObject);
+}
+
+Result WorkbenchClient::getPTPInfo()
+{
+	return getProperty(Identifiers::PTPInfo, new DynamicObject);
 }
 
 Result WorkbenchClient::setStreamProperty( Identifier const type, int const streamIndex, Identifier const &ID, var const parameter )
@@ -202,7 +207,7 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 			DBG("Could not parse get talkers response");
 			return;
 		}
-		handleGetStreamsResponse(talkersPropertyVar, settings->getStreamsTree().getChildWithName(Identifiers::Talkers));
+		handleGetStreamsResponse(talkersPropertyVar, settings->getWorkbenchTree().getChildWithName(Identifiers::Talkers));
 		return;
 	}
 
@@ -214,7 +219,7 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 			DBG("Could not parse get listeners response");
 			return;
 		}
-		handleGetStreamsResponse(listenersPropertyVar, settings->getStreamsTree().getChildWithName(Identifiers::Listeners));
+		handleGetStreamsResponse(listenersPropertyVar, settings->getWorkbenchTree().getChildWithName(Identifiers::Listeners));
 		return;
 	}
 
@@ -239,6 +244,18 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 			DBG("Could not parse get settings response");
 		}
 		handleGetWorkbenchSettingsResponse(workbenchSettingsPropertyObject);
+		return;
+	}
+
+	if (propertyObject->hasProperty(Identifiers::PTPInfo))
+	{
+		var ptpInfoPropertyVar(propertyObject->getProperty(Identifiers::PTPInfo));
+		DynamicObject* ptpInfoPropertyObject = ptpInfoPropertyVar.getDynamicObject();
+		if (nullptr == ptpInfoPropertyObject)
+		{
+			DBG("Could not parse get PTP info response");
+		}
+		handleGetPTPInfoResponse(ptpInfoPropertyObject);
 		return;
 	}
 }
@@ -524,6 +541,15 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 			workbenchSettingsTree.setProperty(Identifiers::SpdifLocked, Strings::unlocked, nullptr);
 		}
 	}
+}
+
+void WorkbenchClient::handleGetPTPInfoResponse(DynamicObject* ptpInfoPropertyObject)
+{
+	ScopedLock locker(settings->lock);
+
+	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
+
+
 }
 
 Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const parameter )

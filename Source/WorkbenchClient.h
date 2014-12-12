@@ -22,6 +22,7 @@ public:
 	Result getListenerStreams();
 	Result getLinkState();
 	Result getSettings();
+	Result getPTPInfo();
 
 	Result setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
 	Result setSettingsProperty(Identifier const & ID, var const parameter);
@@ -33,10 +34,11 @@ protected:
 	virtual void connectionLost();
 	//virtual void messageReceived( const MemoryBlock& message );
 
-	void handleGetResponse( DynamicObject * messageObject );
 	void handleGetSystemResponse( DynamicObject * systemPropertyObject );
 	void handleGetStreamsResponse( var streamsPropertyVar, ValueTree streamsTree );
 	void handleGetWorkbenchSettingsResponse( DynamicObject* workbenchSettingsPropertyObject );
+	void handleGetPTPInfoResponse(DynamicObject* ptpInfoPropertyObject);
+
 	virtual void handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage);
 	void handleFaultNotificationMessage(DynamicObject * messageObject);
 
