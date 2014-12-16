@@ -346,7 +346,7 @@ void WorkbenchComponent::updateStreamControls()
 
 	if (getSettingsButton->isEnabled() && ptpTab == nullptr)
 	{
-		ptpTab = new PTPComponent(tree, client);
+		ptpTab = new PTPViewport(tree, client);
 		tabs->addTab("PTP", Colours::white, ptpTab, true, PTP_TAB);
 	}
 	if (!getSettingsButton->isEnabled())

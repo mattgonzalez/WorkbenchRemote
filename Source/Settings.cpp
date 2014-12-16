@@ -122,19 +122,22 @@ Settings::Settings() :
 	//
 	{
 		//fixme Commented out so it still compiles; needs to be modified from Workbench version.
-		/*
+		
 		ValueTree ptpInfoTree(Identifiers::PTPInfo);
 		ptpInfoTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
 		
 		ValueTree PTPFaultTree(ptpInfoTree.getOrCreateChildWithName(Identifiers::FaultInjection, nullptr));
 		PTPFaultTree.setProperty(Identifiers::Enabled, false, nullptr);
-		PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleMode, PTPFaultInjection::ONCE, nullptr);
+		PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleMode, ONCE, nullptr);
 		PTPFaultTree.setProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle, 0, nullptr);
 		PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleLengthPackets, 1, nullptr);
 		PTPFaultTree.setProperty(Identifiers::PTPNumFaultInjectionCycles, 1, nullptr);
+
+		getWorkbenchTree().addChild(ptpInfoTree, -1, nullptr);
 		//
 		// Sync packet corruption
 		//
+		/*
 		{
 			ValueTree syncFaultTree(PTPFaultTree.getOrCreateChildWithName(Identifiers::Sync, nullptr));
 			ValueTree syncCorruptionTree(syncFaultTree.getOrCreateChildWithName(Identifiers::CorruptPackets, nullptr));
@@ -181,12 +184,13 @@ Settings::Settings() :
 
 			var v(field.correctValueBigEndian);
 			fieldTree.setProperty(Identifiers::Value, v, nullptr);
-			*/
+			
 		}
 	}
+	*/
 	}
-	}
-
+	
+	dumpTree(tree);
 }
 
 Settings::~Settings()

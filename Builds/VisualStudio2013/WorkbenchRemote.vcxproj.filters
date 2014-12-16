@@ -1155,6 +1155,12 @@
     <ClCompile Include="..\..\Source\FollowerComponent.cpp">
       <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\PTPFaultInjectionComponent.cpp">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PTPViewport.cpp">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\AddressUtilities.h">
@@ -2257,6 +2263,15 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\DelayMeasurementComponent.h">
       <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPFaultInjectionComponent.h">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPViewport.h">
+      <Filter>WorkbenchRemote\Source\Workbench\GUI\PTP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPInfo.h">
+      <Filter>WorkbenchRemote\Source\Workbench</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

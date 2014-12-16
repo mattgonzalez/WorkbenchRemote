@@ -5,7 +5,7 @@
 #include "Settings.h"
 #include "StaticStreamViewport.h"
 #include "SettingsComponent.h"
-#include "PTPComponent.h"
+#include "PTPViewport.h"
 
 class MainContentComponent;
 
@@ -76,7 +76,7 @@ private:
 	StaticStreamViewport *talkerStreamsTab;
 	StaticStreamViewport *listenerStreamsTab;
 	SettingsComponent *settingsTab;
-	PTPComponent *ptpTab;
+	PTPViewport *ptpTab;
 
 	class StatusBarComponent : public Component, ValueTree::Listener
 	{

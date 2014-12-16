@@ -32,6 +32,15 @@ public:
 
 protected:
 	ValueTree tree;
+
+	//
+	// Correct values for initializating the PTP Info Valuetree
+	//
+	enum
+	{
+		ONCE = 1,
+
+	};
 };
 
 extern void dumpTree(ValueTree const &tree, const int depth = 0);

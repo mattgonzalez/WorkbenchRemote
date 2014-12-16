@@ -10,6 +10,7 @@ This source code is considered to be proprietary and confidential information.
 #include "GrandmasterComponent.h"
 #include "FollowerComponent.h"
 #include "DelayMeasurementComponent.h"
+#include "PTPFaultInjectionComponent.h"
 
 class WorkbenchClient;
 
@@ -42,6 +43,7 @@ protected:
 
 	virtual void resized();
 
+	ValueTree ptpInfoTree;
 	ValueTree workbenchSettingsTree;
 
 	Label ptpRoleLabel;
@@ -49,6 +51,7 @@ protected:
 	GrandmasterComponent grandmasterComponent;
 	FollowerComponent followerComponent;
 	DelayMeasurementComponent delayMeasurementComponent;
+	PTPFaultInjectionComponent ptpFaultInjectionComponent;
 
 	ComboBox ptpRoleComboBox;
 

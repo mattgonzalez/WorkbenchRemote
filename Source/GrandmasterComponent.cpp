@@ -42,7 +42,6 @@ void GrandmasterComponent::resized()
 	y += h + 10;
 	initialPTPTimeLabel.setBounds(x, y, w, h * 2);
 	int buttonW = 90;
-	int buttonGap = 2;
 	int toggleW = 170;
 	int toggleX = x + w;
 	automaticPTPTimeToggle.setBounds(toggleX, y, toggleW, h);

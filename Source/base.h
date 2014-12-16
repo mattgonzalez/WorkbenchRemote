@@ -22,3 +22,8 @@ const int64 ProtocolMAAP_firstStaticAddress = 0x91E0F000FE00LL;
 const int64 ProtocolMAAP_lastStaticAddress = 0x91E0F000FFFFLL;
 
 #pragma warning(disable:4100)
+
+enum
+{
+	ONE_MILLION = 1000000
+};
