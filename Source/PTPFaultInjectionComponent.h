@@ -39,6 +39,7 @@ protected:
 	ComboBox repeatCombo;
 	Label periodEditorLabel;
 	Label periodLabel;
+	Label packetsLabel;
 
 	Label stopCountLeftLabel;
 	Label stopCountLabel;

@@ -12,6 +12,7 @@ PTPFaultInjectionComponent::PTPFaultInjectionComponent( ValueTree ptpFaultTree_)
 	groupCountLabel(String::empty, ptpFaultTree_.getProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle)),
 	periodEditorLabel(String::empty, ptpFaultTree_.getProperty(Identifiers::PTPFaultInjectionCycleLengthPackets)),
 	stopCountLabel(String::empty, ptpFaultTree_.getProperty(Identifiers::PTPNumFaultInjectionCycles)),
+	packetsLabel(String::empty, "Packet"),
 	packetPairDisplay(faultTree),
 	GroupComponent("PTP Grandmaster Fault Injection", "PTP Grandmaster Fault Injection")
 {
@@ -39,6 +40,8 @@ PTPFaultInjectionComponent::PTPFaultInjectionComponent( ValueTree ptpFaultTree_)
 	periodEditorLabel.setColour(Label::outlineColourId,Colours::lightgrey);
 	periodEditorLabel.addListener(this);
 	addAndMakeVisible(&periodEditorLabel);
+
+	addAndMakeVisible(&packetsLabel);
 
 	stopCountLabel.setEditable(true);
 	stopCountLabel.setJustificationType(Justification::centredRight);
@@ -84,6 +87,7 @@ void PTPFaultInjectionComponent::resized()
 	y += h + 2;
 	repeatCombo.setBounds(x,y,200,h);
 	periodEditorLabel.setBounds(repeatCombo.getRight(),y,50,h);
+	packetsLabel.setBounds(periodEditorLabel.getRight(), y, 50, h);
 
 	y += h + 2;
 	stopCountLeftLabel.setBounds(x,y,200,h);
@@ -91,12 +95,10 @@ void PTPFaultInjectionComponent::resized()
 		y,50,h);
 	stopCountRightLabel.setBounds(stopCountLabel.getRight(),y,200,h);
 
-	y += h + 20;
-	h = getHeight() - y - 40;
-	w = proportionOfWidth(0.45f);
-	
 
-	y = groupCountLabel.getY();
+	y += h;
+
+	packetPairDisplay.setBounds(x, y, 330, h * 3);
 }
 
 void PTPFaultInjectionComponent::comboBoxChanged( ComboBox* comboBoxThatHasChanged )
@@ -195,22 +197,33 @@ void PTPFaultInjectionComponent::valueTreePropertyChanged( ValueTree& treeWhoseP
 	{
 		int count = faultTree[Identifiers::PTPFaultInjectionCycleLengthPackets];
 		String text = String::empty;
+		String packetText = String::empty;
 
 		if ((int)treeWhosePropertyHasChanged[Identifiers::PTPFaultInjectionCycleMode] == PTPInfo::ONCE)
 		{
 			text = "Sync/Follow_Up Pair will be sent";
 			if (count != 1)
+			{
 				text = "Sync/Follow_Up Pairs will be sent";
+			}	
+
+			packetsLabel.setVisible(false);
 		}
 		else
 		{
 			text = "Sync/Follow_Up Pair will";
+			packetText = "Packet";
 			if (count != 1)
+			{
 				text = "Sync/Follow_Up Pairs will";
+				packetText += "s";
+			}
 		}
 		
 		periodEditorLabel.setText(String(count), dontSendNotification);
 		periodLabel.setText(text, dontSendNotification);
+		packetsLabel.setText(packetText, dontSendNotification);
+		packetsLabel.setVisible(true);
 
 		packetPairDisplay.repaint();
 

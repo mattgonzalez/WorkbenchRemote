@@ -22,7 +22,7 @@ ptpFaultInjectionComponent(tree.getChildWithName(Identifiers::PTPInfo))
 	addChildComponent(&grandmasterComponent);
 	addAndMakeVisible(&followerComponent);
 	addAndMakeVisible(&delayMeasurementComponent);
-	addAndMakeVisible(&ptpFaultInjectionComponent);
+	addChildComponent(&ptpFaultInjectionComponent);
 
 	workbenchSettingsTree.addListener(this);
 	}
@@ -42,12 +42,14 @@ void PTPComponent::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChang
 		{
 			grandmasterComponent.setVisible(true);
 			followerComponent.setVisible(false);
+			ptpFaultInjectionComponent.setVisible(true);
 			return;
 		}
 		case CONFIG_FOLLOWER:
 		{
 			grandmasterComponent.setVisible(false);
 			followerComponent.setVisible(true);
+			ptpFaultInjectionComponent.setVisible(false);
 			return;
 		}
 		case CONFIG_BMCA:
@@ -89,5 +91,5 @@ void PTPComponent::resized()
 	grandmasterComponent.setBounds(10, 50, 350, 150);
 	followerComponent.setBounds(10, 50, 350, 150);
 	delayMeasurementComponent.setBounds(10, 200, 350, 150);
-	ptpFaultInjectionComponent.setBounds(10, 350, 350, 400);
+	ptpFaultInjectionComponent.setBounds(10, 350, 350, 265);
 }
