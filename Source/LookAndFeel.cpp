@@ -4,7 +4,8 @@
 #include "Identifiers.h"
 
 
-void LocalLookAndFeel::drawPropertyPanelSectionHeader(Graphics&g, const String& name, bool isOpen, int width, int height)
+#if 0
+//void LocalLookAndFeel::drawPropertyPanelSectionHeader(Graphics&g, const String& name, bool isOpen, int width, int height)
 {
 	normUnchecked = ImageCache::getFromMemory(BinaryData::normalunchecked_png, BinaryData::normalunchecked_pngSize);
 	normChecked = ImageCache::getFromMemory(BinaryData::normalchecked_png, BinaryData::normalchecked_pngSize);
@@ -24,6 +25,7 @@ void LocalLookAndFeel::drawPropertyPanelSectionHeader(Graphics&g, const String& 
 	g.fillRect(0, 0, width, height);
 	LookAndFeel_V2::drawComboBox(g, name, isOpen, width, height);
 }
+#endif
 
 void LocalLookAndFeel::drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown)
 {
@@ -127,7 +129,6 @@ void LocalLookAndFeel::drawComboBox(Graphics& g, int width, int height, bool isB
 		g.drawRect(0, 0, width - w, height, border);
 
 		g.setOpacity(1.0f);
-		const Colour shadowColour(box.findColour(TextEditor::shadowColourId).withMultipliedAlpha(0.75f));
 		drawBevel(g, 0, 0, width - w, height + 2, border + 2, shadowColour, shadowColour);
 	}
 

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -80,29 +80,17 @@ void CPUInformation::initialise() noexcept
     hasSSE2  = (d & (1u << 26)) != 0;
     has3DNow = (b & (1u << 31)) != 0;
     hasSSE3  = (c & (1u <<  0)) != 0;
+    hasSSSE3 = (c & (1u <<  9)) != 0;
+    hasSSE41 = (c & (1u << 20)) != 0;
+    hasSSE42 = (c & (1u << 19)) != 0;
+    hasAVX   = (c & (1u << 28)) != 0;
+
+    SystemStatsHelpers::doCPUID (a, b, c, d, 7);
+    hasAVX2  = (b & (1u <<  5)) != 0;
    #endif
 
-   #if JUCE_IOS || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
     numCpus = (int) [[NSProcessInfo processInfo] activeProcessorCount];
-   #else
-    numCpus = (int) MPProcessors();
-   #endif
 }
-
-#if JUCE_MAC
-struct RLimitInitialiser
-{
-    RLimitInitialiser()
-    {
-        rlimit lim;
-        getrlimit (RLIMIT_NOFILE, &lim);
-        lim.rlim_cur = lim.rlim_max = RLIM_INFINITY;
-        setrlimit (RLIMIT_NOFILE, &lim);
-    }
-};
-
-static RLimitInitialiser rLimitInitialiser;
-#endif
 
 //==============================================================================
 #if ! JUCE_IOS
@@ -180,7 +168,7 @@ String SystemStats::getCpuVendor()
 
     SystemStatsHelpers::doCPUID (dummy, vendor[0], vendor[2], vendor[1], 0);
 
-    return String (reinterpret_cast <const char*> (vendor), 12);
+    return String (reinterpret_cast<const char*> (vendor), 12);
    #else
     return String();
    #endif
@@ -241,35 +229,41 @@ String SystemStats::getDisplayLanguage()
 }
 
 //==============================================================================
-class HiResCounterHandler
+/*  NB: these are kept outside the HiResCounterInfo struct and initialised to 1 to avoid
+    division-by-zero errors if some other static constructor calls us before this file's
+    static constructors have had a chance to fill them in correctly..
+*/
+static uint64 hiResCounterNumerator = 0, hiResCounterDenominator = 1;
+
+class HiResCounterInfo
 {
 public:
-    HiResCounterHandler()
+    HiResCounterInfo()
     {
         mach_timebase_info_data_t timebase;
         (void) mach_timebase_info (&timebase);
 
         if (timebase.numer % 1000000 == 0)
         {
-            numerator   = timebase.numer / 1000000;
-            denominator = timebase.denom;
+            hiResCounterNumerator   = timebase.numer / 1000000;
+            hiResCounterDenominator = timebase.denom;
         }
         else
         {
-            numerator   = timebase.numer;
-            denominator = timebase.denom * (uint64) 1000000;
+            hiResCounterNumerator   = timebase.numer;
+            hiResCounterDenominator = timebase.denom * (uint64) 1000000;
         }
 
         highResTimerFrequency = (timebase.denom * (uint64) 1000000000) / timebase.numer;
-        highResTimerToMillisecRatio = numerator / (double) denominator;
+        highResTimerToMillisecRatio = hiResCounterNumerator / (double) hiResCounterDenominator;
     }
 
-    inline uint32 millisecondsSinceStartup() const noexcept
+    uint32 millisecondsSinceStartup() const noexcept
     {
-        return (uint32) ((mach_absolute_time() * numerator) / denominator);
+        return (uint32) ((mach_absolute_time() * hiResCounterNumerator) / hiResCounterDenominator);
     }
 
-    inline double getMillisecondCounterHiRes() const noexcept
+    double getMillisecondCounterHiRes() const noexcept
     {
         return mach_absolute_time() * highResTimerToMillisecRatio;
     }
@@ -277,15 +271,14 @@ public:
     int64 highResTimerFrequency;
 
 private:
-    uint64 numerator, denominator;
     double highResTimerToMillisecRatio;
 };
 
-static HiResCounterHandler hiResCounterHandler;
+static HiResCounterInfo hiResCounterInfo;
 
-uint32 juce_millisecondsSinceStartup() noexcept         { return hiResCounterHandler.millisecondsSinceStartup(); }
-double Time::getMillisecondCounterHiRes() noexcept      { return hiResCounterHandler.getMillisecondCounterHiRes(); }
-int64  Time::getHighResolutionTicksPerSecond() noexcept { return hiResCounterHandler.highResTimerFrequency; }
+uint32 juce_millisecondsSinceStartup() noexcept         { return hiResCounterInfo.millisecondsSinceStartup(); }
+double Time::getMillisecondCounterHiRes() noexcept      { return hiResCounterInfo.getMillisecondCounterHiRes(); }
+int64  Time::getHighResolutionTicksPerSecond() noexcept { return hiResCounterInfo.highResTimerFrequency; }
 int64  Time::getHighResolutionTicks() noexcept          { return (int64) mach_absolute_time(); }
 
 bool Time::setSystemTimeToThisTime() const

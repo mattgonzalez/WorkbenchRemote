@@ -56,11 +56,11 @@ void DeviceComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& chi
 {
 }
 
-void DeviceComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void DeviceComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void DeviceComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void DeviceComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 

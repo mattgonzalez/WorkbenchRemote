@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -35,7 +35,7 @@ AbstractFifo::AbstractFifo (const int capacity) noexcept
 AbstractFifo::~AbstractFifo() {}
 
 int AbstractFifo::getTotalSize() const noexcept           { return bufferSize; }
-int AbstractFifo::getFreeSpace() const noexcept           { return bufferSize - getNumReady(); }
+int AbstractFifo::getFreeSpace() const noexcept           { return bufferSize - getNumReady() - 1; }
 
 int AbstractFifo::getNumReady() const noexcept
 {
@@ -183,7 +183,7 @@ public:
         Random random;
     };
 
-    void runTest()
+    void runTest() override
     {
         beginTest ("AbstractFifo");
 

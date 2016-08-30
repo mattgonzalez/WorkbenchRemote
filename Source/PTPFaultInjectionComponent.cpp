@@ -181,11 +181,11 @@ void PTPFaultInjectionComponent::valueTreePropertyChanged( ValueTree& treeWhoseP
 {
 	if (Identifiers::PTPNumBadSyncFollowupPairsPerCycle == property)
 	{
-		String text("Faulty Sync/Follow_Up Pair");
+		String name("Faulty Sync/Follow_Up Pair");
 		int count = faultTree[property];
 		if (count != 1)
-			text += 's';
-		groupCountRightLabel.setText(text, dontSendNotification);
+			name += 's';
+		groupCountRightLabel.setText(name, dontSendNotification);
 		groupCountLabel.setText( String(count), dontSendNotification);
 
 		packetPairDisplay.repaint();
@@ -196,32 +196,32 @@ void PTPFaultInjectionComponent::valueTreePropertyChanged( ValueTree& treeWhoseP
 	if (Identifiers::PTPFaultInjectionCycleLengthPackets == property || Identifiers::PTPFaultInjectionCycleMode == property)
 	{
 		int count = faultTree[Identifiers::PTPFaultInjectionCycleLengthPackets];
-		String text = String::empty;
+		String labelText = String::empty;
 		String packetText = String::empty;
 
 		if ((int)treeWhosePropertyHasChanged[Identifiers::PTPFaultInjectionCycleMode] == PTPInfo::ONCE)
 		{
-			text = "Sync/Follow_Up Pair will be sent";
+			labelText = "Sync/Follow_Up Pair will be sent";
 			if (count != 1)
 			{
-				text = "Sync/Follow_Up Pairs will be sent";
+				labelText = "Sync/Follow_Up Pairs will be sent";
 			}	
 
 			packetsLabel.setVisible(false);
 		}
 		else
 		{
-			text = "Sync/Follow_Up Pair will";
+			labelText = "Sync/Follow_Up Pair will";
 			packetText = "Packet";
 			if (count != 1)
 			{
-				text = "Sync/Follow_Up Pairs will";
+				labelText = "Sync/Follow_Up Pairs will";
 				packetText += "s";
 			}
 		}
 		
 		periodEditorLabel.setText(String(count), dontSendNotification);
-		periodLabel.setText(text, dontSendNotification);
+		periodLabel.setText(labelText, dontSendNotification);
 		packetsLabel.setText(packetText, dontSendNotification);
 		packetsLabel.setVisible(true);
 
@@ -232,12 +232,12 @@ void PTPFaultInjectionComponent::valueTreePropertyChanged( ValueTree& treeWhoseP
 
 	if (Identifiers::PTPNumFaultInjectionCycles == property)
 	{
-		String text("Cycle");
+		String rightLabelText("Cycle");
 		int count = faultTree[property];
 		if (count != 1)
-			text += 's';
+			rightLabelText += 's';
 		stopCountLabel.setText(String(count), dontSendNotification);
-		stopCountRightLabel.setText(text, dontSendNotification);
+		stopCountRightLabel.setText(rightLabelText, dontSendNotification);
 
 		packetPairDisplay.repaint();
 
@@ -255,11 +255,11 @@ void PTPFaultInjectionComponent::valueTreeChildAdded( ValueTree& parentTree, Val
 {
 }
 
-void PTPFaultInjectionComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void PTPFaultInjectionComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void PTPFaultInjectionComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void PTPFaultInjectionComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 
@@ -347,18 +347,18 @@ void PTPFaultInjectionComponent::PacketPairDisplay::paint( Graphics&g )
 			j = Justification::centredLeft;
 		}
 		textArea.translate(0, - 28);
-		String text(periodPackets);
-		text += " pair";
+		String labelText(periodPackets);
+		labelText += " pair";
 		if (periodPackets != 1)
 		{
-			text += "s";
+			labelText += "s";
 		}
 		if (PTPInfo::REPEAT == mode)
 		{
 			int repeatCount = (int)tree[Identifiers::PTPNumFaultInjectionCycles];
-			text += " / " + String(repeatCount) + "x";
+			labelText += " / " + String(repeatCount) + "x";
 		}
-		g.drawText(text, textArea,j, false);
+		g.drawText(labelText, textArea,j, false);
 	}
 }
 

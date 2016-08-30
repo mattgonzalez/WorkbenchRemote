@@ -101,8 +101,8 @@ void AudioPatchbayClient::connectionLost()
 
 void AudioPatchbayClient::handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage)
 {
-	var propertyVar(messageObject->getProperty(expectedMessage));
-	DynamicObject * propertyObject = propertyVar.getDynamicObject();
+	var messagePropertyVar(messageObject->getProperty(expectedMessage));
+	DynamicObject * propertyObject = messagePropertyVar.getDynamicObject();
 
 	if (nullptr == propertyObject)
 	{
@@ -521,11 +521,11 @@ void AudioPatchbayClient::valueTreeChildAdded( ValueTree& parentTree, ValueTree&
 {
 }
 
-void AudioPatchbayClient::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void AudioPatchbayClient::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void AudioPatchbayClient::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void AudioPatchbayClient::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 

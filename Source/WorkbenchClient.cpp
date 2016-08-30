@@ -264,7 +264,6 @@ void WorkbenchClient::handleGetSystemResponse( DynamicObject * systemPropertyObj
 {
 	int numTalkers = systemPropertyObject->getProperty(Identifiers::Talkers);
 	int numListeners = systemPropertyObject->getProperty(Identifiers::Listeners);
-	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
 
 	if (systemPropertyObject->hasProperty(Identifiers::BroadRReachSupported))
 	{
@@ -404,8 +403,6 @@ void WorkbenchClient::handleGetLinkStateResponse( DynamicObject* linkStateProper
 		linkStateTree.setProperty(Identifiers::AutoNegotiation, linkStatePropertyObject->getProperty(Identifiers::AutoNegotiation), nullptr);
 	}
 
-	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
-
 	if (linkStatePropertyObject->hasProperty(Identifiers::EthernetMode))
 	{
 		if (linkStatePropertyObject->getProperty(Identifiers::EthernetMode).toString() == Strings::ethernet)
@@ -435,8 +432,6 @@ void WorkbenchClient::handleGetLinkStateResponse( DynamicObject* linkStateProper
 void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workbenchSettingsPropertyObject )
 {
 	ScopedLock locker(settings->lock);
-
-	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
 
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::StaticPTPRole))
 	{
@@ -545,11 +540,7 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 
 void WorkbenchClient::handleGetPTPInfoResponse(DynamicObject* ptpInfoPropertyObject)
 {
-	ScopedLock locker(settings->lock);
-
-	ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
-
-
+/*	ScopedLock locker(settings->lock);*/
 }
 
 Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const parameter )
@@ -651,11 +642,11 @@ void WorkbenchClient::valueTreeChildAdded( ValueTree& parentTree, ValueTree& chi
 {
 }
 
-void WorkbenchClient::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void WorkbenchClient::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void WorkbenchClient::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void WorkbenchClient::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 

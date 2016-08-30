@@ -157,7 +157,7 @@ void AudioPatchbayComponent::buttonClicked (Button* buttonThatWasClicked)
 		for (int i = 0; i < audioDevicesTree.getNumChildren(); ++i)
 		{
 			ValueTree deviceTree(audioDevicesTree.getChild(i));
-			String name(deviceTree[Identifiers::DeviceName]);
+			String name(deviceTree[Identifiers::DeviceName].toString());
 			if (name.isEmpty())
 				continue;
 
@@ -177,7 +177,7 @@ void AudioPatchbayComponent::buttonClicked (Button* buttonThatWasClicked)
 		for (int i = 0; i < audioDevicesTree.getNumChildren(); ++i)
 		{
 			ValueTree deviceTree(audioDevicesTree.getChild(i));
-			String name(deviceTree[Identifiers::DeviceName]);
+			String name(deviceTree[Identifiers::DeviceName].toString());
 			if (name.isEmpty())
 				continue;
 
@@ -280,7 +280,7 @@ void AudioPatchbayComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTr
 	enableControls();
 }
 
-void AudioPatchbayComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void AudioPatchbayComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 	DBG("AudioPatchbayComponent::valueTreeChildRemoved " << parentTree.getType().toString() << " " << childWhichHasBeenRemoved.getType().toString());
 
@@ -300,7 +300,7 @@ void AudioPatchbayComponent::valueTreeChildRemoved( ValueTree& parentTree, Value
 	enableControls();
 }
 
-void AudioPatchbayComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void AudioPatchbayComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 
 }

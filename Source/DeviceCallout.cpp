@@ -217,11 +217,11 @@ void DeviceCallout::valueTreeChildAdded( ValueTree& parentTree, ValueTree& child
 {
 }
 
-void DeviceCallout::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void DeviceCallout::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void DeviceCallout::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void DeviceCallout::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 

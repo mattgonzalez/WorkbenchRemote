@@ -16,11 +16,11 @@ const String portKey ("Port");
 
 void dumpTree(ValueTree const &tree, const int depth)
 {
-	Identifier const id(tree.getType());
+	Identifier const treeId(tree.getType());
 	int index;
 	int const num_props = tree.getNumProperties();
 	int const num_children = tree.getNumChildren();
-	String indent( String::repeatedString("   ",depth) );
+	String indent(String::repeatedString("   ", depth));
 
 	DBG(String::empty);
 	if (1 == depth)
@@ -28,40 +28,45 @@ void dumpTree(ValueTree const &tree, const int depth)
 		DBG("==========================================================================");
 	}
 
-	DBG(indent + id.toString());
+	DBG(indent + treeId.toString());
 
 	if (num_props)
 	{
-		DBG(indent + String::formatted("  properties:%d",num_props))
-			for (index = 0; index < num_props; index++)
+		DBG(indent + String::formatted("  properties:%d", num_props));
+		for (index = 0; index < num_props; index++)
+		{
+			Identifier id(tree.getPropertyName(index));
+			var prop(tree[id]);
+
+			if (prop.isArray())
 			{
-				Identifier id( tree.getPropertyName(index) );
-				var prop( tree[id] );
+				Array<var> *array = prop.getArray();
 
-				if (prop.isArray())
+				DBG(indent + indent + id.toString() + " (array)");
+				for (int array_index = 0; array_index < array->size(); array_index++)
 				{
-					Array<var> *array = prop.getArray();
-
-					DBG(indent + indent + id.toString() + " (array)");
-					for (int array_index = 0; array_index < array->size(); array_index++)
-					{
-						DBG(indent + indent + id.toString() + "[" + String(array_index) + "]: " + (*array)[array_index].toString());
-					}
-				}
-				else
-				{
-					DBG(indent + indent + id.toString() + String("  ") + tree[id].toString());
+					DBG(indent + indent + id.toString() + "[" + String(array_index) + "]: " + (*array)[array_index].toString());
 				}
 			}
+			else if (prop.isBinaryData())
+			{
+				MemoryBlock* block = prop.getBinaryData();
+				DBG(indent + indent + id.toString() + String("  ") + String::toHexString(block->getData(), (int)block->getSize(), 1));
+			}
+			else
+			{
+				DBG(indent + indent + id.toString() + String("  ") + tree[id].toString());
+			}
+		}
 	}
 
 	if (num_children)
 	{
-		DBG(indent + String::formatted("  children:%d",num_children));
+		DBG(indent + String::formatted("  children:%d", num_children));
 		for (index = 0; index < num_children; index++)
 		{
-			ValueTree const child( tree.getChild(index) );
-			dumpTree( child, depth + 1);
+			ValueTree const child(tree.getChild(index));
+			dumpTree(child, depth + 1);
 		}
 	}
 }

@@ -74,11 +74,11 @@ void OutputChannelComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTr
 {
 }
 
-void OutputChannelComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void OutputChannelComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void OutputChannelComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void OutputChannelComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 
@@ -176,7 +176,7 @@ void OutputChannelComponent::showModePopup()
 			continue;
 		}
 
-		String otherDeviceName(otherDeviceTree[Identifiers::DeviceName]);
+		String otherDeviceName(otherDeviceTree[Identifiers::DeviceName].toString());
 
 		PopupMenu deviceMenu;
 		bool submenuTicked = false;
@@ -229,7 +229,7 @@ void OutputChannelComponent::popupMenuFinishedCallback( int menuID, OutputChanne
 			{
 				int sourceChannel = getChannelFromMenuID(menuID);
 
-				String sourceDeviceName(devicesTree.getChild(sourceDeviceIndex)[Identifiers::DeviceName]);
+				String sourceDeviceName(devicesTree.getChild(sourceDeviceIndex)[Identifiers::DeviceName].toString());
 				that->outputChannelTree.setProperty(Identifiers::SourceDeviceName, sourceDeviceName, nullptr);
 				that->outputChannelTree.setProperty(Identifiers::SourceChannel, sourceChannel, nullptr);
 				that->outputChannelTree.setProperty(Identifiers::Mode, OutputChannel::MODE_INPUT, nullptr);
@@ -261,16 +261,16 @@ void OutputChannelComponent::setModeButtonText()
 
 	case OutputChannel::MODE_INPUT:
 		{
- 			String inputDeviceName(outputChannelTree[Identifiers::SourceDeviceName]);
+ 			String inputDeviceName(outputChannelTree[Identifiers::SourceDeviceName].toString());
  			int inputChannel = outputChannelTree[Identifiers::SourceChannel];
 
 			ValueTree deviceTree;
 			ValueTree devicesTree(outputChannelTree.getParent().getParent().getParent());
-			for (int deviceIndex = 0; deviceIndex < devicesTree.getNumChildren(); deviceIndex++)
+			for (int devicesTreeIndex = 0; devicesTreeIndex < devicesTree.getNumChildren(); devicesTreeIndex++)
 			{
-				if (devicesTree.getChild(deviceIndex).getProperty(Identifiers::DeviceName) == inputDeviceName)
+				if (devicesTree.getChild(devicesTreeIndex).getProperty(Identifiers::DeviceName) == inputDeviceName)
 				{
-					deviceTree = devicesTree.getChild(deviceIndex);
+					deviceTree = devicesTree.getChild(devicesTreeIndex);
 					break;
 				}
 			}

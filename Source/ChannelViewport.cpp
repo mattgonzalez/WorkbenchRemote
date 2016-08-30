@@ -69,12 +69,12 @@ void ChannelViewport::valueTreeChildAdded( ValueTree& parentTree, ValueTree& chi
 	triggerAsyncUpdate();
 }
 
-void ChannelViewport::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void ChannelViewport::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 	triggerAsyncUpdate();
 }
 
-void ChannelViewport::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void ChannelViewport::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 	//triggerAsyncUpdate();
 }

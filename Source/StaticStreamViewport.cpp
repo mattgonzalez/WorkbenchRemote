@@ -351,8 +351,8 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 	{
 		if (tree.getParent().isValid())
 		{
-			FaultInjectionCallout * content = new FaultInjectionCallout(tree.getParent(), lock, client);
-			CallOutBox::launchAsynchronously(content, button->getScreenBounds(), nullptr);
+			FaultInjectionCallout * callout = new FaultInjectionCallout(tree.getParent(), lock, client);
+			CallOutBox::launchAsynchronously(callout, button->getScreenBounds(), nullptr);
 		}
 		return;
 	}
@@ -462,11 +462,11 @@ void StaticStreamViewport::StaticStreamComponent::valueTreeChildAdded( ValueTree
 {
 }
 
-void StaticStreamViewport::StaticStreamComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void StaticStreamViewport::StaticStreamComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void StaticStreamViewport::StaticStreamComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void StaticStreamViewport::StaticStreamComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 

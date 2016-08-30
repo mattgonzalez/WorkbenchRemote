@@ -21,7 +21,7 @@ void OutputChannelViewport::buildChannelComponents()
 	for (int i = 0; i < channelCount; ++i)
 	{
 		ValueTree channelTree(channelsTree.getChild(i));
-		String name(channelTree[Identifiers::Name]);
+		String name(channelTree[Identifiers::Name].toString());
 
 		OutputChannelComponent *icc = new OutputChannelComponent(deviceIndex, channelTree, i, lock);
 		icc->channelNameLabel.setText(name,dontSendNotification);

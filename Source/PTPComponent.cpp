@@ -72,11 +72,11 @@ void PTPComponent::valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWh
 {
 }
 
-void PTPComponent::valueTreeChildRemoved(ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved)
+void PTPComponent::valueTreeChildRemoved(ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int)
 {
 }
 
-void PTPComponent::valueTreeChildOrderChanged(ValueTree& parentTreeWhoseChildrenHaveMoved)
+void PTPComponent::valueTreeChildOrderChanged(ValueTree& parentTreeWhoseChildrenHaveMoved, int, int)
 {
 }
 

@@ -269,14 +269,14 @@ void WorkbenchComponent::valueTreeChildAdded( ValueTree& parentTree, ValueTree& 
 	triggerAsyncUpdate();
 }
 
-void WorkbenchComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void WorkbenchComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 	//DBG("WorkbenchComponent::valueTreeChildRemoved " << parentTree.getType().toString() << " " << childWhichHasBeenRemoved.getType().toString());
 
 	triggerAsyncUpdate();
 }
 
-void WorkbenchComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void WorkbenchComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 
 }
@@ -445,11 +445,11 @@ void WorkbenchComponent::StatusBarComponent::valueTreeChildAdded( ValueTree& par
 {
 }
 
-void WorkbenchComponent::StatusBarComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void WorkbenchComponent::StatusBarComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void WorkbenchComponent::StatusBarComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void WorkbenchComponent::StatusBarComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 

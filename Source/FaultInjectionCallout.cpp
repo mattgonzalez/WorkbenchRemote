@@ -209,11 +209,11 @@ void FaultInjectionCallout::valueTreeChildAdded( ValueTree& parentTree, ValueTre
 {
 }
 
-void FaultInjectionCallout::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved )
+void FaultInjectionCallout::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
 {
 }
 
-void FaultInjectionCallout::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved )
+void FaultInjectionCallout::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
 {
 }
 
@@ -233,9 +233,9 @@ void FaultInjectionCallout::HelpTextDisplay::mouseMove( const MouseEvent& event 
 
 	while (c != nullptr)
 	{
-		NamedValueSet& properties(c->getProperties());
+		NamedValueSet& eventComponentProperties(c->getProperties());
 
-		if (properties.contains(Identifiers::HelpText))
+		if (eventComponentProperties.contains(Identifiers::HelpText))
 		{
 			break;
 		}
@@ -252,9 +252,9 @@ void FaultInjectionCallout::HelpTextDisplay::mouseMove( const MouseEvent& event 
 
 	if (c != currentHelpComponent)
 	{
-		NamedValueSet& properties(c->getProperties());
+		NamedValueSet& eventComponentProperties(c->getProperties());
 
-		label.setText(properties[Identifiers::HelpText], dontSendNotification);
+		label.setText(eventComponentProperties[Identifiers::HelpText], dontSendNotification);
 		currentHelpComponent = c;
 	}
 }

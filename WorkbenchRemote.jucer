@@ -1,15 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="deL17w" name="WorkbenchRemote" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.Socket" includeBinaryInAppConfig="1"
-              jucerVersion="3.1.0">
+              bundleIdentifier="com.echoaudio.WorkbenchRemote" includeBinaryInAppConfig="1"
+              jucerVersion="4.2.3">
   <MAINGROUP id="JLallp" name="WorkbenchRemote">
     <GROUP id="{6D0D113B-AC35-DBA2-4B32-A595F73D6710}" name="Source">
       <FILE id="cIh3cW" name="AddressUtilities.cpp" compile="1" resource="0"
             file="Source/AddressUtilities.cpp"/>
       <FILE id="tnbsuh" name="AddressUtilities.h" compile="0" resource="0"
             file="Source/AddressUtilities.h"/>
+      <FILE id="GIa4o2" name="AudioPatchbayClient.cpp" compile="1" resource="0"
+            file="Source/AudioPatchbayClient.cpp"/>
+      <FILE id="ZejhnB" name="AudioPatchbayClient.h" compile="0" resource="0"
+            file="Source/AudioPatchbayClient.h"/>
+      <FILE id="KLugFU" name="AudioPatchbayComponent.cpp" compile="1" resource="0"
+            file="Source/AudioPatchbayComponent.cpp"/>
+      <FILE id="b1EfLn" name="AudioPatchbayComponent.h" compile="0" resource="0"
+            file="Source/AudioPatchbayComponent.h"/>
       <FILE id="ptdN47" name="base.h" compile="0" resource="0" file="Source/base.h"/>
+      <FILE id="kE2jzQ" name="BinaryData.cpp" compile="1" resource="0" file="Source/BinaryData.cpp"/>
+      <FILE id="VadQjb" name="BinaryData.h" compile="0" resource="0" file="Source/BinaryData.h"/>
+      <FILE id="HEu062" name="Channel.cpp" compile="1" resource="0" file="Source/Channel.cpp"/>
+      <FILE id="PmaRPq" name="Channel.h" compile="0" resource="0" file="Source/Channel.h"/>
+      <FILE id="EX1VE7" name="ChannelComponent.cpp" compile="1" resource="0"
+            file="Source/ChannelComponent.cpp"/>
+      <FILE id="udbXEa" name="ChannelComponent.h" compile="0" resource="0"
+            file="Source/ChannelComponent.h"/>
+      <FILE id="nupfbk" name="ChannelViewport.cpp" compile="1" resource="0"
+            file="Source/ChannelViewport.cpp"/>
+      <FILE id="aqPWJu" name="ChannelViewport.h" compile="0" resource="0"
+            file="Source/ChannelViewport.h"/>
+      <FILE id="XcHQ2R" name="DelayMeasurementComponent.cpp" compile="1"
+            resource="0" file="Source/DelayMeasurementComponent.cpp"/>
+      <FILE id="Yi0Arn" name="DelayMeasurementComponent.h" compile="0" resource="0"
+            file="Source/DelayMeasurementComponent.h"/>
+      <FILE id="bvTYL6" name="DeviceCallout.cpp" compile="1" resource="0"
+            file="Source/DeviceCallout.cpp"/>
+      <FILE id="mi590K" name="DeviceCallout.h" compile="0" resource="0" file="Source/DeviceCallout.h"/>
+      <FILE id="RXNAeE" name="DeviceComponent.cpp" compile="1" resource="0"
+            file="Source/DeviceComponent.cpp"/>
+      <FILE id="NHPu3q" name="DeviceComponent.h" compile="0" resource="0"
+            file="Source/DeviceComponent.h"/>
+      <FILE id="KLinMs" name="DeviceHeaderComponent.cpp" compile="1" resource="0"
+            file="Source/DeviceHeaderComponent.cpp"/>
+      <FILE id="dJb3Px" name="DeviceHeaderComponent.h" compile="0" resource="0"
+            file="Source/DeviceHeaderComponent.h"/>
       <FILE id="mxNgmO" name="FaultInjection.cpp" compile="1" resource="0"
             file="Source/FaultInjection.cpp"/>
       <FILE id="mnSo8b" name="FaultInjection.h" compile="0" resource="0"
@@ -18,57 +53,122 @@
             file="Source/FaultInjectionCallout.cpp"/>
       <FILE id="xwXq2K" name="FaultInjectionCallout.h" compile="0" resource="0"
             file="Source/FaultInjectionCallout.h"/>
+      <FILE id="b9ZmMH" name="FollowerComponent.cpp" compile="1" resource="0"
+            file="Source/FollowerComponent.cpp"/>
+      <FILE id="XxOsvB" name="FollowerComponent.h" compile="0" resource="0"
+            file="Source/FollowerComponent.h"/>
+      <FILE id="zEM7f8" name="GearButton.cpp" compile="1" resource="0" file="Source/GearButton.cpp"/>
+      <FILE id="klNo6I" name="GearButton.h" compile="0" resource="0" file="Source/GearButton.h"/>
+      <FILE id="J0GtNO" name="GrandmasterComponent.cpp" compile="1" resource="0"
+            file="Source/GrandmasterComponent.cpp"/>
+      <FILE id="QBzmmE" name="GrandmasterComponent.h" compile="0" resource="0"
+            file="Source/GrandmasterComponent.h"/>
       <FILE id="QnYDwx" name="Identifiers.cpp" compile="1" resource="0" file="Source/Identifiers.cpp"/>
       <FILE id="KMmR6v" name="Identifiers.h" compile="0" resource="0" file="Source/Identifiers.h"/>
+      <FILE id="hfP0UT" name="InputChannel.cpp" compile="1" resource="0"
+            file="Source/InputChannel.cpp"/>
+      <FILE id="Q0JWn1" name="InputChannel.h" compile="0" resource="0" file="Source/InputChannel.h"/>
+      <FILE id="vKw9SC" name="InputChannelComponent.cpp" compile="1" resource="0"
+            file="Source/InputChannelComponent.cpp"/>
+      <FILE id="iuZniI" name="InputChannelComponent.h" compile="0" resource="0"
+            file="Source/InputChannelComponent.h"/>
+      <FILE id="N8vpAj" name="InputChannelViewport.cpp" compile="1" resource="0"
+            file="Source/InputChannelViewport.cpp"/>
+      <FILE id="dcwOzh" name="InputChannelViewport.h" compile="0" resource="0"
+            file="Source/InputChannelViewport.h"/>
+      <FILE id="D5actR" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
+      <FILE id="qEsEJN" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
       <FILE id="wbGivG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="rkGhqU" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
       <FILE id="jbheME" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="fQZ3uE" name="MeterComponent.cpp" compile="1" resource="0"
+            file="Source/MeterComponent.cpp"/>
+      <FILE id="XdbvpD" name="MeterComponent.h" compile="0" resource="0"
+            file="Source/MeterComponent.h"/>
+      <FILE id="UZiehi" name="OutputChannel.cpp" compile="1" resource="0"
+            file="Source/OutputChannel.cpp"/>
+      <FILE id="z5ua65" name="OutputChannel.h" compile="0" resource="0" file="Source/OutputChannel.h"/>
+      <FILE id="c5Ak0L" name="OutputChannelCallout.cpp" compile="1" resource="0"
+            file="Source/OutputChannelCallout.cpp"/>
+      <FILE id="I3GWgt" name="OutputChannelCallout.h" compile="0" resource="0"
+            file="Source/OutputChannelCallout.h"/>
+      <FILE id="Ovdy7q" name="OutputChannelComponent.cpp" compile="1" resource="0"
+            file="Source/OutputChannelComponent.cpp"/>
+      <FILE id="JtTDjZ" name="OutputChannelComponent.h" compile="0" resource="0"
+            file="Source/OutputChannelComponent.h"/>
+      <FILE id="dSFTdD" name="OutputChannelViewport.cpp" compile="1" resource="0"
+            file="Source/OutputChannelViewport.cpp"/>
+      <FILE id="k1NyGl" name="OutputChannelViewport.h" compile="0" resource="0"
+            file="Source/OutputChannelViewport.h"/>
+      <FILE id="jbbUxS" name="PTPComponent.cpp" compile="1" resource="0"
+            file="Source/PTPComponent.cpp"/>
+      <FILE id="G33qok" name="PTPComponent.h" compile="0" resource="0" file="Source/PTPComponent.h"/>
+      <FILE id="M9Spoc" name="PTPFaultInjectionComponent.cpp" compile="1"
+            resource="0" file="Source/PTPFaultInjectionComponent.cpp"/>
+      <FILE id="LZdmfj" name="PTPFaultInjectionComponent.h" compile="0" resource="0"
+            file="Source/PTPFaultInjectionComponent.h"/>
+      <FILE id="Rq8hSk" name="PTPInfo.h" compile="0" resource="0" file="Source/PTPInfo.h"/>
+      <FILE id="OCZ207" name="PTPViewport.cpp" compile="1" resource="0" file="Source/PTPViewport.cpp"/>
+      <FILE id="N63zjj" name="PTPViewport.h" compile="0" resource="0" file="Source/PTPViewport.h"/>
+      <FILE id="GNGIGA" name="RemoteClient.cpp" compile="1" resource="0"
+            file="Source/RemoteClient.cpp"/>
+      <FILE id="tAHkjp" name="RemoteClient.h" compile="0" resource="0" file="Source/RemoteClient.h"/>
       <FILE id="gSbd8s" name="Settings.cpp" compile="1" resource="0" file="Source/Settings.cpp"/>
       <FILE id="wL4ZnF" name="Settings.h" compile="0" resource="0" file="Source/Settings.h"/>
+      <FILE id="FHbe90" name="SettingsComponent.cpp" compile="1" resource="0"
+            file="Source/SettingsComponent.cpp"/>
+      <FILE id="w8MrTP" name="SettingsComponent.h" compile="0" resource="0"
+            file="Source/SettingsComponent.h"/>
       <FILE id="LzzUFx" name="StaticStreamViewport.cpp" compile="1" resource="0"
             file="Source/StaticStreamViewport.cpp"/>
       <FILE id="KBvfcW" name="StaticStreamViewport.h" compile="0" resource="0"
             file="Source/StaticStreamViewport.h"/>
+      <FILE id="rmrLo8" name="Strings.cpp" compile="1" resource="0" file="Source/Strings.cpp"/>
+      <FILE id="esLr9F" name="Strings.h" compile="0" resource="0" file="Source/Strings.h"/>
       <FILE id="VJKLOk" name="WorkbenchClient.cpp" compile="1" resource="0"
             file="Source/WorkbenchClient.cpp"/>
       <FILE id="cR63H1" name="WorkbenchClient.h" compile="0" resource="0"
             file="Source/WorkbenchClient.h"/>
+      <FILE id="LtWoSB" name="WorkbenchComponent.cpp" compile="1" resource="0"
+            file="Source/WorkbenchComponent.cpp"/>
+      <FILE id="JMYpA4" name="WorkbenchComponent.h" compile="0" resource="0"
+            file="Source/WorkbenchComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <VS2010 targetFolder="Builds/VisualStudio2010">
+    <VS2013 targetFolder="Builds/VisualStudio2013">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="WorkbenchRemote"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="2" targetName="WorkbenchRemote"/>
+                       isDebug="0" optimisation="3" targetName="WorkbenchRemote"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_graphics" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_events" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_data_structures" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_core" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="/juce/modules"/>
+        <MODULEPATH id="juce_events" path="/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/juce/modules"/>
+        <MODULEPATH id="juce_core" path="/juce/modules"/>
       </MODULEPATHS>
-    </VS2010>
-    <VS2012 targetFolder="Builds/VisualStudio2012">
+    </VS2013>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="Socket"/>
+                       isDebug="1" optimisation="1" targetName="WorkbenchRemote"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="2" targetName="Socket"/>
+                       isDebug="0" optimisation="3" targetName="WorkbenchRemote"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_graphics" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_events" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_data_structures" path="c:/juce/modules"/>
-        <MODULEPATH id="juce_core" path="c:/juce/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="/juce/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="/juce/modules"/>
+        <MODULEPATH id="juce_graphics" path="/juce/modules"/>
+        <MODULEPATH id="juce_events" path="/juce/modules"/>
+        <MODULEPATH id="juce_data_structures" path="/juce/modules"/>
+        <MODULEPATH id="juce_core" path="/juce/modules"/>
       </MODULEPATHS>
-    </VS2012>
+    </VS2015>
   </EXPORTFORMATS>
   <MODULES>
     <MODULES id="juce_core" showAllCode="1" useLocalCopy="1"/>

@@ -38,7 +38,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 	tree(tree_),
 	client(client_)
 {
-	const String msec(" msec");
+	const String msecString(" msec");
 
 	//
 	// PTP settings
@@ -109,7 +109,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 			20, 
 			0.1,
 			1.0,
-			msec);	
+			msecString);	
 		avtp_controls.add(slider);
 		talkerTimestampOffsetPropertyComponent = slider;
 
@@ -119,7 +119,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 			20, 
 			0.1,
 			1.0,
-			msec);	
+			msecString);
 		avtp_controls.add(slider);
 		listenerTimestampOffsetPropertyComponent = slider;
 
@@ -344,7 +344,6 @@ void SettingsComponent::LocalLookAndFeel::drawComboBox( Graphics& g, int width, 
 		g.drawRect (0, 0, width - w, height, border);
 
 		g.setOpacity (1.0f);
-		const Colour shadowColour (box.findColour (TextEditor::shadowColourId).withMultipliedAlpha (0.75f));
 		drawBevel (g, 0, 0, width - w, height + 2, border + 2, shadowColour, shadowColour);
 	}
 

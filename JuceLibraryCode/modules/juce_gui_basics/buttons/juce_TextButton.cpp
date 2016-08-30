@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -26,8 +26,11 @@ TextButton::TextButton()  : Button (String())
 {
 }
 
-TextButton::TextButton (const String& name, const String& toolTip)
-    : Button (name)
+TextButton::TextButton (const String& name) : Button (name)
+{
+}
+
+TextButton::TextButton (const String& name, const String& toolTip)  : Button (name)
 {
     setTooltip (toolTip);
 }
@@ -52,12 +55,17 @@ void TextButton::colourChanged()
     repaint();
 }
 
-Font TextButton::getFont()
+void TextButton::changeWidthToFitText()
 {
-    return Font (jmin (15.0f, getHeight() * 0.6f));
+    changeWidthToFitText (getHeight());
 }
 
 void TextButton::changeWidthToFitText (const int newHeight)
 {
-    getLookAndFeel().changeTextButtonWidthToFitText (*this, newHeight);
+    setSize (getBestWidthForHeight (newHeight), newHeight);
+}
+
+int TextButton::getBestWidthForHeight (int buttonHeight)
+{
+    return getLookAndFeel().getTextButtonWidthToFitText (*this, buttonHeight);
 }
