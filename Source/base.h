@@ -27,3 +27,5 @@ enum
 {
 	ONE_MILLION = 1000000
 };
+
+#define FAULT_INJECTION_1722 0

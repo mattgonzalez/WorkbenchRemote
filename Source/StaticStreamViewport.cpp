@@ -111,7 +111,9 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	parentContentComponent(parent_),
 	startButton("Start"),
 	stopButton("Stop"),
+#if FAULT_INJECTION_1722
 	faultButton("Inject"),
+#endif
 	clockReferenceButton("CRS"),
 	autoStartButton("Auto-start"),
 	streamIdLabel(String::empty,"Stream ID"),
@@ -137,11 +139,13 @@ StaticStreamViewport::StaticStreamComponent::StaticStreamComponent( ValueTree tr
 	addAndMakeVisible(&stopButton);
 	addAndMakeVisible(&autoStartButton);
 
+#if FAULT_INJECTION_1722
 	if(tree.getParent().getType() == Identifiers::Talkers)
 	{
 		addAndMakeVisible(&faultButton);
 		faultButton.addListener(this);
 	}
+#endif
 
 	addAndMakeVisible(&clockReferenceButton);
 	startButton.setEnabled(false);
@@ -224,11 +228,13 @@ void StaticStreamViewport::StaticStreamComponent::resized()
 
 	startButton.setSize(40,25);
 	stopButton.setSize(40,25);
+#if FAULT_INJECTION_1722
 	faultButton.setSize(80, 25);
+	faultButton.setCentreRelative(0.2f, buttonY);
+#endif
 	clockReferenceButton.setSize(60,25);
 	startButton.setCentreRelative(0.4f,buttonY);
 	stopButton.setCentreRelative(0.6f,buttonY);
-	faultButton.setCentreRelative(0.2f,buttonY);
 	clockReferenceButton.setCentreRelative(0.85f,buttonY);
 
 	autoStartButton.setSize(78,25);
@@ -347,6 +353,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 		return;
 	}
 
+#if FAULT_INJECTION_1722
 	if (&faultButton == button)
 	{
 		if (tree.getParent().isValid())
@@ -356,6 +363,7 @@ void StaticStreamViewport::StaticStreamComponent::buttonClicked( Button* button)
 		}
 		return;
 	}
+#endif
 
 	if (&stopButton == button)
 	{

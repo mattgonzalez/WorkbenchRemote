@@ -271,9 +271,6 @@
     <ClCompile Include="..\..\Source\InputChannelViewport.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\LookAndFeel.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Main.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
@@ -1549,9 +1546,6 @@
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\InputChannelViewport.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\LookAndFeel.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MainComponent.h">

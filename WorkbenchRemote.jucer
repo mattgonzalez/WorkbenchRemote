@@ -76,8 +76,6 @@
             file="Source/InputChannelViewport.cpp"/>
       <FILE id="dcwOzh" name="InputChannelViewport.h" compile="0" resource="0"
             file="Source/InputChannelViewport.h"/>
-      <FILE id="D5actR" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
-      <FILE id="qEsEJN" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
       <FILE id="wbGivG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="rkGhqU" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>

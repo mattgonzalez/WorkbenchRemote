@@ -39,6 +39,7 @@ local.properties
 
 # User-specific files
 *.vc.db
+*.opendb
 *.suo
 *.user
 *.sln.docstates

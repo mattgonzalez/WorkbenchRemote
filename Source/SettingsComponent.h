@@ -74,6 +74,7 @@ protected:
 	PropertyPanel panel;
 	ValueTree tree;
 	WorkbenchClient* client;
+#if 0
 
 	class LocalLookAndFeel : public LookAndFeel_V3
 	{
@@ -98,4 +99,5 @@ protected:
 		void positionComboBoxText(ComboBox& box, Label& label);
 		void drawComboBox(Graphics& g, int width, int height, bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box);
 	}lf;
+#endif
 };

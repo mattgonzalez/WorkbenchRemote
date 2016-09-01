@@ -61,7 +61,9 @@ protected:
 		ComboBox channelsCombo;
 		TextButton startButton;
 		TextButton stopButton;
+#if FAULT_INJECTION_1722
 		TextButton faultButton;
+#endif
 		ToggleButton clockReferenceButton;
 		ToggleButton autoStartButton;
 
