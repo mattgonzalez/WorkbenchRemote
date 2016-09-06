@@ -15,8 +15,6 @@ public:
 
 protected:
 	ValueTree tree;
-	Label syncFollowupLabel;
-	Label syncFollowupReadout;
 	Label initialPTPTimeLabel;
 
 	TextEditor initialPTPTimeEditor;

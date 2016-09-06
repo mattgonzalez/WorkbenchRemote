@@ -8,19 +8,13 @@ GrandmasterComponent::GrandmasterComponent(ValueTree tree_) :
 GroupComponent("PTP Grandmaster", "PTP Grandmaster"),
 tree(tree_)
 {
-	addAndMakeVisible(&syncFollowupLabel);
-	addAndMakeVisible(&syncFollowupReadout);
 	addAndMakeVisible(&initialPTPTimeLabel);
 	addAndMakeVisible(&initialPTPTimeEditor);
 	addAndMakeVisible(&initialPTPTimeButton);
 	addAndMakeVisible(&automaticPTPTimeToggle);
 
-	syncFollowupReadout.setColour(Label::backgroundColourId, Colours::grey.withAlpha(0.2f));
-	syncFollowupReadout.setJustificationType(Justification::centred);
-
 	initialPTPTimeEditor.setColour(TextEditor::outlineColourId, Colours::black);
 
-	syncFollowupLabel.setText("Sync / Follow_Up Sent:", dontSendNotification);
 	initialPTPTimeLabel.setText("PTP Start Time:", dontSendNotification);
 
 	initialPTPTimeEditor.setInputRestrictions(19, Strings::decChars);
@@ -44,9 +38,6 @@ void GrandmasterComponent::resized()
 	int y = 28;
 	int w = 150;
 	int h = 23;
-	syncFollowupLabel.setBounds(x, y, w, h);
-	syncFollowupReadout.setBounds(x + w, y, w, h);
-	y += h + 10;
 	initialPTPTimeLabel.setBounds(x, y, w, h * 2);
 	int buttonW = 90;
 	int toggleW = 170;

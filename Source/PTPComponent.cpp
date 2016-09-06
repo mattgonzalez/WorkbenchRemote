@@ -39,32 +39,32 @@ void PTPComponent::valueTreePropertyChanged(ValueTree& treeWhosePropertyHasChang
 	{
 		switch ((int)treeWhosePropertyHasChanged.getProperty(property))
 		{
-		case CONFIG_GRANDMASTER:
-		{
-			grandmasterComponent.setVisible(true);
-			followerComponent.setVisible(false);
-			ptpFaultInjectionComponent.setVisible(true);
-			return;
-		}
-		case CONFIG_FOLLOWER:
-		{
-			grandmasterComponent.setVisible(false);
-			followerComponent.setVisible(true);
-			ptpFaultInjectionComponent.setVisible(false);
-			return;
-		}
-		case CONFIG_BMCA:
-		{
-			grandmasterComponent.setVisible(false);
-			followerComponent.setVisible(false);
-			return;
-		}
-		default:
-		{
-			grandmasterComponent.setVisible(false);
-			followerComponent.setVisible(false);
-			return;
-		}
+			case CONFIG_GRANDMASTER:
+			{
+				grandmasterComponent.setVisible(true);
+				followerComponent.setVisible(false);
+				ptpFaultInjectionComponent.setVisible(true);
+				return;
+			}
+			case CONFIG_FOLLOWER:
+			{
+				grandmasterComponent.setVisible(false);
+				followerComponent.setVisible(true);
+				ptpFaultInjectionComponent.setVisible(false);
+				return;
+			}
+			case CONFIG_BMCA:
+			{
+				grandmasterComponent.setVisible(false);
+				followerComponent.setVisible(false);
+				return;
+			}
+			default:
+			{
+				grandmasterComponent.setVisible(false);
+				followerComponent.setVisible(false);
+				return;
+			}
 		}
 	}
 }
@@ -89,7 +89,7 @@ void PTPComponent::resized()
 {
 	juce::Rectangle<int>r(70, 20, 200, 20);
 	ptpRoleComboBox.setBounds(r);
-	grandmasterComponent.setBounds(10, 50, 350, 150);
+	grandmasterComponent.setBounds(10, 50, 350, 120);
 	followerComponent.setBounds(10, 50, 350, 150);
 	delayMeasurementComponent.setBounds(10, 200, 350, 150);
 	ptpFaultInjectionComponent.setBounds(10, 350, 350, 265);
