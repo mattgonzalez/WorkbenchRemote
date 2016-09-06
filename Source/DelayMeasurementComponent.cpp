@@ -24,10 +24,10 @@ workbenchSettingsTree(tree)
 
 void DelayMeasurementComponent::resized()
 {
-	int y = 40;
 	int h = 20;
 	int x = 10;
 	int w = 140;
+	int y = 32;
 	pDelayRequestIntervalLabel.setBounds(x, y, w, h);
 
 	x += w;

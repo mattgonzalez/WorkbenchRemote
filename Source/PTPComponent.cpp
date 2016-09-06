@@ -89,8 +89,11 @@ void PTPComponent::resized()
 {
 	juce::Rectangle<int>r(70, 20, 200, 20);
 	ptpRoleComboBox.setBounds(r);
-	grandmasterComponent.setBounds(10, 50, 350, 120);
-	followerComponent.setBounds(10, 50, 350, 150);
-	delayMeasurementComponent.setBounds(10, 200, 350, 150);
-	ptpFaultInjectionComponent.setBounds(10, 350, 350, 265);
+
+	int x = 10;
+	int w = 350;
+	grandmasterComponent.setBounds(x, 50, w, 120);
+	followerComponent.setBounds(grandmasterComponent.getBounds());
+	delayMeasurementComponent.setBounds(x, grandmasterComponent.getBottom() + 5, w, 80);
+	ptpFaultInjectionComponent.setBounds(x, delayMeasurementComponent.getBottom() + 5, w, 265);
 }
