@@ -25,7 +25,7 @@ ptpFaultInjectionComponent(tree.getChildWithName(Identifiers::PTPInfo))
 	addChildComponent(&ptpFaultInjectionComponent);
 
 	workbenchSettingsTree.addListener(this);
-	}
+}
 
 PTPComponent::~PTPComponent()
 {

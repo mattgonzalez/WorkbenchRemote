@@ -433,59 +433,7 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 {
 	ScopedLock locker(settings->lock);
 
-	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::StaticPTPRole))
-	{
-		var property(workbenchSettingsPropertyObject->getProperty(Identifiers::StaticPTPRole));
-		if (property.toString() == Strings::follower)
-		{
-			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
-		}
-		if (property.toString() == Strings::grandmaster)
-		{
-			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_GRANDMASTER, nullptr);
-		}
-		if (property.toString() == Strings::BMCA)
-		{
-			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_BMCA, nullptr);
-		}
-	}
-
-	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendFollowupTLV))
-	{
-		workbenchSettingsTree.setProperty(Identifiers::PTPSendFollowupTLV, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendFollowupTLV), nullptr);
-	}
-
-	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendAnnounce))
-	{
-		workbenchSettingsTree.setProperty(Identifiers::PTPSendAnnounce, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendAnnounce), nullptr);
-	}
-
-	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPSendSignalingFlag))
-	{
-		workbenchSettingsTree.setProperty(Identifiers::PTPSendSignalingFlag, workbenchSettingsPropertyObject->getProperty(Identifiers::PTPSendSignalingFlag), nullptr);
-	}
-
-	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::PTPDelayRequest))
-	{
-		var delayRequestVar(workbenchSettingsPropertyObject->getProperty(Identifiers::PTPDelayRequest));
-
-		DynamicObject::Ptr delayRequestObject(delayRequestVar.getDynamicObject());
-		if (delayRequestObject != nullptr)
-		{
-			if (delayRequestObject->hasProperty(Identifiers::Enabled))
-			{
-				bool enabled(delayRequestObject->getProperty(Identifiers::Enabled));
-				if (enabled)
-				{
-					workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, delayRequestObject->getProperty(Identifiers::Milliseconds), nullptr);
-				}
-				else
-				{
-					workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, SettingsComponent::CONFIG_DELAY_REQUESTS_DISABLED, nullptr);
-				}
-			}
-		}
-	}
+	handleGetPTPInfoResponse(workbenchSettingsPropertyObject);
 
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TalkerPresentationOffsetMsec))
 	{
@@ -540,7 +488,61 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 
 void WorkbenchClient::handleGetPTPInfoResponse(DynamicObject* ptpInfoPropertyObject)
 {
-/*	ScopedLock locker(settings->lock);*/
+	ScopedLock locker(settings->lock);
+
+	if (ptpInfoPropertyObject->hasProperty(Identifiers::StaticPTPRole))
+	{
+		var property(ptpInfoPropertyObject->getProperty(Identifiers::StaticPTPRole));
+		if (property.toString() == Strings::follower)
+		{
+			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
+		}
+		if (property.toString() == Strings::grandmaster)
+		{
+			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_GRANDMASTER, nullptr);
+		}
+		if (property.toString() == Strings::BMCA)
+		{
+			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_BMCA, nullptr);
+		}
+	}
+
+	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPSendFollowupTLV))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPSendFollowupTLV, ptpInfoPropertyObject->getProperty(Identifiers::PTPSendFollowupTLV), nullptr);
+	}
+
+	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPSendAnnounce))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPSendAnnounce, ptpInfoPropertyObject->getProperty(Identifiers::PTPSendAnnounce), nullptr);
+	}
+
+	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPSendSignalingFlag))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPSendSignalingFlag, ptpInfoPropertyObject->getProperty(Identifiers::PTPSendSignalingFlag), nullptr);
+	}
+
+	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPDelayRequest))
+	{
+		var delayRequestVar(ptpInfoPropertyObject->getProperty(Identifiers::PTPDelayRequest));
+
+		DynamicObject::Ptr delayRequestObject(delayRequestVar.getDynamicObject());
+		if (delayRequestObject != nullptr)
+		{
+			if (delayRequestObject->hasProperty(Identifiers::Enabled))
+			{
+				bool enabled(delayRequestObject->getProperty(Identifiers::Enabled));
+				if (enabled)
+				{
+					workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, delayRequestObject->getProperty(Identifiers::Milliseconds), nullptr);
+				}
+				else
+				{
+					workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, SettingsComponent::CONFIG_DELAY_REQUESTS_DISABLED, nullptr);
+				}
+			}
+		}
+	}
 }
 
 Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const parameter )
