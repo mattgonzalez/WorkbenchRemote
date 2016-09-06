@@ -543,6 +543,16 @@ void WorkbenchClient::handleGetPTPInfoResponse(DynamicObject* ptpInfoPropertyObj
 			}
 		}
 	}
+
+	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPAutomaticGMTime))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPAutomaticGMTime, (bool)ptpInfoPropertyObject->getProperty(Identifiers::PTPAutomaticGMTime), nullptr);
+	}
+
+	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPInitialTime))
+	{
+		workbenchSettingsTree.setProperty(Identifiers::PTPInitialTime, (int64)ptpInfoPropertyObject->getProperty(Identifiers::PTPInitialTime), nullptr);
+	}
 }
 
 Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const parameter )
@@ -622,6 +632,16 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 		{
 			settingsObject->setProperty(Identifiers::BroadRReachMode, Strings::slave);
 		}
+	}
+
+	if (ID == Identifiers::PTPAutomaticGMTime)
+	{
+		settingsObject->setProperty(Identifiers::PTPAutomaticGMTime, (bool)parameter);
+	}
+
+	if (ID == Identifiers::PTPInitialTime)
+	{
+		settingsObject->setProperty(Identifiers::PTPInitialTime, (int64)parameter);
 	}
 
 	commandObject->setProperty(Identifiers::WorkbenchSettings, var(settingsObject));

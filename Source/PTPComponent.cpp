@@ -8,7 +8,8 @@ client(client_),
 workbenchSettingsTree(tree.getChildWithName(Identifiers::WorkbenchSettings)),
 ptpInfoTree(tree.getChildWithName(Identifiers::PTPInfo)),
 ptpRoleLabel(String::empty, "PTP Role"),
-delayMeasurementComponent(tree.getChildWithName(Identifiers::WorkbenchSettings)),
+grandmasterComponent(workbenchSettingsTree),
+delayMeasurementComponent(workbenchSettingsTree),
 ptpFaultInjectionComponent(tree.getChildWithName(Identifiers::PTPInfo))
 {
 	addAndMakeVisible(&ptpRoleLabel);
