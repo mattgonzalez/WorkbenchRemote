@@ -41,7 +41,6 @@ MainContentComponent::MainContentComponent(WorkbenchClient* client_, AudioPatchb
 	tabs = new TabbedComponent(TabbedButtonBar::TabsAtTop);
 	addAndMakeVisible(tabs);
 
-
 	workbenchTab = new WorkbenchComponent(this, client, settings);
 	tabs->addTab("Workbench", Colours::white, workbenchTab, true, WORKBENCH_TAB);
 
