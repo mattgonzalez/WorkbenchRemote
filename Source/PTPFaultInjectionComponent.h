@@ -1,16 +1,18 @@
 #pragma once
 
 #include "FaultInjection.h"
+#include "PTPSyncCorruptionComponent.h"
+#include "PTPFollowupCorruptionComponent.h"
 
 class PTPFaultInjectionComponent : 
-	public GroupComponent, 
+	public Component, 
 	public ComboBox::Listener, 
 	public Label::Listener, 
 	public Button::Listener,
 	public ValueTree::Listener
 {
 public:
-	PTPFaultInjectionComponent(ValueTree ptpFaultTree_);
+	PTPFaultInjectionComponent(ValueTree ptpFaultTree_, int64 adapterGuid_);
 	~PTPFaultInjectionComponent();
 
 	virtual void resized();
@@ -23,8 +25,8 @@ public:
 
 	virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
 	virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
-	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int );
-	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int );
+	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved,  int indexFromWhichChildWasRemoved );
+	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int oldIndex, int newIndex );
 	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
 
 	virtual void paint( Graphics& g );
@@ -38,14 +40,16 @@ protected:
 
 	ComboBox repeatCombo;
 	Label periodEditorLabel;
-	Label periodLabel;
-	Label packetsLabel;
+	Label periodRightLabel;
 
 	Label stopCountLeftLabel;
 	Label stopCountLabel;
 	Label stopCountRightLabel;
 
 	ValueTree faultTree;
+
+	PTPSyncCorruptionComponent syncCorruptionComponent;
+	PTPFollowupCorruptionComponent followupCorruptionComponent;
 
 	class PacketPairDisplay : public Component
 	{
@@ -58,4 +62,3 @@ protected:
 		ValueTree &tree;
 	} packetPairDisplay;
 };
-

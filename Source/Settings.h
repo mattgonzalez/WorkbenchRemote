@@ -20,6 +20,8 @@ public:
 	ValueTree getAudioDevicesTree();
 	ValueTree getLinkStateTree();
 	ValueTree getWorkbenchSettingsTree();
+	ValueTree getPTPTree();
+	ValueTree getAVTPTree();
 
 	ScopedPointer<PropertiesFile> propfile;
 
@@ -30,16 +32,16 @@ public:
 	void removeAudioDevices();
 	CriticalSection lock;
 
-protected:
 	ValueTree tree;
 
 	//
-	// Correct values for initializating the PTP Info Valuetree
+	// Settings also used by Workbench
 	//
 	enum
 	{
-		ONCE = 1,
-
+		ANALYZERBR_USB_ETHERNET_MODE_STANDARD = 1,
+		ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER,
+		ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE
 	};
 };
 

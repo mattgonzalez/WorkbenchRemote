@@ -101,6 +101,7 @@ private:
 		String speedToString(uint64 speed) const;
 		ValueTree tree;
 	} statusBar;
+
 	enum
 	{
 		TALKERS_TAB,

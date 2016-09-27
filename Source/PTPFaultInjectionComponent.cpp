@@ -1,10 +1,10 @@
 #include "base.h"
+#include "PTPFaultInjection.h"
 #include "PTPFaultInjectionComponent.h"
 #include "Identifiers.h"
 #include "Strings.h"
-#include "PTPInfo.h"
 
-PTPFaultInjectionComponent::PTPFaultInjectionComponent( ValueTree ptpFaultTree_) :
+PTPFaultInjectionComponent::PTPFaultInjectionComponent( ValueTree ptpFaultTree_, int64 adapterGuid_ ) :
 	groupCountLeftLabel(String::empty, "Send "),
 	stopCountLeftLabel(String::empty,"Stop after "),
 	enableButton("Enable fault injection"),
@@ -12,10 +12,11 @@ PTPFaultInjectionComponent::PTPFaultInjectionComponent( ValueTree ptpFaultTree_)
 	groupCountLabel(String::empty, ptpFaultTree_.getProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle)),
 	periodEditorLabel(String::empty, ptpFaultTree_.getProperty(Identifiers::PTPFaultInjectionCycleLengthPackets)),
 	stopCountLabel(String::empty, ptpFaultTree_.getProperty(Identifiers::PTPNumFaultInjectionCycles)),
-	packetsLabel(String::empty, "Packet"),
-	packetPairDisplay(faultTree),
-	GroupComponent("PTP Grandmaster Fault Injection", "PTP Grandmaster Fault Injection")
+	syncCorruptionComponent(ptpFaultTree_.getChildWithName(Identifiers::Sync).getChildWithName(Identifiers::CorruptPackets), adapterGuid_),
+	followupCorruptionComponent(ptpFaultTree_.getChildWithName(Identifiers::Followup).getChildWithName(Identifiers::CorruptPackets), adapterGuid_),
+	packetPairDisplay(faultTree)
 {
+	enableButton.setName("PTP fault injection enable button");
 	enableButton.setToggleState(faultTree.getProperty(Identifiers::Enabled), dontSendNotification);
 	enableButton.addListener(this);
 	addAndMakeVisible(&enableButton);
@@ -29,9 +30,9 @@ PTPFaultInjectionComponent::PTPFaultInjectionComponent( ValueTree ptpFaultTree_)
 	addAndMakeVisible(&groupCountLabel);
 	addAndMakeVisible(&groupCountRightLabel);
 
-	repeatCombo.addItem("Once", PTPInfo::ONCE);
-	repeatCombo.addItem("Repeat every ", PTPInfo::REPEAT);
-	repeatCombo.addItem("Repeat continuously every ", PTPInfo::REPEAT_CONTINUOUSLY);
+	repeatCombo.addItem("Once", PTPFaultInjection::ONCE);
+	repeatCombo.addItem("Repeat every ", PTPFaultInjection::REPEAT);
+	repeatCombo.addItem("Repeat continuously every ", PTPFaultInjection::REPEAT_CONTINUOUSLY);
 	addAndMakeVisible(&repeatCombo);
 	repeatCombo.addListener(this);
 
@@ -41,18 +42,19 @@ PTPFaultInjectionComponent::PTPFaultInjectionComponent( ValueTree ptpFaultTree_)
 	periodEditorLabel.addListener(this);
 	addAndMakeVisible(&periodEditorLabel);
 
-	addAndMakeVisible(&packetsLabel);
-
 	stopCountLabel.setEditable(true);
 	stopCountLabel.setJustificationType(Justification::centredRight);
 	stopCountLabel.setColour(Label::outlineColourId,Colours::lightgrey);
-	//labelTextChanged(&stopCountLabel);
+	labelTextChanged(&stopCountLabel);
 	stopCountLabel.addListener(this);
 	addAndMakeVisible(&stopCountLeftLabel);
 	addAndMakeVisible(&stopCountLabel);
 	addAndMakeVisible(&stopCountRightLabel);
-	addAndMakeVisible(&periodLabel);
+	addAndMakeVisible(&periodRightLabel);
 	repeatCombo.setSelectedId(faultTree.getProperty(Identifiers::PTPFaultInjectionCycleMode),sendNotification);
+
+	addAndMakeVisible(&syncCorruptionComponent);
+	addAndMakeVisible(&followupCorruptionComponent);
 
 	addAndMakeVisible(&packetPairDisplay);
 
@@ -77,17 +79,15 @@ void PTPFaultInjectionComponent::resized()
 	enableButton.setBounds( (getWidth() - w) / 2, y, w, h);
 
 	y += h + 20;
-	groupCountLeftLabel.setBounds(x,y,50,h);
+	groupCountLeftLabel.setBounds(x,y,200,h);
 	groupCountLabel.setBounds(groupCountLeftLabel.getRight(),
 		y,50,h);
 	groupCountRightLabel.setBounds(groupCountLabel.getRight(),y,200,h);
 
 	y += h + 2;
-	periodLabel.setBounds(x, y, 250, h);
-	y += h + 2;
 	repeatCombo.setBounds(x,y,200,h);
 	periodEditorLabel.setBounds(repeatCombo.getRight(),y,50,h);
-	packetsLabel.setBounds(periodEditorLabel.getRight(), y, 50, h);
+	periodRightLabel.setBounds(periodEditorLabel.getRight(), y, 200, h);
 
 	y += h + 2;
 	stopCountLeftLabel.setBounds(x,y,200,h);
@@ -95,36 +95,46 @@ void PTPFaultInjectionComponent::resized()
 		y,50,h);
 	stopCountRightLabel.setBounds(stopCountLabel.getRight(),y,200,h);
 
+	y += h + 20;
+	h = getHeight() - y - 40;
+	w = proportionOfWidth(0.45f);
+	syncCorruptionComponent.setBounds(0,y,w,h);
 
-	y += h;
+	juce::Rectangle<int> r(syncCorruptionComponent.getBounds());
+	r.setX( getWidth() - r.getWidth() - r.getX());
+	followupCorruptionComponent.setBounds(r);
 
-	packetPairDisplay.setBounds(x, y, 330, h * 3);
+	y = groupCountLabel.getY();
+	packetPairDisplay.setBounds(followupCorruptionComponent.getX(),
+		y,
+		followupCorruptionComponent.getWidth(),
+		stopCountLabel.getBottom() - y);
 }
 
 void PTPFaultInjectionComponent::comboBoxChanged( ComboBox* comboBoxThatHasChanged )
 {
 	if (&repeatCombo == comboBoxThatHasChanged)
 	{
-		bool periodVisible = true;
+		bool periodVisible = false;
 		bool stopVisible = false;
 
 		switch (comboBoxThatHasChanged->getSelectedId())
 		{
-		case PTPInfo::ONCE:
+		case PTPFaultInjection::ONCE:
 			break;
 
-		case PTPInfo::REPEAT:
+		case PTPFaultInjection::REPEAT:
 			periodVisible = true;
 			stopVisible = true;
 			break;
 
-		case PTPInfo::REPEAT_CONTINUOUSLY:
+		case PTPFaultInjection::REPEAT_CONTINUOUSLY:
 			periodVisible = true;
 			break;
 		}
 
 		periodEditorLabel.setVisible(periodVisible);	
-		periodLabel.setVisible(periodVisible);
+		periodRightLabel.setVisible(periodVisible);
 		stopCountLeftLabel.setVisible(stopVisible);
 		stopCountLabel.setVisible(stopVisible);
 		stopCountRightLabel.setVisible(stopVisible);
@@ -145,7 +155,7 @@ void PTPFaultInjectionComponent::labelTextChanged( Label* labelThatHasChanged )
 
 	if (labelThatHasChanged == &groupCountLabel)
 	{
-		count = jlimit(0, (int)PTPInfo::MAX_FAULT_INJECTION_CYCLE_LENGTH, count);
+		count = jlimit(0, (int)PTPFaultInjection::MAX_FAULT_INJECTION_CYCLE_LENGTH, count);
 		labelThatHasChanged->setText(String(count), dontSendNotification);
 		faultTree.setProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle, count, nullptr);
 		return;
@@ -153,7 +163,7 @@ void PTPFaultInjectionComponent::labelTextChanged( Label* labelThatHasChanged )
 
 	if (labelThatHasChanged == &periodEditorLabel)
 	{
-		count = jlimit(0, (int)PTPInfo::MAX_FAULT_INJECTION_CYCLE_LENGTH, count);
+		count = jlimit(0, (int)PTPFaultInjection::MAX_FAULT_INJECTION_CYCLE_LENGTH, count);
 		labelThatHasChanged->setText(String(count), dontSendNotification);
 		faultTree.setProperty(Identifiers::PTPFaultInjectionCycleLengthPackets, count, nullptr);
 		return;
@@ -161,7 +171,7 @@ void PTPFaultInjectionComponent::labelTextChanged( Label* labelThatHasChanged )
 
 	if (labelThatHasChanged == &stopCountLabel)
 	{
-		count = jlimit(0, (int)PTPInfo::MAX_FAULT_INJECTION_CYCLES, count);
+		count = jlimit(0, (int)PTPFaultInjection::MAX_FAULT_INJECTION_CYCLES, count);
 		labelThatHasChanged->setText(String(count), dontSendNotification);
 		faultTree.setProperty(Identifiers::PTPNumFaultInjectionCycles, count, nullptr);
 		return;
@@ -179,13 +189,19 @@ void PTPFaultInjectionComponent::buttonClicked( Button* button )
 
 void PTPFaultInjectionComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
+	if (Identifiers::PTPFaultInjectionCycleMode == property)
+	{
+		repeatCombo.setSelectedId(faultTree[property], sendNotification);
+		return;
+	}
+
 	if (Identifiers::PTPNumBadSyncFollowupPairsPerCycle == property)
 	{
-		String name("Faulty Sync/Follow_Up Pair");
+		String text("Faulty Sync/Follow_Up Pair");
 		int count = faultTree[property];
 		if (count != 1)
-			name += 's';
-		groupCountRightLabel.setText(name, dontSendNotification);
+			text += 's';
+		groupCountRightLabel.setText(text, dontSendNotification);
 		groupCountLabel.setText( String(count), dontSendNotification);
 
 		packetPairDisplay.repaint();
@@ -193,37 +209,14 @@ void PTPFaultInjectionComponent::valueTreePropertyChanged( ValueTree& treeWhoseP
 		return;
 	}
 
-	if (Identifiers::PTPFaultInjectionCycleLengthPackets == property || Identifiers::PTPFaultInjectionCycleMode == property)
+	if (Identifiers::PTPFaultInjectionCycleLengthPackets == property)
 	{
-		int count = faultTree[Identifiers::PTPFaultInjectionCycleLengthPackets];
-		String labelText = String::empty;
-		String packetText = String::empty;
-
-		if ((int)treeWhosePropertyHasChanged[Identifiers::PTPFaultInjectionCycleMode] == PTPInfo::ONCE)
-		{
-			labelText = "Sync/Follow_Up Pair will be sent";
-			if (count != 1)
-			{
-				labelText = "Sync/Follow_Up Pairs will be sent";
-			}	
-
-			packetsLabel.setVisible(false);
-		}
-		else
-		{
-			labelText = "Sync/Follow_Up Pair will";
-			packetText = "Packet";
-			if (count != 1)
-			{
-				labelText = "Sync/Follow_Up Pairs will";
-				packetText += "s";
-			}
-		}
-		
+		String text("Sync/Follow_Up Pair");
+		int count = faultTree[property];
+		if (count != 1)
+			text += 's';
 		periodEditorLabel.setText(String(count), dontSendNotification);
-		periodLabel.setText(labelText, dontSendNotification);
-		packetsLabel.setText(packetText, dontSendNotification);
-		packetsLabel.setVisible(true);
+		periodRightLabel.setText(text, dontSendNotification);
 
 		packetPairDisplay.repaint();
 
@@ -232,12 +225,12 @@ void PTPFaultInjectionComponent::valueTreePropertyChanged( ValueTree& treeWhoseP
 
 	if (Identifiers::PTPNumFaultInjectionCycles == property)
 	{
-		String rightLabelText("Cycle");
+		String text("Cycle");
 		int count = faultTree[property];
 		if (count != 1)
-			rightLabelText += 's';
+			text += 's';
 		stopCountLabel.setText(String(count), dontSendNotification);
-		stopCountRightLabel.setText(rightLabelText, dontSendNotification);
+		stopCountRightLabel.setText(text, dontSendNotification);
 
 		packetPairDisplay.repaint();
 
@@ -255,11 +248,11 @@ void PTPFaultInjectionComponent::valueTreeChildAdded( ValueTree& parentTree, Val
 {
 }
 
-void PTPFaultInjectionComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int )
+void PTPFaultInjectionComponent::valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved,  int indexFromWhichChildWasRemoved )
 {
 }
 
-void PTPFaultInjectionComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int )
+void PTPFaultInjectionComponent::valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int oldIndex, int newIndex )
 {
 }
 
@@ -274,7 +267,6 @@ void PTPFaultInjectionComponent::paint( Graphics& g )
 	r.expand( 10.0f, 5.0f);
 	g.setColour( Colours::lightslategrey.withAlpha(0.25f));
 	g.fillRoundedRectangle(r, 5.0f);
-	GroupComponent::paint(g);
 }
 
 PTPFaultInjectionComponent::PacketPairDisplay::PacketPairDisplay( ValueTree &tree_ ) :
@@ -314,16 +306,16 @@ void PTPFaultInjectionComponent::PacketPairDisplay::paint( Graphics&g )
 	int mode = (int)tree[Identifiers::PTPFaultInjectionCycleMode];
 	w = getWidth() - errorArea.getRight() - margin;
 	juce::Rectangle<int> goodArea(errorArea.getRight(), errorArea.getY(), w, errorArea.getHeight());
-	if (periodPackets > 0 && mode > PTPInfo::ONCE)
+	if (periodPackets > 0 && mode > PTPFaultInjection::ONCE)
 	{
 		drawBlocks(g, goodArea, goodPackets, Colours::limegreen);
 	}
 
-	if (errorCount > 0 && periodPackets > 0 && mode > PTPInfo::ONCE)
+	if (errorCount > 0 && periodPackets > 0 && mode > PTPFaultInjection::ONCE)
 	{
 		Path p;
 		Point<float> start(goodArea.toFloat().getTopRight());
-		start = start.translated(/*JUCE_LIVE_CONSTANT*/(-5.0f), -5.0f);
+		start = start.translated((-5.0f), -5.0f);
 		p.startNewSubPath(start);
 		p.lineTo(start.translated(0.0f, -8.0f));
 		Point<float> end(errorArea.toFloat().getTopLeft());
@@ -347,18 +339,18 @@ void PTPFaultInjectionComponent::PacketPairDisplay::paint( Graphics&g )
 			j = Justification::centredLeft;
 		}
 		textArea.translate(0, - 28);
-		String labelText(periodPackets);
-		labelText += " pair";
+		String text(periodPackets);
+		text += " pair";
 		if (periodPackets != 1)
 		{
-			labelText += "s";
+			text += "s";
 		}
-		if (PTPInfo::REPEAT == mode)
+		if (PTPFaultInjection::REPEAT == mode)
 		{
 			int repeatCount = (int)tree[Identifiers::PTPNumFaultInjectionCycles];
-			labelText += " / " + String(repeatCount) + "x";
+			text += " / " + String(repeatCount) + "x";
 		}
-		g.drawText(labelText, textArea,j, false);
+		g.drawText(text, textArea,j, false);
 	}
 }
 
@@ -414,3 +406,6 @@ void PTPFaultInjectionComponent::PacketPairDisplay::drawBlocks( Graphics &g, juc
 		area.setWidth( bigCount * blockW + blockSpace * (bigCount - 1) + 3 * (smallBlockW + blockSpace));
 	}
 }
+
+
+

@@ -43,8 +43,7 @@ protected:
 
 	virtual void resized();
 
-	ValueTree ptpInfoTree;
-	ValueTree workbenchSettingsTree;
+	ValueTree ptpTree;
 
 	Label ptpRoleLabel;
 

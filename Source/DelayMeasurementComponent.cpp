@@ -1,8 +1,7 @@
 #include "base.h"
 #include "DelayMeasurementComponent.h"
 #include "Identifiers.h"
-#include "SettingsComponent.h"
-
+#include "PTP.h"
 
 DelayMeasurementComponent::DelayMeasurementComponent(ValueTree tree):
 GroupComponent("Delay Measurement", "Delay Measurement"),
@@ -11,9 +10,9 @@ workbenchSettingsTree(tree)
 {
 	addAndMakeVisible(&pDelayRequestIntervalLabel);
 
-	pDelayRequestIntervalComboBox.addItem("Disabled", SettingsComponent::CONFIG_DELAY_REQUESTS_DISABLED);
-	for (int msec = SettingsComponent::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS;
-		msec <= SettingsComponent::MAX_DELAY_REQUEST_INTERVAL_MILLISECONDS;
+	pDelayRequestIntervalComboBox.addItem("Disabled", PTP::CONFIG_DELAY_REQUESTS_DISABLED);
+	for (int msec = PTP::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS;
+		msec <= PTP::MAX_DELAY_REQUEST_INTERVAL_MILLISECONDS;
 		msec <<= 1)
 	{
 		pDelayRequestIntervalComboBox.addItem("Every " + String(msec) + " milliseconds", msec);

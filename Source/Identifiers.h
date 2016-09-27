@@ -20,6 +20,8 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 	IDENTIFIER( Count								) \
 	IDENTIFIER( Percent								) \
 	IDENTIFIER( Amount								) \
+	IDENTIFIER( Value								) \
+	IDENTIFIER( Difference							) \
 	IDENTIFIER( CorruptPackets						) \
 	IDENTIFIER( SkipPackets							) \
 	IDENTIFIER( DuplicatePackets					) \
@@ -60,7 +62,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 	IDENTIFIER( CurrentAudioDevices					) \
 	IDENTIFIER( Workbench							) \
 	IDENTIFIER( Port								) \
-	IDENTIFIER( PTPInfo								) \
+	IDENTIFIER( PTP 								) \
 	IDENTIFIER(	StaticPTPRole						) \
 	IDENTIFIER( PTPSendFollowupTLV					) \
 	IDENTIFIER( PTPSendAnnounce						) \
@@ -89,6 +91,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 	IDENTIFIER( BroadRReachSupported				) \
 	IDENTIFIER( SpdifLocked							) \
 	IDENTIFIER( Milliseconds						) \
+	IDENTIFIER( AVTP                                )
 
 namespace Identifiers
 {

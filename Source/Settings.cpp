@@ -10,6 +10,10 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "Settings.h"
 #include "Identifiers.h"
 #include "SettingsComponent.h"
+#include "PTP.h"
+#include "FaultInjection.h"
+#include "PacketSync.h"
+#include "PacketFollowUp.h"
 
 const String addressKey ("Address");
 const String portKey ("Port");
@@ -83,7 +87,7 @@ Settings::Settings() :
 	propfile = new PropertiesFile (options);
 
 	//
-	// Workbench default Valuetree 
+	// Workbench default ValueTree 
 	//
 	{
 		ValueTree workbenchTree (Identifiers::Workbench);
@@ -93,7 +97,7 @@ Settings::Settings() :
 	}
 
 	//
-	// Audio Patchbay default Valuetree 
+	// Audio Patchbay default ValueTree 
 	//
 	{
 		ValueTree audioDevicesTree (Identifiers::AudioDevices);
@@ -103,7 +107,7 @@ Settings::Settings() :
 	}
 
 	//
-	// Linkstate default Valuetree 
+	// Linkstate default ValueTree 
 	//
 	{
 		ValueTree linkStateTree(Identifiers::LinkState);
@@ -111,38 +115,35 @@ Settings::Settings() :
 	}
 
 	//
-	// Workbench settings default Valuetree 
+	// Workbench settings default ValueTree 
 	//
 	{
 		ValueTree workbenchSettingsTree(Identifiers::WorkbenchSettings);
-		workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
-		workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, SettingsComponent::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS, nullptr);
-		workbenchSettingsTree.setProperty(Identifiers::EthernetMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+		workbenchSettingsTree.setProperty(Identifiers::EthernetMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
 		workbenchSettingsTree.setProperty(Identifiers::BroadRReachSupported, false, nullptr);
 		getWorkbenchTree().addChild(workbenchSettingsTree, -1, nullptr);
 	}
 
 	//
-	// PTP info default Valuetree 
+	// PTP info default ValueTree 
 	//
 	{
-		//fixme Commented out so it still compiles; needs to be modified from Workbench version.
-		
-		ValueTree ptpInfoTree(Identifiers::PTPInfo);
-		ptpInfoTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
-		
-		ValueTree PTPFaultTree(ptpInfoTree.getOrCreateChildWithName(Identifiers::FaultInjection, nullptr));
-		PTPFaultTree.setProperty(Identifiers::Enabled, false, nullptr);
-		PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleMode, ONCE, nullptr);
-		PTPFaultTree.setProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle, 0, nullptr);
-		PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleLengthPackets, 1, nullptr);
-		PTPFaultTree.setProperty(Identifiers::PTPNumFaultInjectionCycles, 1, nullptr);
+		ValueTree ptpTree(Identifiers::PTP);
+		ptpTree.setProperty(Identifiers::StaticPTPRole, PTP::CONFIG_FOLLOWER, nullptr);
+		ptpTree.setProperty(Identifiers::PTPDelayRequest, PTP::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS, nullptr);
 
-		getWorkbenchTree().addChild(ptpInfoTree, -1, nullptr);
+		ValueTree PTPFaultTree(ptpTree.getOrCreateChildWithName(Identifiers::FaultInjection, nullptr));
+			PTPFaultTree.setProperty(Identifiers::Enabled, false, nullptr);
+			PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleMode, FaultInjection::ONCE, nullptr);
+			PTPFaultTree.setProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle, 0, nullptr);
+			PTPFaultTree.setProperty(Identifiers::PTPFaultInjectionCycleLengthPackets, 1, nullptr);
+			PTPFaultTree.setProperty(Identifiers::PTPNumFaultInjectionCycles, 1, nullptr);
+
+		getWorkbenchTree().addChild(ptpTree, -1, nullptr);
+
 		//
 		// Sync packet corruption
 		//
-		/*
 		{
 			ValueTree syncFaultTree(PTPFaultTree.getOrCreateChildWithName(Identifiers::Sync, nullptr));
 			ValueTree syncCorruptionTree(syncFaultTree.getOrCreateChildWithName(Identifiers::CorruptPackets, nullptr));
@@ -150,16 +151,10 @@ Settings::Settings() :
 			{
 				PacketPTP::Field field;
 				field.index = fieldIndex;
-				PacketSync::getField(field, Guid64(int64(0)));
+				PacketSync::getField(field, int64(0));
 
 				ValueTree fieldTree(syncCorruptionTree.getOrCreateChildWithName(field.identifier, nullptr));
 				fieldTree.setProperty(Identifiers::Enabled, false, nullptr);
-
-				if (PacketPTP::sourcePortIdentity == fieldIndex)
-				{
-					// do this one later once the adapter MAC address is loaded
-					continue;
-				}
 
 				var v(field.correctValueBigEndian);
 				fieldTree.setProperty(Identifiers::Value, v, nullptr);
@@ -167,35 +162,33 @@ Settings::Settings() :
 		}
 
 		//
-		// Followup packet corruption
+		// Follow_Up packet corruption
 		//
-	{
-		ValueTree followupFaultTree(PTPFaultTree.getOrCreateChildWithName(Identifiers::Followup, nullptr));
-		ValueTree followupCorruptionTree(followupFaultTree.getOrCreateChildWithName(Identifiers::CorruptPackets, nullptr));
-		for (int fieldIndex = 0; fieldIndex < PacketFollowUp::NUM_FIELDS; ++fieldIndex)
 		{
-			PacketPTP::Field field;
-			field.index = fieldIndex;
-			PacketFollowUp::getField(field, Guid64(int64(0)));
-
-			ValueTree fieldTree(followupCorruptionTree.getOrCreateChildWithName(field.identifier, nullptr));
-			fieldTree.setProperty(Identifiers::Enabled, false, nullptr);
-
-			if (PacketPTP::sourcePortIdentity == fieldIndex)
+			ValueTree followupFaultTree(PTPFaultTree.getOrCreateChildWithName(Identifiers::Followup, nullptr));
+			ValueTree followupCorruptionTree(followupFaultTree.getOrCreateChildWithName(Identifiers::CorruptPackets, nullptr));
+			for (int fieldIndex = 0; fieldIndex < PacketFollowUp::NUM_FIELDS; ++fieldIndex)
 			{
-				// do this one later once the adapter MAC address is loaded
-				continue;
-			}
+				PacketPTP::Field field;
+				field.index = fieldIndex;
+				PacketFollowUp::getField(field, int64(0));
 
-			var v(field.correctValueBigEndian);
-			fieldTree.setProperty(Identifiers::Value, v, nullptr);
-			
+				ValueTree fieldTree(followupCorruptionTree.getOrCreateChildWithName(field.identifier, nullptr));
+				fieldTree.setProperty(Identifiers::Enabled, false, nullptr);
+
+				var v(field.correctValueBigEndian);
+				fieldTree.setProperty(Identifiers::Value, v, nullptr);
+			}
 		}
 	}
-	*/
+
+	//
+	// AVTP default ValueTree 
+	//
+	{
+		ValueTree avtpSettingsTree(Identifiers::AVTP);
+		getWorkbenchTree().addChild(avtpSettingsTree, -1, nullptr);
 	}
-	
-	dumpTree(tree);
 }
 
 Settings::~Settings()
@@ -299,6 +292,7 @@ ValueTree Settings::getLinkStateTree()
 {
 	return getWorkbenchTree().getChildWithName(Identifiers::LinkState);
 }
+
 ValueTree Settings::getWorkbenchTree()
 {
 	return tree.getChildWithName(Identifiers::Workbench);
@@ -307,6 +301,16 @@ ValueTree Settings::getWorkbenchTree()
 ValueTree Settings::getWorkbenchSettingsTree()
 {
 	return getWorkbenchTree().getChildWithName(Identifiers::WorkbenchSettings);
+}
+
+ValueTree Settings::getPTPTree()
+{
+	return getWorkbenchTree().getChildWithName(Identifiers::PTP);
+}
+
+ValueTree Settings::getAVTPTree()
+{
+	return getWorkbenchTree().getChildWithName(Identifiers::AVTP);
 }
 
 static void createChannels (ValueTree &  parent,int const numChannels)

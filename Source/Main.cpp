@@ -9,6 +9,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "base.h"
 #include "MainComponent.h"
 #include "Settings.h"
+#include "ValueTreeDisplay.h"
 
 //==============================================================================
 class WorkbenchRemoteApplication  : public JUCEApplication
@@ -32,11 +33,25 @@ public:
 		LookAndFeel::setDefaultLookAndFeel(lookAndFeelV3);
 		
         mainWindow = new MainWindow(client, patchbayClient, settings);
+		juce::Rectangle<int> userDesktopArea(Desktop::getInstance().getDisplays().getMainDisplay().userArea);
+		juce::Rectangle<int> windowBounds(userDesktopArea.reduced(50));
+		mainWindow->setBounds(windowBounds);
+
+#if VALUE_TREE_DISPLAY
+		{
+			ValueTreeDisplayWindow* treeDisplayWindow = new ValueTreeDisplayWindow;
+			treeDisplayWindow->treeDisplay.setTree(settings->tree);
+			treeDisplayWindowWeakRef = treeDisplayWindow;
+		}
+#endif
     }
 
     void shutdown() override
     {
         mainWindow = nullptr;
+#if VALUE_TREE_DISPLAY
+		delete treeDisplayWindowWeakRef;
+#endif
 		lookAndFeelV3 = nullptr;
 		client = nullptr;
 		patchbayClient = nullptr;
@@ -64,13 +79,13 @@ public:
         {
 			setUsingNativeTitleBar(true);
 
-            setContentOwned (new MainContentComponent(client, patchbayClient, settings), true);
+            setContentOwned (new MainContentComponent(client, patchbayClient, settings), false);
 
             centreWithSize (getWidth(), getHeight());
             setVisible (true);
 
 			setResizable(true,false);
-			setResizeLimits(850, 700, INT_MAX, INT_MAX);
+			//setResizeLimits(850, 700, INT_MAX, INT_MAX);
         }
 
         void closeButtonPressed()
@@ -88,7 +103,9 @@ private:
 	ScopedPointer<AudioPatchbayClient> patchbayClient;
 	ScopedPointer<LookAndFeel_V3> lookAndFeelV3;
     ScopedPointer<MainWindow> mainWindow;
-
+#if VALUE_TREE_DISPLAY
+	WeakReference<Component> treeDisplayWindowWeakRef;
+#endif
 };
 
 //==============================================================================

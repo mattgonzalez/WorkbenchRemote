@@ -5,18 +5,17 @@
 
 PTPComponent::PTPComponent(ValueTree tree, WorkbenchClient * client_):
 client(client_),
-workbenchSettingsTree(tree.getChildWithName(Identifiers::WorkbenchSettings)),
-ptpInfoTree(tree.getChildWithName(Identifiers::PTPInfo)),
+ptpTree(tree.getChildWithName(Identifiers::PTP)),
 ptpRoleLabel(String::empty, "PTP Role"),
-grandmasterComponent(workbenchSettingsTree),
-delayMeasurementComponent(workbenchSettingsTree),
-ptpFaultInjectionComponent(tree.getChildWithName(Identifiers::PTPInfo))
+grandmasterComponent(ptpTree),
+delayMeasurementComponent(ptpTree),
+ptpFaultInjectionComponent(ptpTree.getChildWithName(Identifiers::FaultInjection), 0x12345678abcdef0LL)
 {
 	addAndMakeVisible(&ptpRoleLabel);
 	ptpRoleComboBox.addItem("PTP Follower", CONFIG_FOLLOWER);
 	ptpRoleComboBox.addItem("PTP Grandmaster", CONFIG_GRANDMASTER);
 	ptpRoleComboBox.addItem("Use best master clock algorithm (BMCA)", CONFIG_BMCA);
-	ptpRoleComboBox.getSelectedIdAsValue().referTo(workbenchSettingsTree.getPropertyAsValue(Identifiers::StaticPTPRole, nullptr));
+	ptpRoleComboBox.getSelectedIdAsValue().referTo(ptpTree.getPropertyAsValue(Identifiers::StaticPTPRole, nullptr));
 	addAndMakeVisible(&ptpRoleComboBox);
 	ptpRoleLabel.attachToComponent(&ptpRoleComboBox, true);
 
@@ -25,7 +24,7 @@ ptpFaultInjectionComponent(tree.getChildWithName(Identifiers::PTPInfo))
 	addAndMakeVisible(&delayMeasurementComponent);
 	addChildComponent(&ptpFaultInjectionComponent);
 
-	workbenchSettingsTree.addListener(this);
+	ptpTree.addListener(this);
 }
 
 PTPComponent::~PTPComponent()
@@ -91,9 +90,9 @@ void PTPComponent::resized()
 	ptpRoleComboBox.setBounds(r);
 
 	int x = 10;
-	int w = 350;
+	int w = proportionOfWidth(0.9f);
 	grandmasterComponent.setBounds(x, 50, w, 120);
 	followerComponent.setBounds(grandmasterComponent.getBounds());
 	delayMeasurementComponent.setBounds(x, grandmasterComponent.getBottom() + 5, w, 80);
-	ptpFaultInjectionComponent.setBounds(x, delayMeasurementComponent.getBottom() + 5, w, 265);
+	ptpFaultInjectionComponent.setBounds(x, delayMeasurementComponent.getBottom() + 5, w, 700);
 }

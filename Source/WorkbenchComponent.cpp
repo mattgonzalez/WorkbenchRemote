@@ -139,7 +139,7 @@ void WorkbenchComponent::resized()
 	getSettingsButton->setBounds(r.translated(r.getWidth() + 5, 0));
 
 	y = infoButton->getBottom() + 10;
-	int w = getWidth()/2 - 20;
+	int w = proportionOfWidth(0.75f) - 20;
 	int h = getHeight() - y - 10;
 	tabs->setBounds(10, y, w, h);
 	h /= 2;
@@ -183,7 +183,7 @@ void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
 
 	if (buttonThatWasClicked == getPTPInfoButton)
 	{
-		client->getPTPInfo();
+		client->getPTP();
 		return;
 	}
 
@@ -357,7 +357,7 @@ void WorkbenchComponent::updateStreamControls()
 
 	if (getSettingsButton->isEnabled() && settingsTab == nullptr)
 	{
-		settingsTab = new SettingsComponent(tree.getChildWithName(Identifiers::WorkbenchSettings), client);
+		settingsTab = new SettingsComponent(settings, client);
 		tabs->addTab("Settings", Colours::white, settingsTab, true, SETTINGS_TAB);
 	}
 	if (!getSettingsButton->isEnabled())
@@ -365,8 +365,6 @@ void WorkbenchComponent::updateStreamControls()
 		tabs->removeTab(SETTINGS_TAB);
 		settingsTab = nullptr;
 	}
-
-	
 }
 
 void WorkbenchComponent::valueChanged( Value& value )

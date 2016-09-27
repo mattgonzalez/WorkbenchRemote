@@ -29,3 +29,4 @@ enum
 };
 
 #define FAULT_INJECTION_1722 0
+#define VALUE_TREE_DISPLAY 1

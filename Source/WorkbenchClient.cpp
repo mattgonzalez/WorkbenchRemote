@@ -12,6 +12,9 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "Identifiers.h"
 #include "Strings.h"
 #include "SettingsComponent.h"
+#include "PacketSync.h"
+#include "PTP.h"
+#include "FaultInjection.h"
 
 /*
 
@@ -38,6 +41,18 @@ Strings are sent without a zero terminator.
 
 */
 
+const String WorkbenchClient::followerString("Follower");
+const String WorkbenchClient::grandmasterString("Grandmaster");
+const String WorkbenchClient::BMCAString("BMCA");
+const String WorkbenchClient::ethernetString("Ethernet");
+const String WorkbenchClient::masterString("Master");
+const String WorkbenchClient::slaveString("Slave");
+const String WorkbenchClient::lockedString("Locked");
+const String WorkbenchClient::unlockedString("Unlocked");
+const String WorkbenchClient::onceString("Once");
+const String WorkbenchClient::repeatString("Repeat");
+const String WorkbenchClient::repeatContinuouslyString("Repeat Continuously");
+
 //============================================================================
 //
 // Constructor and destructor
@@ -50,10 +65,12 @@ Strings are sent without a zero terminator.
 //
 WorkbenchClient::WorkbenchClient(Settings* settings_):
 	RemoteClient(settings_,'KROW'),
-	workbenchSettingsTree(settings_->getWorkbenchSettingsTree())
+	workbenchSettingsTree(settings_->getWorkbenchSettingsTree()),
+	ptpTree(settings_->getPTPTree())
 {
 	//DBG("WorkbenchClient::WorkbenchClient()");
 	workbenchSettingsTree.addListener(this);
+	ptpTree.addListener(this);
 }
 
 WorkbenchClient::~WorkbenchClient()
@@ -143,9 +160,9 @@ Result WorkbenchClient::getSettings()
 	return getProperty(Identifiers::WorkbenchSettings, new DynamicObject);
 }
 
-Result WorkbenchClient::getPTPInfo()
+Result WorkbenchClient::getPTP()
 {
-	return getProperty(Identifiers::PTPInfo, new DynamicObject);
+	return getProperty(Identifiers::PTP, new DynamicObject);
 }
 
 Result WorkbenchClient::setStreamProperty( Identifier const type, int const streamIndex, Identifier const &ID, var const parameter )
@@ -247,15 +264,15 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 		return;
 	}
 
-	if (propertyObject->hasProperty(Identifiers::PTPInfo))
+	if (propertyObject->hasProperty(Identifiers::PTP))
 	{
-		var ptpInfoPropertyVar(propertyObject->getProperty(Identifiers::PTPInfo));
-		DynamicObject* ptpInfoPropertyObject = ptpInfoPropertyVar.getDynamicObject();
-		if (nullptr == ptpInfoPropertyObject)
+		var ptpPropertyVar(propertyObject->getProperty(Identifiers::PTP));
+		DynamicObject* ptpPropertyObject = ptpPropertyVar.getDynamicObject();
+		if (nullptr == ptpPropertyObject)
 		{
-			DBG("Could not parse get PTP info response");
+			DBG("Could not parse get PTP response");
 		}
-		handleGetPTPInfoResponse(ptpInfoPropertyObject);
+		handleGetPTPResponse(ptpPropertyObject);
 		return;
 	}
 }
@@ -405,10 +422,10 @@ void WorkbenchClient::handleGetLinkStateResponse( DynamicObject* linkStateProper
 
 	if (linkStatePropertyObject->hasProperty(Identifiers::EthernetMode))
 	{
-		if (linkStatePropertyObject->getProperty(Identifiers::EthernetMode).toString() == Strings::ethernet)
+		if (linkStatePropertyObject->getProperty(Identifiers::EthernetMode).toString() == ethernetString)
 		{
-			linkStateTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
-			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+			linkStateTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
 		}
 		linkStateTree.setProperty(Identifiers::EthernetMode, linkStatePropertyObject->getProperty(Identifiers::EthernetMode), nullptr);
 	}
@@ -416,15 +433,15 @@ void WorkbenchClient::handleGetLinkStateResponse( DynamicObject* linkStateProper
 	if (linkStatePropertyObject->hasProperty(Identifiers::BroadRReachMode))
 	{
 		var property(linkStatePropertyObject->getProperty(Identifiers::BroadRReachMode));
-		if (property.toString() == Strings::master)
+		if (property.toString() == masterString)
 		{
-			linkStateTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
-			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+			linkStateTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
 		}
-		if (property.toString() == Strings::slave)
+		if (property.toString() == slaveString)
 		{
-			linkStateTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE, nullptr);
-			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE, nullptr);
+			linkStateTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE, nullptr);
 		}
 	}
 }
@@ -433,7 +450,7 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 {
 	ScopedLock locker(settings->lock);
 
-	handleGetPTPInfoResponse(workbenchSettingsPropertyObject);
+	handleGetPTPResponse(workbenchSettingsPropertyObject);
 
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::TalkerPresentationOffsetMsec))
 	{
@@ -452,22 +469,22 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::EthernetMode))
 	{
-		if (workbenchSettingsPropertyObject->getProperty(Identifiers::EthernetMode).toString() == Strings::ethernet)
+		if (workbenchSettingsPropertyObject->getProperty(Identifiers::EthernetMode).toString() == ethernetString)
 		{
-			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_STANDARD, nullptr);
 		}
 	}
 
 	if (workbenchSettingsPropertyObject->hasProperty(Identifiers::BroadRReachMode))
 	{
 		var property(workbenchSettingsPropertyObject->getProperty(Identifiers::BroadRReachMode));
-		if (property.toString() == Strings::master)
+		if (property.toString() == masterString)
 		{
-			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER, nullptr);
 		}
-		if (property.toString() == Strings::slave)
+		if (property.toString() == slaveString)
 		{
-			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::BroadRReachMode, Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE, nullptr);
 		}
 	}
 
@@ -477,54 +494,54 @@ void WorkbenchClient::handleGetWorkbenchSettingsResponse( DynamicObject* workben
 
 		if (spdifLocked)
 		{
-			workbenchSettingsTree.setProperty(Identifiers::SpdifLocked, Strings::locked, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::SpdifLocked, lockedString, nullptr);
 		}
 		else
 		{
-			workbenchSettingsTree.setProperty(Identifiers::SpdifLocked, Strings::unlocked, nullptr);
+			workbenchSettingsTree.setProperty(Identifiers::SpdifLocked, unlockedString, nullptr);
 		}
 	}
 }
 
-void WorkbenchClient::handleGetPTPInfoResponse(DynamicObject* ptpInfoPropertyObject)
+void WorkbenchClient::handleGetPTPResponse(DynamicObject* ptpPropertyObject)
 {
 	ScopedLock locker(settings->lock);
 
-	if (ptpInfoPropertyObject->hasProperty(Identifiers::StaticPTPRole))
+	if (ptpPropertyObject->hasProperty(Identifiers::StaticPTPRole))
 	{
-		var property(ptpInfoPropertyObject->getProperty(Identifiers::StaticPTPRole));
-		if (property.toString() == Strings::follower)
+		var property(ptpPropertyObject->getProperty(Identifiers::StaticPTPRole));
+		if (property.toString() == followerString)
 		{
-			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_FOLLOWER, nullptr);
+			ptpTree.setProperty(Identifiers::StaticPTPRole, PTP::CONFIG_FOLLOWER, nullptr);
 		}
-		if (property.toString() == Strings::grandmaster)
+		if (property.toString() == grandmasterString)
 		{
-			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_GRANDMASTER, nullptr);
+			ptpTree.setProperty(Identifiers::StaticPTPRole, PTP::CONFIG_GRANDMASTER, nullptr);
 		}
-		if (property.toString() == Strings::BMCA)
+		if (property.toString() == BMCAString)
 		{
-			workbenchSettingsTree.setProperty(Identifiers::StaticPTPRole, SettingsComponent::CONFIG_BMCA, nullptr);
+			ptpTree.setProperty(Identifiers::StaticPTPRole, PTP::CONFIG_BMCA, nullptr);
 		}
 	}
 
-	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPSendFollowupTLV))
+	if (ptpPropertyObject->hasProperty(Identifiers::PTPSendFollowupTLV))
 	{
-		workbenchSettingsTree.setProperty(Identifiers::PTPSendFollowupTLV, ptpInfoPropertyObject->getProperty(Identifiers::PTPSendFollowupTLV), nullptr);
+		ptpTree.setProperty(Identifiers::PTPSendFollowupTLV, ptpPropertyObject->getProperty(Identifiers::PTPSendFollowupTLV), nullptr);
 	}
 
-	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPSendAnnounce))
+	if (ptpPropertyObject->hasProperty(Identifiers::PTPSendAnnounce))
 	{
-		workbenchSettingsTree.setProperty(Identifiers::PTPSendAnnounce, ptpInfoPropertyObject->getProperty(Identifiers::PTPSendAnnounce), nullptr);
+		ptpTree.setProperty(Identifiers::PTPSendAnnounce, ptpPropertyObject->getProperty(Identifiers::PTPSendAnnounce), nullptr);
 	}
 
-	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPSendSignalingFlag))
+	if (ptpPropertyObject->hasProperty(Identifiers::PTPSendSignalingFlag))
 	{
-		workbenchSettingsTree.setProperty(Identifiers::PTPSendSignalingFlag, ptpInfoPropertyObject->getProperty(Identifiers::PTPSendSignalingFlag), nullptr);
+		ptpTree.setProperty(Identifiers::PTPSendSignalingFlag, ptpPropertyObject->getProperty(Identifiers::PTPSendSignalingFlag), nullptr);
 	}
 
-	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPDelayRequest))
+	if (ptpPropertyObject->hasProperty(Identifiers::PTPDelayRequest))
 	{
-		var delayRequestVar(ptpInfoPropertyObject->getProperty(Identifiers::PTPDelayRequest));
+		var delayRequestVar(ptpPropertyObject->getProperty(Identifiers::PTPDelayRequest));
 
 		DynamicObject::Ptr delayRequestObject(delayRequestVar.getDynamicObject());
 		if (delayRequestObject != nullptr)
@@ -534,79 +551,188 @@ void WorkbenchClient::handleGetPTPInfoResponse(DynamicObject* ptpInfoPropertyObj
 				bool enabled(delayRequestObject->getProperty(Identifiers::Enabled));
 				if (enabled)
 				{
-					workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, delayRequestObject->getProperty(Identifiers::Milliseconds), nullptr);
+					ptpTree.setProperty(Identifiers::PTPDelayRequest, delayRequestObject->getProperty(Identifiers::Milliseconds), nullptr);
 				}
 				else
 				{
-					workbenchSettingsTree.setProperty(Identifiers::PTPDelayRequest, SettingsComponent::CONFIG_DELAY_REQUESTS_DISABLED, nullptr);
+					ptpTree.setProperty(Identifiers::PTPDelayRequest, PTP::CONFIG_DELAY_REQUESTS_DISABLED, nullptr);
 				}
 			}
 		}
 	}
 
-	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPAutomaticGMTime))
+	if (ptpPropertyObject->hasProperty(Identifiers::PTPAutomaticGMTime))
 	{
-		workbenchSettingsTree.setProperty(Identifiers::PTPAutomaticGMTime, (bool)ptpInfoPropertyObject->getProperty(Identifiers::PTPAutomaticGMTime), nullptr);
+		ptpTree.setProperty(Identifiers::PTPAutomaticGMTime, (bool)ptpPropertyObject->getProperty(Identifiers::PTPAutomaticGMTime), nullptr);
 	}
 
-	if (ptpInfoPropertyObject->hasProperty(Identifiers::PTPInitialTime))
+	if (ptpPropertyObject->hasProperty(Identifiers::PTPInitialTime))
 	{
-		workbenchSettingsTree.setProperty(Identifiers::PTPInitialTime, (int64)ptpInfoPropertyObject->getProperty(Identifiers::PTPInitialTime), nullptr);
+		ptpTree.setProperty(Identifiers::PTPInitialTime, (int64)ptpPropertyObject->getProperty(Identifiers::PTPInitialTime), nullptr);
+	}
+
+ 	if (ptpPropertyObject->hasProperty(Identifiers::FaultInjection))
+ 	{
+		DynamicObject::Ptr faultInjectionObject(ptpPropertyObject->getProperty(Identifiers::FaultInjection).getDynamicObject());
+		if (faultInjectionObject != nullptr)
+		{
+			ValueTree ptpFaultInjectionTree(ptpTree.getChildWithName(Identifiers::FaultInjection));
+
+			if (faultInjectionObject->hasProperty(Identifiers::Enabled))
+			{
+				ptpFaultInjectionTree.setProperty(Identifiers::Enabled, (bool)faultInjectionObject->getProperty(Identifiers::Enabled), nullptr);
+			}
+
+			if (faultInjectionObject->hasProperty(Identifiers::PTPFaultInjectionCycleMode))
+			{
+				var const &modeVar(faultInjectionObject->getProperty(Identifiers::PTPFaultInjectionCycleMode));
+				int mode = -1;
+
+				if (modeVar == onceString)
+				{
+					mode = FaultInjection::ONCE;
+				}
+				else if (modeVar == repeatString)
+				{
+					mode = FaultInjection::REPEAT;
+				}
+				else if (modeVar == repeatContinuouslyString)
+				{
+					mode = FaultInjection::REPEAT_CONTINUOUSLY;
+				}
+				
+				if (mode >= FaultInjection::ONCE)
+				{
+					ptpFaultInjectionTree.setProperty(Identifiers::PTPFaultInjectionCycleMode, mode, nullptr);
+				}
+			}
+
+			if (faultInjectionObject->hasProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle))
+			{
+				int numBadPairs = faultInjectionObject->getProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle);
+				numBadPairs = jlimit(0, (int)FaultInjection::MAX_FAULT_INJECTION_CYCLE_LENGTH, numBadPairs);
+				ptpFaultInjectionTree.setProperty(Identifiers::PTPNumBadSyncFollowupPairsPerCycle, numBadPairs, nullptr);
+			}
+
+			if (faultInjectionObject->hasProperty(Identifiers::PTPFaultInjectionCycleLengthPackets))
+			{
+				int length = faultInjectionObject->getProperty(Identifiers::PTPFaultInjectionCycleLengthPackets);
+				length = jlimit(0, (int)FaultInjection::MAX_FAULT_INJECTION_CYCLE_LENGTH, length);
+				ptpFaultInjectionTree.setProperty(Identifiers::PTPFaultInjectionCycleLengthPackets, length, nullptr);
+			}
+
+			if (faultInjectionObject->hasProperty(Identifiers::PTPNumFaultInjectionCycles))
+			{
+				int numCycles = faultInjectionObject->getProperty(Identifiers::PTPNumFaultInjectionCycles);
+				numCycles = jlimit(0, (int)FaultInjection::MAX_FAULT_INJECTION_CYCLE_LENGTH, numCycles);
+				ptpFaultInjectionTree.setProperty(Identifiers::PTPNumFaultInjectionCycles, numCycles, nullptr);
+			}
+
+			if (faultInjectionObject->hasProperty(Identifiers::Sync))
+			{
+				handlePTPPacketFieldCorruption(Identifiers::Sync, faultInjectionObject, ptpFaultInjectionTree);
+			}
+
+			if (faultInjectionObject->hasProperty(Identifiers::Followup))
+			{
+				handlePTPPacketFieldCorruption(Identifiers::Followup, faultInjectionObject, ptpFaultInjectionTree);
+			}
+		}
+ 	}
+}
+
+void WorkbenchClient::handlePTPPacketFieldCorruption(Identifier const &packetTypeIdentifier, DynamicObject::Ptr faultInjectionObject, ValueTree &ptpFaultInjectionTree)
+{
+	DynamicObject* packetTypeObject = faultInjectionObject->getProperty(packetTypeIdentifier).getDynamicObject();
+
+	if (packetTypeObject)
+	{
+		if (packetTypeObject->hasProperty(Identifiers::CorruptPackets))
+		{
+			DynamicObject* corruptPacketsObject = packetTypeObject->getProperty(Identifiers::CorruptPackets).getDynamicObject();
+			if (corruptPacketsObject)
+			{
+				NamedValueSet& corruptProperties(corruptPacketsObject->getProperties());
+				ValueTree corruptionTree(ptpFaultInjectionTree.getChildWithName(packetTypeIdentifier).getChildWithName(Identifiers::CorruptPackets));
+
+				for (int propertyIndex = 0; propertyIndex < corruptProperties.size(); ++propertyIndex)
+				{
+					Identifier fieldProperty(corruptProperties.getName(propertyIndex));
+					ValueTree fieldTree(corruptionTree.getChildWithName(fieldProperty));
+					if (fieldTree.isValid())
+					{
+						DynamicObject* fieldObject = corruptProperties[fieldProperty].getDynamicObject();
+						if (fieldObject)
+						{
+							var const &newValueVar(fieldObject->getProperty(Identifiers::Value));
+							var const &currentValueVar(fieldTree[Identifiers::Value]);
+
+							if (newValueVar.isArray() && size_t(newValueVar.size()) == currentValueVar.getBinaryData()->getSize())
+							{
+								MemoryBlock block(newValueVar.size());
+
+								for (int i = 0; i < newValueVar.size(); ++i)
+								{
+									block[i] = (uint8)(int)newValueVar[i];
+								}
+
+								fieldTree.setProperty(Identifiers::Value, var(block), nullptr);
+								fieldTree.setProperty(Identifiers::Enabled, (bool)fieldObject->getProperty(Identifiers::Enabled), nullptr);
+								fieldTree.sendPropertyChangeMessage(Identifiers::Value);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
-Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const parameter )
+Result WorkbenchClient::setSettingsProperty( Identifier const &commandProperty, Identifier const &property, var const &parameter )
 {
 	DynamicObject messageObject;
 	DynamicObject::Ptr commandObject(new DynamicObject);
 	DynamicObject::Ptr settingsObject(new DynamicObject);
 
-	if (ID != Identifiers::BroadRReachMode && ID != Identifiers::StaticPTPRole)
+	if (property != Identifiers::BroadRReachMode && property != Identifiers::StaticPTPRole)
 	{
-		settingsObject->setProperty(ID, parameter);
+		settingsObject->setProperty(property, parameter);
 	}
 
-	if (ID == Identifiers::StaticPTPRole)
+	if (property == Identifiers::StaticPTPRole)
 	{
 		switch ((int)parameter)
 		{
-		case SettingsComponent::CONFIG_FOLLOWER:
+		case PTP::CONFIG_FOLLOWER:
 			{
-				settingsObject->setProperty(Identifiers::StaticPTPRole, Strings::follower);
+				settingsObject->setProperty(Identifiers::StaticPTPRole, followerString);
 				break;
 			}
-		case SettingsComponent::CONFIG_GRANDMASTER:
+		case PTP::CONFIG_GRANDMASTER:
 			{
-				settingsObject->setProperty(Identifiers::StaticPTPRole, Strings::grandmaster);
+				settingsObject->setProperty(Identifiers::StaticPTPRole, grandmasterString);
 				break;
 			}
-		case SettingsComponent::CONFIG_BMCA:
+		case PTP::CONFIG_BMCA:
 			{
-				settingsObject->setProperty(Identifiers::StaticPTPRole, Strings::BMCA);
+				settingsObject->setProperty(Identifiers::StaticPTPRole, BMCAString);
 				break;
 			}
 		}
 	}
 
-	if (ID == Identifiers::PTPSendFollowupTLV)
+	if (property == Identifiers::PTPSendFollowupTLV ||
+		property == Identifiers::PTPSendAnnounce ||
+		property == Identifiers::PTPSendSignalingFlag ||
+		property == Identifiers::PTPAutomaticGMTime)
 	{
-		settingsObject->setProperty(Identifiers::PTPSendFollowupTLV, (bool)parameter);
+		settingsObject->setProperty(property, (bool)parameter);
 	}
 
-	if ( ID == Identifiers::PTPSendAnnounce)
-	{
-		settingsObject->setProperty(Identifiers::PTPSendAnnounce, (bool)parameter);
-	}
-
-	if (ID == Identifiers::PTPSendSignalingFlag)
-	{
-		settingsObject->setProperty(Identifiers::PTPSendSignalingFlag, (bool)parameter);
-	}
-
-	if (ID == Identifiers::PTPDelayRequest)
+	if (property == Identifiers::PTPDelayRequest)
 	{
 		DynamicObject::Ptr delayRequestObject(new DynamicObject);
-		if ((int)parameter == SettingsComponent::CONFIG_DELAY_REQUESTS_DISABLED)
+		if ((int)parameter == PTP::CONFIG_DELAY_REQUESTS_DISABLED)
 		{
 			delayRequestObject->setProperty(Identifiers::Enabled, false);
 		}
@@ -615,36 +741,91 @@ Result WorkbenchClient::setSettingsProperty( Identifier const & ID, var const pa
 			delayRequestObject->setProperty(Identifiers::Enabled, true);
 			delayRequestObject->setProperty(Identifiers::Milliseconds, (int)parameter);
 		}
-		settingsObject->setProperty(Identifiers::PTPDelayRequest, (var)delayRequestObject);
+		settingsObject->setProperty(Identifiers::PTPDelayRequest, var(delayRequestObject));
 	}
 
-	if (ID == Identifiers::BroadRReachMode)
+	if (property == Identifiers::BroadRReachMode)
 	{
-		if ((int)parameter == SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_STANDARD)
+		if ((int)parameter == Settings::ANALYZERBR_USB_ETHERNET_MODE_STANDARD)
 		{
-			settingsObject->setProperty(Identifiers::EthernetMode, Strings::ethernet);
+			settingsObject->setProperty(Identifiers::EthernetMode, ethernetString);
 		}
-		if ((int)parameter == SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER)
+		if ((int)parameter == Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER)
 		{
-			settingsObject->setProperty(Identifiers::BroadRReachMode, Strings::master);
+			settingsObject->setProperty(Identifiers::BroadRReachMode, masterString);
 		}
-		if ((int)parameter == SettingsComponent::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE)
+		if ((int)parameter == Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE)
 		{
-			settingsObject->setProperty(Identifiers::BroadRReachMode, Strings::slave);
+			settingsObject->setProperty(Identifiers::BroadRReachMode, slaveString);
 		}
 	}
 
-	if (ID == Identifiers::PTPAutomaticGMTime)
-	{
-		settingsObject->setProperty(Identifiers::PTPAutomaticGMTime, (bool)parameter);
-	}
-
-	if (ID == Identifiers::PTPInitialTime)
+	if (property == Identifiers::PTPInitialTime)
 	{
 		settingsObject->setProperty(Identifiers::PTPInitialTime, (int64)parameter);
 	}
 
-	commandObject->setProperty(Identifiers::WorkbenchSettings, var(settingsObject));
+	commandObject->setProperty(commandProperty, var(settingsObject));
+	messageObject.setProperty(Identifiers::SetCommand, var(commandObject));
+	messageObject.setProperty(Identifiers::Sequence, commandSequence++);
+
+	return sendJSONToSocket(messageObject);
+}
+
+Result WorkbenchClient::setPTPFaultInjectionProperty(Identifier const &property)
+{
+	DynamicObject::Ptr faultInjectionObject(new DynamicObject);
+	ValueTree faultInjectionTree(ptpTree.getChildWithName(Identifiers::FaultInjection));
+
+	faultInjectionObject->setProperty(property, faultInjectionTree[property]);
+
+	DynamicObject::Ptr ptpObject(new DynamicObject);
+	ptpObject->setProperty(Identifiers::FaultInjection, var(faultInjectionObject));
+
+	DynamicObject::Ptr commandObject(new DynamicObject); 
+	commandObject->setProperty(Identifiers::PTP, var(ptpObject));
+	DynamicObject messageObject;
+	messageObject.setProperty(Identifiers::SetCommand, var(commandObject));
+	messageObject.setProperty(Identifiers::Sequence, commandSequence++);
+
+	return sendJSONToSocket(messageObject);
+}
+
+Result WorkbenchClient::setPTPCorruptPacketField(ValueTree &corruptFieldTree)
+{
+	var const &blockVar(corruptFieldTree[Identifiers::Value]);
+	if (false == blockVar.isBinaryData())
+	{
+		return Result::fail("No binary data");
+	}
+
+	MemoryBlock* block = blockVar.getBinaryData();
+	uint8* blockData = static_cast<uint8 *>(block->getData());
+	var arrayVar;
+	for (size_t i = 0; i < block->getSize(); ++i)
+	{
+		arrayVar.append(blockData[i]);
+	}
+
+	DynamicObject::Ptr fieldObject(new DynamicObject);
+	fieldObject->setProperty(Identifiers::Value, arrayVar);
+	fieldObject->setProperty(Identifiers::Enabled, corruptFieldTree[Identifiers::Enabled]);
+ 
+ 	DynamicObject::Ptr corruptPacketsObject(new DynamicObject);
+ 	corruptPacketsObject->setProperty(corruptFieldTree.getType(), var(fieldObject));
+
+	DynamicObject::Ptr packetTypeObject(new DynamicObject);
+	packetTypeObject->setProperty(Identifiers::CorruptPackets, var(corruptPacketsObject));
+		
+	DynamicObject::Ptr faultInjectionObject(new DynamicObject);
+	faultInjectionObject->setProperty(corruptFieldTree.getParent().getParent().getType(), var(packetTypeObject));
+
+	DynamicObject::Ptr ptpObject(new DynamicObject);
+	ptpObject->setProperty(Identifiers::FaultInjection, var(faultInjectionObject));
+
+	DynamicObject::Ptr commandObject(new DynamicObject);
+	commandObject->setProperty(Identifiers::PTP, var(ptpObject));
+	DynamicObject messageObject;
 	messageObject.setProperty(Identifiers::SetCommand, var(commandObject));
 	messageObject.setProperty(Identifiers::Sequence, commandSequence++);
 
@@ -655,7 +836,25 @@ void WorkbenchClient::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasC
 {
 	if (treeWhosePropertyHasChanged.getType() == Identifiers::WorkbenchSettings)
 	{
-		setSettingsProperty(property, treeWhosePropertyHasChanged.getProperty(property));
+		setSettingsProperty(Identifiers::WorkbenchSettings, property, treeWhosePropertyHasChanged.getProperty(property));
+		return;
+	}
+
+	if (treeWhosePropertyHasChanged.getType() == Identifiers::PTP)
+	{
+		setSettingsProperty(Identifiers::PTP, property, treeWhosePropertyHasChanged.getProperty(property));
+		return;
+	}
+
+	if (treeWhosePropertyHasChanged.getType() == Identifiers::FaultInjection)
+	{
+		setPTPFaultInjectionProperty(property);
+		return;
+	}
+
+	if (treeWhosePropertyHasChanged.getParent().getType() == Identifiers::CorruptPackets)
+	{
+		setPTPCorruptPacketField(treeWhosePropertyHasChanged);
 		return;
 	}
 }

@@ -124,7 +124,7 @@ void AudioPatchbayComponent::resized()
 	getOutputButton->setBounds(r.translated(r.getWidth() + 5, 0));
 	
 	y = infoButton->getBottom() + 10;
-	int w = getWidth()/2 - 20;
+	int w = proportionOfWidth(0.75f) - 20;
 	int h = getHeight() - y - 10;
 	tabs->setBounds(10, y, w, h);
 	h /= 2;

@@ -7,10 +7,12 @@ This source code is considered to be proprietary and confidential information.
 ==============================================================================
 */
 #include "base.h"
+#include "Settings.h"
 #include "WorkbenchClient.h"
 #include "SettingsComponent.h"
 #include "BinaryData.h"
 #include "Identifiers.h"
+#include "PTP.h"
 
 class LabelPropertyComponent : public PropertyComponent
 {
@@ -34,8 +36,8 @@ public:
 	Label label;
 };
 
-SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_):
-	tree(tree_),
+SettingsComponent::SettingsComponent(Settings* settings_, WorkbenchClient * client_):
+	settings(settings_),
 	client(client_)
 {
 	const String msecString(" msec");
@@ -47,31 +49,32 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		StringArray choices;
 		Array<var> temp;
 		Array<PropertyComponent *> time_controls;
+		ValueTree PTPtree(settings->getPTPTree());
 	
 		choices.add("PTP Follower");
 		choices.add("PTP Grandmaster");
 		choices.add("Use best master clock algorithm (BMCA)");
-		temp.add(CONFIG_FOLLOWER);
-		temp.add(CONFIG_GRANDMASTER);
-		temp.add(CONFIG_BMCA);
+		temp.add(PTP::CONFIG_FOLLOWER);
+		temp.add(PTP::CONFIG_GRANDMASTER);
+		temp.add(PTP::CONFIG_BMCA);
 
-		staticPTPRoleChoicePropertyComponent = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::StaticPTPRole, nullptr),
+		staticPTPRoleChoicePropertyComponent = new ChoicePropertyComponent(PTPtree.getPropertyAsValue(Identifiers::StaticPTPRole, nullptr),
 			"PTP role",
 			choices,
 			temp);
 		time_controls.add(staticPTPRoleChoicePropertyComponent);
 	
-		followupTLVPropertyComponent = new BooleanPropertyComponent(tree.getPropertyAsValue(Identifiers::PTPSendFollowupTLV, nullptr),
+		followupTLVPropertyComponent = new BooleanPropertyComponent(PTPtree.getPropertyAsValue(Identifiers::PTPSendFollowupTLV, nullptr),
 			"Follow_Up TLV",
 			"Send Follow_Up messages with TLV");
 		time_controls.add(followupTLVPropertyComponent);
 	
-		announceBooleanPropertyComponent = new BooleanPropertyComponent(tree.getPropertyAsValue(Identifiers::PTPSendAnnounce, nullptr),
+		announceBooleanPropertyComponent = new BooleanPropertyComponent(PTPtree.getPropertyAsValue(Identifiers::PTPSendAnnounce, nullptr),
 			"Announce",
 			"Send Announce messages");
 		time_controls.add(announceBooleanPropertyComponent);
 
-		sendSignalingFlagPropertyComponent = new BooleanPropertyComponent(tree.getPropertyAsValue(Identifiers::PTPSendSignalingFlag, nullptr),
+		sendSignalingFlagPropertyComponent = new BooleanPropertyComponent(PTPtree.getPropertyAsValue(Identifiers::PTPSendSignalingFlag, nullptr),
 			"Send Signaling",
 			"Send Signaling once PTP locked");
 		time_controls.add(sendSignalingFlagPropertyComponent);
@@ -79,15 +82,15 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		choices.clearQuick();
 		temp.clearQuick();
 		choices.add("Disabled");
-		temp.add(CONFIG_DELAY_REQUESTS_DISABLED);
-		for (int msec = MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS; 
-			msec <= MAX_DELAY_REQUEST_INTERVAL_MILLISECONDS; 
+		temp.add(PTP::CONFIG_DELAY_REQUESTS_DISABLED);
+		for (int msec = PTP::MIN_DELAY_REQUEST_INTERVAL_MILLISECONDS;
+			msec <= PTP::MAX_DELAY_REQUEST_INTERVAL_MILLISECONDS;
 			msec <<= 1)
 		{
 			choices.add("Every " + String(msec) + " milliseconds");
 			temp.add(msec);
 		}
-		delayRequestIntervalMsecPropertyComponent = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::PTPDelayRequest, nullptr),
+		delayRequestIntervalMsecPropertyComponent = new ChoicePropertyComponent(PTPtree.getPropertyAsValue(Identifiers::PTPDelayRequest, nullptr),
 			"Send PDelay_Req",
 			choices,
 			temp);
@@ -102,8 +105,9 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		//
 		SliderWithUnitsPropertyComponent *slider;
 		Array<PropertyComponent *> avtp_controls;
+		ValueTree avtpTree(settings->getAVTPTree());
 
-		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::TalkerPresentationOffsetMsec, nullptr),
+		slider = new SliderWithUnitsPropertyComponent(avtpTree.getPropertyAsValue(Identifiers::TalkerPresentationOffsetMsec, nullptr),
 			"Talker presentation offset",
 			0, 
 			20, 
@@ -113,7 +117,7 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		avtp_controls.add(slider);
 		talkerTimestampOffsetPropertyComponent = slider;
 
-		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::ListenerPresentationOffsetMsec, nullptr),
+		slider = new SliderWithUnitsPropertyComponent(avtpTree.getPropertyAsValue(Identifiers::ListenerPresentationOffsetMsec, nullptr),
 			"Listener presentation offset",
 			0, 
 			20, 
@@ -129,8 +133,9 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 	{
 		SliderWithUnitsPropertyComponent *slider;
 		Array<PropertyComponent *> faultLoggingControls;
+		ValueTree avtpTree(settings->getAVTPTree());
 
-		slider = new SliderWithUnitsPropertyComponent(tree.getPropertyAsValue(Identifiers::TimestampTolerancePercent, nullptr),
+		slider = new SliderWithUnitsPropertyComponent(avtpTree.getPropertyAsValue(Identifiers::TimestampTolerancePercent, nullptr),
 			"Timestamp tolerance",
 			0, 
 			10, 
@@ -147,22 +152,23 @@ SettingsComponent::SettingsComponent(ValueTree tree_, WorkbenchClient * client_)
 		StringArray choices;
 		Array<var> temp;
 		Array<PropertyComponent *> analyzerControls;
+		ValueTree workbenchSettingsTree(settings->getWorkbenchSettingsTree());
 
 		choices.add("Standard Ethernet");
 		choices.add("BroadR-Reach master");
 		choices.add("BroadR-Reach slave");
-		temp.add(ANALYZERBR_USB_ETHERNET_MODE_STANDARD);
-		temp.add(ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER);
-		temp.add(ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE);
+		temp.add(Settings::ANALYZERBR_USB_ETHERNET_MODE_STANDARD);
+		temp.add(Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_MASTER);
+		temp.add(Settings::ANALYZERBR_USB_ETHERNET_MODE_BR_SLAVE);
 		
-		broadRReachSupportedValue.referTo(tree.getPropertyAsValue(Identifiers::BroadRReachSupported, nullptr));
-		analyzerBREthernetMode = new ChoicePropertyComponent(tree.getPropertyAsValue(Identifiers::BroadRReachMode, nullptr),
+		broadRReachSupportedValue.referTo(workbenchSettingsTree.getPropertyAsValue(Identifiers::BroadRReachSupported, nullptr));
+		analyzerBREthernetMode = new ChoicePropertyComponent(workbenchSettingsTree.getPropertyAsValue(Identifiers::BroadRReachMode, nullptr),
 			"Ethernet mode",
 			choices,
 			temp);
 		analyzerBREthernetMode->setEnabled((bool)broadRReachSupportedValue.getValue());
 		analyzerControls.add(analyzerBREthernetMode);
-		SpdifLockedValue.referTo(tree.getPropertyAsValue(Identifiers::SpdifLocked, nullptr));
+		SpdifLockedValue.referTo(workbenchSettingsTree.getPropertyAsValue(Identifiers::SpdifLocked, nullptr));
 
 		spdifLockComp = new LabelPropertyComponent("S/PDIF input lock");
 		spdifLockComp->setEnabled(false);

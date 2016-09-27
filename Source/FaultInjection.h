@@ -25,5 +25,15 @@ namespace FaultInjection
 		NUM_TYPES
 	};
 
+	enum
+	{
+		ONCE = 1,
+		REPEAT = 2,
+		REPEAT_CONTINUOUSLY = 3,
+
+		MAX_FAULT_INJECTION_CYCLE_LENGTH = ONE_MILLION,
+		MAX_FAULT_INJECTION_CYCLES = ONE_MILLION,
+	};
+
 	extern const Type types[NUM_TYPES];
 };
