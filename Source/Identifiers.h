@@ -68,6 +68,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 	IDENTIFIER( PTPSendAnnounce						) \
 	IDENTIFIER( PTPSendSignalingFlag				) \
 	IDENTIFIER( PTPDelayRequest						) \
+	IDENTIFIER( PTPDelayRequestIntervalMsec         ) \
 	IDENTIFIER( PTPInitialTime						) \
 	IDENTIFIER( PTPAutomaticGMTime					) \
 	IDENTIFIER( Sync								) \

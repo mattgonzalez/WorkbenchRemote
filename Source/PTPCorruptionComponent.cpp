@@ -202,7 +202,10 @@ void PTPCorruptionComponent::FieldComponent::valueTreePropertyChanged(ValueTree&
 
 	if (Identifiers::Enabled == property)
 	{
-		enabledButton.setToggleState(fieldTree[Identifiers::Enabled], dontSendNotification);
+		bool enabled = fieldTree[Identifiers::Enabled];
+		enabledButton.setToggleState(enabled, dontSendNotification);
+		valueLabel.setEnabled(enabled);
+		valueLabel.setEditable(enabled);
 		return;
 	}
 }

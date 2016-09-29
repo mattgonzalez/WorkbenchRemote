@@ -17,7 +17,7 @@ workbenchSettingsTree(tree)
 	{
 		pDelayRequestIntervalComboBox.addItem("Every " + String(msec) + " milliseconds", msec);
 	}
-	pDelayRequestIntervalComboBox.getSelectedIdAsValue().referTo(workbenchSettingsTree.getPropertyAsValue(Identifiers::PTPDelayRequest, nullptr));
+	pDelayRequestIntervalComboBox.getSelectedIdAsValue().referTo(workbenchSettingsTree.getPropertyAsValue(Identifiers::PTPDelayRequestIntervalMsec, nullptr));
 	addAndMakeVisible(&pDelayRequestIntervalComboBox);
 }
 

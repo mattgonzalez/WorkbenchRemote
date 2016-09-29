@@ -25,36 +25,41 @@ public:
 	Result getPTP();
 
 	Result setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
-	Result setSettingsProperty(Identifier const &commandProperty, Identifier const &property, var const &parameter);
-	Result setPTPFaultInjectionProperty(Identifier const &property);
-	Result setPTPCorruptPacketField(ValueTree &corruptFieldTree);
 
 protected:
+	JUCE_LEAK_DETECTOR(WorkbenchClient)
+		
 	ValueTree workbenchSettingsTree;
 	ValueTree ptpTree;
 
 	virtual void connectionMade();
 	virtual void connectionLost();
-	//virtual void messageReceived( const MemoryBlock& message );
+
+	void setPTPRoleProperty(DynamicObject* object, var const &value);
+	void setPTPDelayRequestProperties(DynamicObject*object);
+	Result setRemotePTPFaultInjectionProperty(Identifier const &property);
+	Result setRemotePTPCorruptPacketField(ValueTree &corruptFieldTree);
 
 	void handleGetSystemResponse( DynamicObject * systemPropertyObject );
 	void handleGetStreamsResponse( var streamsPropertyVar, ValueTree streamsTree );
 	void handleGetWorkbenchSettingsResponse( DynamicObject* workbenchSettingsPropertyObject );
-	void handleGetPTPResponse(DynamicObject* ptpPropertyObject);
+	void handlePTPObject(DynamicObject* ptpPropertyObject);
 
 	void handlePTPPacketFieldCorruption(Identifier const &packetTypeIdentifier, DynamicObject::Ptr faultInjectionObject, ValueTree &ptpFaultInjectionTree);
 
 	virtual void handlePropertyChangedMessage(DynamicObject * messageObject, Identifier const expectedMessage);
-	void handleFaultNotificationMessage(DynamicObject * messageObject);
+	void handleStreamFaultNotificationMessage(DynamicObject * messageObject);
+	void handleGetLinkStateResponse( DynamicObject* linkStatePropertyObject );
 
-	JUCE_LEAK_DETECTOR(WorkbenchClient)
-		void handleGetLinkStateResponse( DynamicObject* linkStatePropertyObject );
+	Result setRemoteProperty(Identifier const &commandProperty, DynamicObject* propertyObject);
+	DynamicObject* createSettingsObject(Identifier const &property, var const &parameter);
+	DynamicObject* createPTPObject(Identifier const &property, var const &parameter);
 
 	virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
-	virtual void valueTreeChildAdded( ValueTree& parentTree, ValueTree& childWhichHasBeenAdded );
-	virtual void valueTreeChildRemoved( ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int );
-	virtual void valueTreeChildOrderChanged( ValueTree& parentTreeWhoseChildrenHaveMoved, int, int );
-	virtual void valueTreeParentChanged( ValueTree& treeWhoseParentHasChanged );
+	virtual void valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWhichHasBeenAdded) {}
+	virtual void valueTreeChildRemoved(ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved, int) {}
+	virtual void valueTreeChildOrderChanged(ValueTree& parentTreeWhoseChildrenHaveMoved, int, int) {}
+	virtual void valueTreeParentChanged(ValueTree& treeWhoseParentHasChanged) {}
 
 	//
 	// Some JSON properties are reported as plain-text strings; use these strings for comparison

@@ -172,6 +172,9 @@
     <ClCompile Include="..\..\Source\Strings.cpp" />
     <ClCompile Include="..\..\Source\ValueTreeDisplay.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchClient.cpp" />
+    <ClCompile Include="..\..\Source\WorkbenchClient_PTP.cpp" />
+    <ClCompile Include="..\..\Source\WorkbenchClient_Settings.cpp" />
+    <ClCompile Include="..\..\Source\WorkbenchClient_Streams.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchComponent.cpp" />
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\containers\juce_AbstractFifo.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>

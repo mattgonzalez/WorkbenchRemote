@@ -32,7 +32,7 @@ StaticStreamViewport::~StaticStreamViewport()
 
 void StaticStreamViewport::resized()
 {
-	int width = getWidth();
+	int width = 600;
 	int height = MARGIN*2 + (STREAM_H + STREAM_GAP) * content->streamBoxes.size();
 	if (height > getHeight())
 	{

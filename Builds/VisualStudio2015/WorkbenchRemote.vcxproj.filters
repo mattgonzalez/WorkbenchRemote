@@ -1419,10 +1419,25 @@
     <ClCompile Include="..\..\Source\ResetButton.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\PacketSync.cpp" />
-    <ClCompile Include="..\..\Source\PacketFollowUp.cpp" />
-    <ClCompile Include="..\..\Source\LoadSVG.cpp" />
     <ClCompile Include="..\..\Source\ValueTreeDisplay.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LoadSVG.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PacketFollowUp.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PacketSync.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient_PTP.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient_Settings.cpp">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient_Streams.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2693,11 +2708,13 @@
     <ClInclude Include="..\..\Source\ResetButton.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\LoadSVG.h" />
     <ClInclude Include="..\..\Source\ValueTreeDisplay.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PTP.h">
+      <Filter>WorkbenchRemote\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LoadSVG.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
   </ItemGroup>

@@ -52,23 +52,22 @@ void GrandmasterComponent::buttonClicked(Button* button)
 {
 	if (button == &initialPTPTimeButton)
 	{
-// 		ValueTree timeTree(controller->getTree(Identifiers::PTP));
-// 		int64 initialTime(initialPTPTimeEditor.getText().getLargeIntValue());
-// 		int64 previousTime = timeTree[Identifiers::PTPInitialTime];
-// 
-// 		initialTime = jlimit(int64(0), 0x7fffffffffffffffLL, initialTime);
-// 
-// 		if (previousTime == initialTime)
-// 		{
-// 			timeTree.sendPropertyChangeMessage(Identifiers::PTPInitialTime);
-// 		}
-// 		else
-// 		{
-// 			timeTree.setProperty(Identifiers::PTPInitialTime, initialTime, nullptr);
-// 		}
-// 
-// 		initialPTPTimeEditor.setText(String(initialTime));
-// 
+		int64 initialTime(initialPTPTimeEditor.getText().getLargeIntValue());
+		int64 previousTime = tree[Identifiers::PTPInitialTime];
+
+		initialTime = jlimit(int64(0), 0x7fffffffffffffffLL, initialTime);
+
+		if (previousTime == initialTime)
+		{
+			tree.sendPropertyChangeMessage(Identifiers::PTPInitialTime);
+		}
+		else
+		{
+			tree.setProperty(Identifiers::PTPInitialTime, initialTime, nullptr);
+		}
+
+		initialPTPTimeEditor.setText(String(initialTime));
+ 
  		return;
 	}
 

@@ -197,7 +197,7 @@ SettingsComponent::~SettingsComponent()
 
 void SettingsComponent::resized()
 {
-	panel.setBounds(proportionOfWidth(0.02f), proportionOfHeight(0.05f), 365, proportionOfHeight(0.8f));
+	panel.setBounds(proportionOfWidth(0.02f), proportionOfHeight(0.05f), 600, proportionOfHeight(0.8f));
 }
 
 void SettingsComponent::paint( Graphics& g )
