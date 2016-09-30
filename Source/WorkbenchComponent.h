@@ -68,6 +68,7 @@ private:
 	ScopedPointer<TextButton> getLinkStateButton;
 	ScopedPointer<TextButton> getSettingsButton;
 	ScopedPointer<TextButton> getPTPInfoButton;
+	ScopedPointer<TextButton> getAVTPInfoButton;
 
 	TextEditor sendReadout;
 	TextEditor receiveReadout;

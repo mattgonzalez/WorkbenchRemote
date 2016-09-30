@@ -14,6 +14,7 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 #include "FaultInjection.h"
 #include "PacketSync.h"
 #include "PacketFollowUp.h"
+#include "AVTP.h"
 
 const String addressKey ("Address");
 const String portKey ("Port");
@@ -187,6 +188,21 @@ Settings::Settings() :
 	//
 	{
 		ValueTree avtpSettingsTree(Identifiers::AVTP);
+
+		avtpSettingsTree.setProperty(Identifiers::TalkerPresentationOffsetMsec, 15, nullptr);
+		avtpSettingsTree.setProperty(Identifiers::ListenerPresentationOffsetMsec, 15, nullptr);
+		avtpSettingsTree.setProperty(Identifiers::TalkerSafetyMsec, 10, nullptr);
+		avtpSettingsTree.setProperty(Identifiers::Draft1722a, 6, nullptr);
+		avtpSettingsTree.setProperty(Identifiers::TalkerTimestampAdjustNsec, 0, nullptr);
+
+		avtpSettingsTree.setProperty(Identifiers::PacketRate, (int)AVTP::AUDIO_STREAM_PACKET_RATE_CLASS_C, nullptr);
+		avtpSettingsTree.setProperty(Identifiers::MediaClockAdjustPPM, 0, nullptr);
+		avtpSettingsTree.setProperty(Identifiers::TimestampsPerPacket, 1, nullptr);
+		avtpSettingsTree.setProperty(Identifiers::VlanID, (int)AVTP::DEFAULT_STREAM_VLAN, nullptr);
+
+		ValueTree AVTPFaultLoggingTree(avtpSettingsTree.getOrCreateChildWithName(Identifiers::FaultLogging, nullptr));
+		AVTPFaultLoggingTree.setProperty(Identifiers::TimestampTolerancePercent, 10.0, nullptr);
+
 		getWorkbenchTree().addChild(avtpSettingsTree, -1, nullptr);
 	}
 }

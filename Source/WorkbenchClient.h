@@ -23,6 +23,7 @@ public:
 	Result getLinkState();
 	Result getSettings();
 	Result getPTP();
+	Result getAVTP();
 
 	Result setStreamProperty(Identifier const type, int const streamIndex, Identifier const &ID, var const parameter);
 
@@ -31,6 +32,7 @@ protected:
 		
 	ValueTree workbenchSettingsTree;
 	ValueTree ptpTree;
+	ValueTree avtpTree;
 
 	virtual void connectionMade();
 	virtual void connectionLost();
@@ -44,6 +46,7 @@ protected:
 	void handleGetStreamsResponse( var streamsPropertyVar, ValueTree streamsTree );
 	void handleGetWorkbenchSettingsResponse( DynamicObject* workbenchSettingsPropertyObject );
 	void handlePTPObject(DynamicObject* ptpPropertyObject);
+	void handleAVTPObject(DynamicObject* avtpPropertyObject);
 
 	void handlePTPPacketFieldCorruption(Identifier const &packetTypeIdentifier, DynamicObject::Ptr faultInjectionObject, ValueTree &ptpFaultInjectionTree);
 
@@ -54,6 +57,7 @@ protected:
 	Result setRemoteProperty(Identifier const &commandProperty, DynamicObject* propertyObject);
 	DynamicObject* createSettingsObject(Identifier const &property, var const &parameter);
 	DynamicObject* createPTPObject(Identifier const &property, var const &parameter);
+	DynamicObject* createAVTPObject(ValueTree const tree, Identifier const &property);
 
 	virtual void valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property );
 	virtual void valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWhichHasBeenAdded) {}

@@ -79,6 +79,13 @@ Copyright (C) 2014 Echo Digital Audio Corporation.
 	IDENTIFIER( PTPNumFaultInjectionCycles			) \
 	IDENTIFIER( TalkerPresentationOffsetMsec   		) \
 	IDENTIFIER( ListenerPresentationOffsetMsec		) \
+	IDENTIFIER( TalkerSafetyMsec                    ) \
+	IDENTIFIER( Draft1722a                          ) \
+	IDENTIFIER( TalkerTimestampAdjustNsec           ) \
+	IDENTIFIER( VlanID                              ) \
+	IDENTIFIER( PacketRate                          ) \
+	IDENTIFIER( MediaClockAdjustPPM                 ) \
+	IDENTIFIER( TimestampsPerPacket                 ) \
 	IDENTIFIER( TimestampTolerancePercent			) \
 	IDENTIFIER( LinkState							) \
 	IDENTIFIER( ConnectState						) \

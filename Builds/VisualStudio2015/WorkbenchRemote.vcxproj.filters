@@ -220,6 +220,9 @@
     <Filter Include="Juce Library Code">
       <UniqueIdentifier>{8B4D1BAA-6DB4-CAEC-A0FA-271F354D5C61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WorkbenchRemote\Source\AVTP">
+      <UniqueIdentifier>{fccecb6b-cc07-4b67-939b-b089ba102958}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\AudioPatchbayComponent.cpp">
@@ -1454,6 +1457,9 @@
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\juce_gui_extra.cpp">
       <Filter>Juce Library Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient_AVTP.cpp">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2734,6 +2740,9 @@
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">
       <Filter>Juce Library Code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AVTP.h">
+      <Filter>WorkbenchRemote\Source\AVTP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

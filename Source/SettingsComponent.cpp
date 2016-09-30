@@ -133,9 +133,9 @@ SettingsComponent::SettingsComponent(Settings* settings_, WorkbenchClient * clie
 	{
 		SliderWithUnitsPropertyComponent *slider;
 		Array<PropertyComponent *> faultLoggingControls;
-		ValueTree avtpTree(settings->getAVTPTree());
+		ValueTree faultLoggingTree(settings->getAVTPTree().getChildWithName(Identifiers::FaultLogging));
 
-		slider = new SliderWithUnitsPropertyComponent(avtpTree.getPropertyAsValue(Identifiers::TimestampTolerancePercent, nullptr),
+		slider = new SliderWithUnitsPropertyComponent(faultLoggingTree.getPropertyAsValue(Identifiers::TimestampTolerancePercent, nullptr),
 			"Timestamp tolerance",
 			0, 
 			10, 

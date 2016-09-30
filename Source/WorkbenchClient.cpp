@@ -66,11 +66,13 @@ const String WorkbenchClient::repeatContinuouslyString("Repeat Continuously");
 WorkbenchClient::WorkbenchClient(Settings* settings_):
 	RemoteClient(settings_,'KROW'),
 	workbenchSettingsTree(settings_->getWorkbenchSettingsTree()),
-	ptpTree(settings_->getPTPTree())
+	ptpTree(settings_->getPTPTree()),
+	avtpTree(settings_->getAVTPTree())
 {
 	//DBG("WorkbenchClient::WorkbenchClient()");
 	workbenchSettingsTree.addListener(this);
 	ptpTree.addListener(this);
+	avtpTree.addListener(this);
 }
 
 WorkbenchClient::~WorkbenchClient()
@@ -164,6 +166,11 @@ Result WorkbenchClient::getSettings()
 Result WorkbenchClient::getPTP()
 {
 	return getProperty(Identifiers::PTP, new DynamicObject);
+}
+
+Result WorkbenchClient::getAVTP()
+{
+	return getProperty(Identifiers::AVTP, new DynamicObject);
 }
 
 Result WorkbenchClient::setStreamProperty( Identifier const type, int const streamIndex, Identifier const &ID, var const parameter )
@@ -276,6 +283,18 @@ void WorkbenchClient::handlePropertyChangedMessage(DynamicObject * messageObject
 		handlePTPObject(ptpPropertyObject);
 		return;
 	}
+
+	if (propertyObject->hasProperty(Identifiers::AVTP))
+	{
+		var avtpPropertyVar(propertyObject->getProperty(Identifiers::AVTP));
+		DynamicObject* avtpPropertyObject = avtpPropertyVar.getDynamicObject();
+		if (nullptr == avtpPropertyObject)
+		{
+			DBG("Could not parse get AVTP response");
+		}
+		handleAVTPObject(avtpPropertyObject);
+		return;
+	}
 }
 
 void WorkbenchClient::handleGetSystemResponse( DynamicObject * systemPropertyObject )
@@ -293,6 +312,8 @@ void WorkbenchClient::handleGetSystemResponse( DynamicObject * systemPropertyObj
 
 void WorkbenchClient::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
+	//DBG("WorkbenchClient::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+
 	if (treeWhosePropertyHasChanged.getType() == Identifiers::WorkbenchSettings)
 	{
 		setRemoteProperty(Identifiers::WorkbenchSettings, createSettingsObject(property, treeWhosePropertyHasChanged[property]));
@@ -302,6 +323,13 @@ void WorkbenchClient::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasC
 	if (treeWhosePropertyHasChanged.getType() == Identifiers::PTP)
 	{
 		setRemoteProperty(Identifiers::PTP, createPTPObject(property, treeWhosePropertyHasChanged[property]));
+		return;
+	}
+
+	if (treeWhosePropertyHasChanged.getType() == Identifiers::AVTP ||
+		treeWhosePropertyHasChanged.getType() == Identifiers::FaultLogging)
+	{
+		setRemoteProperty(Identifiers::AVTP, createAVTPObject(treeWhosePropertyHasChanged, property));
 		return;
 	}
 

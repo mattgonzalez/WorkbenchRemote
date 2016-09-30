@@ -68,6 +68,10 @@ WorkbenchComponent::WorkbenchComponent(MainContentComponent* mainComponent_, Wor
 	getPTPInfoButton->addListener(this);
 	getPTPInfoButton->setEnabled(false);
 
+	addAndMakeVisible(getAVTPInfoButton = new TextButton("Get AVTP Info"));
+	getAVTPInfoButton->addListener(this);
+	getAVTPInfoButton->setEnabled(false);
+
 	addAndMakeVisible(&sendReadout);
 	sendReadout.setColour(TextEditor::outlineColourId, Colours::lightgrey);
 	sendReadout.setReadOnly(true);
@@ -130,6 +134,8 @@ void WorkbenchComponent::resized()
 	r = infoButton->getBounds();
 	getPTPInfoButton->setBounds(r.translated(r.getWidth() + 5, 0));
 	r = getPTPInfoButton->getBounds();
+	getAVTPInfoButton->setBounds(r.translated(r.getWidth() + 5, 0));
+	r = getAVTPInfoButton->getBounds();
 	getTalkersButton->setBounds(r.translated( r.getWidth() + 5, 0));
 	r = getTalkersButton->getBounds();
 	getListenersButton->setBounds(r.translated(r.getWidth() + 5, 0));
@@ -187,6 +193,11 @@ void WorkbenchComponent::buttonClicked (Button* buttonThatWasClicked)
 		return;
 	}
 
+	if (buttonThatWasClicked == getAVTPInfoButton)
+	{
+		client->getAVTP();
+		return;
+	}
 
 	if (buttonThatWasClicked == connectButton)
 	{
@@ -252,7 +263,7 @@ void WorkbenchComponent::actionListenerCallback( const String& message )
 
 void WorkbenchComponent::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
-	DBG("WorkbenchComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+	//DBG("WorkbenchComponent::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
 
 	if (Identifiers::Active == property)
 	{
@@ -295,6 +306,7 @@ void WorkbenchComponent::enableControls()
 	getLinkStateButton->setEnabled(connected);
 	getSettingsButton->setEnabled(connected);
 	getPTPInfoButton->setEnabled(connected);
+	getAVTPInfoButton->setEnabled(connected);
 
 	ScopedLock locker(settings->lock);
 	ValueTree talkersTree(settings->getWorkbenchTree().getChildWithName(Identifiers::Talkers));

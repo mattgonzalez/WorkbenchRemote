@@ -493,7 +493,7 @@ void AudioPatchbayClient::handleSetResponse( DynamicObject * messageObject )
 
 void AudioPatchbayClient::valueTreePropertyChanged( ValueTree& treeWhosePropertyHasChanged, const Identifier& property )
 {
-	DBG("AudioPatchbayClient::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
+	//DBG("AudioPatchbayClient::valueTreePropertyChanged " << treeWhosePropertyHasChanged.getType().toString() << " " << property.toString());
 
 	if (Identifiers::DeviceName == property || Identifiers::SampleRate == property)
 	{

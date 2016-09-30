@@ -156,6 +156,7 @@
     <ClCompile Include="..\..\Source\SettingsComponent.cpp" />
     <ClCompile Include="..\..\Source\StaticStreamViewport.cpp" />
     <ClCompile Include="..\..\Source\ValueTreeDisplay.cpp" />
+    <ClCompile Include="..\..\Source\WorkbenchClient_AVTP.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchComponent.cpp" />
     <ClCompile Include="..\..\Source\PacketFollowUp.cpp" />
     <ClCompile Include="..\..\Source\PacketPTP.cpp" />
@@ -1253,6 +1254,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\AudioPatchbayComponent.h" />
+    <ClInclude Include="..\..\Source\AVTP.h" />
     <ClInclude Include="..\..\Source\BinaryData.h" />
     <ClInclude Include="..\..\Source\ChannelComponent.h" />
     <ClInclude Include="..\..\Source\ChannelViewport.h" />
