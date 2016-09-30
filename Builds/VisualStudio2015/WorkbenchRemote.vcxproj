@@ -127,55 +127,55 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\AddressUtilities.cpp" />
-    <ClCompile Include="..\..\Source\AudioPatchbayClient.cpp" />
     <ClCompile Include="..\..\Source\AudioPatchbayComponent.cpp" />
     <ClCompile Include="..\..\Source\BinaryData.cpp" />
-    <ClCompile Include="..\..\Source\Channel.cpp" />
     <ClCompile Include="..\..\Source\ChannelComponent.cpp" />
     <ClCompile Include="..\..\Source\ChannelViewport.cpp" />
     <ClCompile Include="..\..\Source\DelayMeasurementComponent.cpp" />
     <ClCompile Include="..\..\Source\DeviceCallout.cpp" />
     <ClCompile Include="..\..\Source\DeviceComponent.cpp" />
     <ClCompile Include="..\..\Source\DeviceHeaderComponent.cpp" />
-    <ClCompile Include="..\..\Source\FaultInjection.cpp" />
     <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp" />
     <ClCompile Include="..\..\Source\FollowerComponent.cpp" />
     <ClCompile Include="..\..\Source\GearButton.cpp" />
     <ClCompile Include="..\..\Source\GrandmasterComponent.cpp" />
-    <ClCompile Include="..\..\Source\Identifiers.cpp" />
-    <ClCompile Include="..\..\Source\InputChannel.cpp" />
     <ClCompile Include="..\..\Source\InputChannelComponent.cpp" />
     <ClCompile Include="..\..\Source\InputChannelViewport.cpp" />
-    <ClCompile Include="..\..\Source\LoadSVG.cpp" />
-    <ClCompile Include="..\..\Source\Main.cpp" />
     <ClCompile Include="..\..\Source\MainComponent.cpp" />
     <ClCompile Include="..\..\Source\MeterComponent.cpp" />
-    <ClCompile Include="..\..\Source\OutputChannel.cpp" />
     <ClCompile Include="..\..\Source\OutputChannelCallout.cpp" />
     <ClCompile Include="..\..\Source\OutputChannelComponent.cpp" />
     <ClCompile Include="..\..\Source\OutputChannelViewport.cpp" />
-    <ClCompile Include="..\..\Source\PacketFollowUp.cpp" />
-    <ClCompile Include="..\..\Source\PacketPTP.cpp" />
-    <ClCompile Include="..\..\Source\PacketSync.cpp" />
     <ClCompile Include="..\..\Source\PTPComponent.cpp" />
     <ClCompile Include="..\..\Source\PTPCorruptionComponent.cpp" />
     <ClCompile Include="..\..\Source\PTPFaultInjectionComponent.cpp" />
     <ClCompile Include="..\..\Source\PTPFollowupCorruptionComponent.cpp" />
     <ClCompile Include="..\..\Source\PTPSyncCorruptionComponent.cpp" />
     <ClCompile Include="..\..\Source\PTPViewport.cpp" />
-    <ClCompile Include="..\..\Source\RemoteClient.cpp" />
     <ClCompile Include="..\..\Source\ResetButton.cpp" />
-    <ClCompile Include="..\..\Source\Settings.cpp" />
     <ClCompile Include="..\..\Source\SettingsComponent.cpp" />
     <ClCompile Include="..\..\Source\StaticStreamViewport.cpp" />
-    <ClCompile Include="..\..\Source\Strings.cpp" />
     <ClCompile Include="..\..\Source\ValueTreeDisplay.cpp" />
-    <ClCompile Include="..\..\Source\WorkbenchClient.cpp" />
+    <ClCompile Include="..\..\Source\WorkbenchComponent.cpp" />
+    <ClCompile Include="..\..\Source\PacketFollowUp.cpp" />
+    <ClCompile Include="..\..\Source\PacketPTP.cpp" />
+    <ClCompile Include="..\..\Source\PacketSync.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchClient_PTP.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchClient_Settings.cpp" />
     <ClCompile Include="..\..\Source\WorkbenchClient_Streams.cpp" />
-    <ClCompile Include="..\..\Source\WorkbenchComponent.cpp" />
+    <ClCompile Include="..\..\Source\WorkbenchClient.cpp" />
+    <ClCompile Include="..\..\Source\RemoteClient.cpp" />
+    <ClCompile Include="..\..\Source\AudioPatchbayClient.cpp" />
+    <ClCompile Include="..\..\Source\AddressUtilities.cpp" />
+    <ClCompile Include="..\..\Source\LoadSVG.cpp" />
+    <ClCompile Include="..\..\Source\Channel.cpp" />
+    <ClCompile Include="..\..\Source\FaultInjection.cpp" />
+    <ClCompile Include="..\..\Source\Identifiers.cpp" />
+    <ClCompile Include="..\..\Source\InputChannel.cpp" />
+    <ClCompile Include="..\..\Source\Main.cpp" />
+    <ClCompile Include="..\..\Source\OutputChannel.cpp" />
+    <ClCompile Include="..\..\Source\Settings.cpp" />
+    <ClCompile Include="..\..\Source\Strings.cpp" />
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\containers\juce_AbstractFifo.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -953,6 +953,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_ConcertinaPanel.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_FlexBox.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_GroupComponent.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1249,54 +1252,53 @@
     <ClCompile Include="..\..\JuceLibraryCode\juce_gui_extra.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\AddressUtilities.h" />
-    <ClInclude Include="..\..\Source\AudioPatchbayClient.h" />
     <ClInclude Include="..\..\Source\AudioPatchbayComponent.h" />
-    <ClInclude Include="..\..\Source\base.h" />
     <ClInclude Include="..\..\Source\BinaryData.h" />
-    <ClInclude Include="..\..\Source\Channel.h" />
     <ClInclude Include="..\..\Source\ChannelComponent.h" />
     <ClInclude Include="..\..\Source\ChannelViewport.h" />
     <ClInclude Include="..\..\Source\DelayMeasurementComponent.h" />
     <ClInclude Include="..\..\Source\DeviceCallout.h" />
     <ClInclude Include="..\..\Source\DeviceComponent.h" />
     <ClInclude Include="..\..\Source\DeviceHeaderComponent.h" />
-    <ClInclude Include="..\..\Source\FaultInjection.h" />
     <ClInclude Include="..\..\Source\FaultInjectionCallout.h" />
     <ClInclude Include="..\..\Source\FollowerComponent.h" />
     <ClInclude Include="..\..\Source\GearButton.h" />
     <ClInclude Include="..\..\Source\GrandmasterComponent.h" />
-    <ClInclude Include="..\..\Source\Identifiers.h" />
-    <ClInclude Include="..\..\Source\InputChannel.h" />
     <ClInclude Include="..\..\Source\InputChannelComponent.h" />
     <ClInclude Include="..\..\Source\InputChannelViewport.h" />
-    <ClInclude Include="..\..\Source\LoadSVG.h" />
     <ClInclude Include="..\..\Source\MainComponent.h" />
     <ClInclude Include="..\..\Source\MeterComponent.h" />
-    <ClInclude Include="..\..\Source\OutputChannel.h" />
     <ClInclude Include="..\..\Source\OutputChannelCallout.h" />
     <ClInclude Include="..\..\Source\OutputChannelComponent.h" />
     <ClInclude Include="..\..\Source\OutputChannelViewport.h" />
+    <ClInclude Include="..\..\Source\PTPComponent.h" />
+    <ClInclude Include="..\..\Source\PTPCorruptionComponent.h" />
+    <ClInclude Include="..\..\Source\PTPFaultInjectionComponent.h" />
+    <ClInclude Include="..\..\Source\PTPFollowupCorruptionComponent.h" />
+    <ClInclude Include="..\..\Source\PTPSyncCorruptionComponent.h" />
+    <ClInclude Include="..\..\Source\PTPViewport.h" />
+    <ClInclude Include="..\..\Source\ResetButton.h" />
+    <ClInclude Include="..\..\Source\SettingsComponent.h" />
+    <ClInclude Include="..\..\Source\StaticStreamViewport.h" />
+    <ClInclude Include="..\..\Source\ValueTreeDisplay.h" />
+    <ClInclude Include="..\..\Source\WorkbenchComponent.h" />
     <ClInclude Include="..\..\Source\PacketFollowUp.h" />
     <ClInclude Include="..\..\Source\PacketPTP.h" />
     <ClInclude Include="..\..\Source\PacketSync.h" />
-    <ClInclude Include="..\..\Source\PTPComponent.h" />
-    <ClInclude Include="..\..\Source\PTPCorruptionComponent.h" />
-    <ClInclude Include="..\..\Source\PTPFaultInjection.h" />
-    <ClInclude Include="..\..\Source\PTPFaultInjectionComponent.h" />
-    <ClInclude Include="..\..\Source\PTPFollowupCorruptionComponent.h" />
     <ClInclude Include="..\..\Source\PTP.h" />
-    <ClInclude Include="..\..\Source\PTPSyncCorruptionComponent.h" />
-    <ClInclude Include="..\..\Source\PTPViewport.h" />
-    <ClInclude Include="..\..\Source\RemoteClient.h" />
-    <ClInclude Include="..\..\Source\ResetButton.h" />
-    <ClInclude Include="..\..\Source\Settings.h" />
-    <ClInclude Include="..\..\Source\SettingsComponent.h" />
-    <ClInclude Include="..\..\Source\StaticStreamViewport.h" />
-    <ClInclude Include="..\..\Source\Strings.h" />
-    <ClInclude Include="..\..\Source\ValueTreeDisplay.h" />
     <ClInclude Include="..\..\Source\WorkbenchClient.h" />
-    <ClInclude Include="..\..\Source\WorkbenchComponent.h" />
+    <ClInclude Include="..\..\Source\RemoteClient.h" />
+    <ClInclude Include="..\..\Source\AudioPatchbayClient.h" />
+    <ClInclude Include="..\..\Source\AddressUtilities.h" />
+    <ClInclude Include="..\..\Source\LoadSVG.h" />
+    <ClInclude Include="..\..\Source\base.h" />
+    <ClInclude Include="..\..\Source\Channel.h" />
+    <ClInclude Include="..\..\Source\FaultInjection.h" />
+    <ClInclude Include="..\..\Source\Identifiers.h" />
+    <ClInclude Include="..\..\Source\InputChannel.h" />
+    <ClInclude Include="..\..\Source\OutputChannel.h" />
+    <ClInclude Include="..\..\Source\Settings.h" />
+    <ClInclude Include="..\..\Source\Strings.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\containers\juce_AbstractFifo.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\containers\juce_Array.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\containers\juce_ArrayAllocationBase.h" />
@@ -1572,6 +1574,8 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_ComponentBuilder.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_ComponentMovementWatcher.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_ConcertinaPanel.h" />
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_FlexBox.h" />
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_FlexItem.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_GroupComponent.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_MultiDocumentPanel.h" />
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_ResizableBorderComponent.h" />
@@ -1680,7 +1684,7 @@
     <None Include="..\..\JuceLibraryCode\modules\juce_graphics\image_formats\pnglib\libpng_readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include=".\resources.rc" />
+    <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

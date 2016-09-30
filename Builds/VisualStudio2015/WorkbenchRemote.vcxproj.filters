@@ -7,6 +7,18 @@
     <Filter Include="WorkbenchRemote\Source">
       <UniqueIdentifier>{312F8EA0-CF35-ACAA-8459-C32E3AF07022}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WorkbenchRemote\Source\GUI">
+      <UniqueIdentifier>{585F4A8F-E880-2032-B08D-C2E64868E35A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkbenchRemote\Source\PTP">
+      <UniqueIdentifier>{6AEE95F5-4389-D644-3562-573E7C7CF3A5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkbenchRemote\Source\Socket">
+      <UniqueIdentifier>{91D2D8C9-8EFD-879A-524E-1AD250F2FE8A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorkbenchRemote\Source\Utilities">
+      <UniqueIdentifier>{2BBA3234-FFD7-B39B-D425-7BEC3630E1A4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Juce Modules">
       <UniqueIdentifier>{422C46B7-0467-2DB0-BF3C-16DFCAFD69AC}</UniqueIdentifier>
     </Filter>
@@ -210,52 +222,133 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\AddressUtilities.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\AudioPatchbayClient.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\AudioPatchbayComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\BinaryData.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ChannelComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ChannelViewport.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DelayMeasurementComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DeviceCallout.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DeviceComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DeviceHeaderComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\FollowerComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GearButton.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GrandmasterComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\InputChannelComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\InputChannelViewport.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\MainComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\MeterComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OutputChannelCallout.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OutputChannelComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OutputChannelViewport.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PTPComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PTPCorruptionComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PTPFaultInjectionComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PTPFollowupCorruptionComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PTPSyncCorruptionComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PTPViewport.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ResetButton.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SettingsComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\StaticStreamViewport.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ValueTreeDisplay.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchComponent.cpp">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PacketFollowUp.cpp">
+      <Filter>WorkbenchRemote\Source\PTP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PacketPTP.cpp">
+      <Filter>WorkbenchRemote\Source\PTP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PacketSync.cpp">
+      <Filter>WorkbenchRemote\Source\PTP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient_PTP.cpp">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient_Settings.cpp">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient_Streams.cpp">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WorkbenchClient.cpp">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RemoteClient.cpp">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\AudioPatchbayClient.cpp">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\AddressUtilities.cpp">
+      <Filter>WorkbenchRemote\Source\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LoadSVG.cpp">
+      <Filter>WorkbenchRemote\Source\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Channel.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ChannelComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\ChannelViewport.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\DelayMeasurementComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\DeviceCallout.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\DeviceComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\DeviceHeaderComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\FaultInjection.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\FaultInjectionCallout.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\FollowerComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\GearButton.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\GrandmasterComponent.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Identifiers.cpp">
@@ -264,61 +357,16 @@
     <ClCompile Include="..\..\Source\InputChannel.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\InputChannelComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\InputChannelViewport.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Main.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\MainComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\MeterComponent.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\OutputChannel.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\OutputChannelCallout.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\OutputChannelComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\OutputChannelViewport.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PTPComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PTPFaultInjectionComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PTPViewport.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\RemoteClient.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Settings.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SettingsComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\StaticStreamViewport.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Strings.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\WorkbenchClient.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\WorkbenchComponent.cpp">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_core\containers\juce_AbstractFifo.cpp">
@@ -1098,6 +1146,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_ConcertinaPanel.cpp">
       <Filter>Juce Modules\juce_gui_basics\layout</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_FlexBox.cpp">
+      <Filter>Juce Modules\juce_gui_basics\layout</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_GroupComponent.cpp">
       <Filter>Juce Modules\juce_gui_basics\layout</Filter>
     </ClCompile>
@@ -1404,93 +1455,132 @@
     <ClCompile Include="..\..\JuceLibraryCode\juce_gui_extra.cpp">
       <Filter>Juce Library Code</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\PacketPTP.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PTPCorruptionComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PTPFollowupCorruptionComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PTPSyncCorruptionComponent.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\ResetButton.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\ValueTreeDisplay.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\LoadSVG.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PacketFollowUp.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PacketSync.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\WorkbenchClient_PTP.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\WorkbenchClient_Settings.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\WorkbenchClient_Streams.cpp">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\AddressUtilities.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\AudioPatchbayClient.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\AudioPatchbayComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\base.h">
-      <Filter>WorkbenchRemote\Source</Filter>
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\BinaryData.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChannelComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ChannelViewport.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DelayMeasurementComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DeviceCallout.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DeviceComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DeviceHeaderComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\FaultInjectionCallout.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\FollowerComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GearButton.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GrandmasterComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\InputChannelComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\InputChannelViewport.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MainComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MeterComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OutputChannelCallout.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OutputChannelComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OutputChannelViewport.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPCorruptionComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPFaultInjectionComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPFollowupCorruptionComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPSyncCorruptionComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTPViewport.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ResetButton.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SettingsComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\StaticStreamViewport.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ValueTreeDisplay.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\WorkbenchComponent.h">
+      <Filter>WorkbenchRemote\Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PacketFollowUp.h">
+      <Filter>WorkbenchRemote\Source\PTP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PacketPTP.h">
+      <Filter>WorkbenchRemote\Source\PTP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PacketSync.h">
+      <Filter>WorkbenchRemote\Source\PTP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PTP.h">
+      <Filter>WorkbenchRemote\Source\PTP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\WorkbenchClient.h">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\RemoteClient.h">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AudioPatchbayClient.h">
+      <Filter>WorkbenchRemote\Source\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AddressUtilities.h">
+      <Filter>WorkbenchRemote\Source\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LoadSVG.h">
+      <Filter>WorkbenchRemote\Source\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\base.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Channel.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ChannelComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\ChannelViewport.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\DelayMeasurementComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\DeviceCallout.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\DeviceComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\DeviceHeaderComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\FaultInjection.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\FaultInjectionCallout.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\FollowerComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\GearButton.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\GrandmasterComponent.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Identifiers.h">
@@ -1499,58 +1589,13 @@
     <ClInclude Include="..\..\Source\InputChannel.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\InputChannelComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\InputChannelViewport.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\MainComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\MeterComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\OutputChannel.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OutputChannelCallout.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OutputChannelComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OutputChannelViewport.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PTPComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PTPFaultInjectionComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PTPViewport.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\RemoteClient.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Settings.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SettingsComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\StaticStreamViewport.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Strings.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\WorkbenchClient.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\WorkbenchComponent.h">
       <Filter>WorkbenchRemote\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_core\containers\juce_AbstractFifo.h">
@@ -2378,6 +2423,12 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_ConcertinaPanel.h">
       <Filter>Juce Modules\juce_gui_basics\layout</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_FlexBox.h">
+      <Filter>Juce Modules\juce_gui_basics\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_FlexItem.h">
+      <Filter>Juce Modules\juce_gui_basics\layout</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_GroupComponent.h">
       <Filter>Juce Modules\juce_gui_basics\layout</Filter>
     </ClInclude>
@@ -2684,39 +2735,6 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">
       <Filter>Juce Library Code</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\PacketPTP.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PTPCorruptionComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PTPFollowupCorruptionComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PTPSyncCorruptionComponent.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PacketFollowUp.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PacketSync.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PTPFaultInjection.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\ResetButton.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\ValueTreeDisplay.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PTP.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\LoadSVG.h">
-      <Filter>WorkbenchRemote\Source</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\JuceLibraryCode\modules\juce_graphics\image_formats\jpglib\changes to libjpeg for JUCE.txt">
@@ -2727,8 +2745,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include=".\resources.rc">
-      <Filter>Juce Library Code</Filter>
+    <ResourceCompile Include="icon.rc">
+      <Filter>WorkbenchRemote</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>
