@@ -90,7 +90,7 @@ SettingsComponent::SettingsComponent(Settings* settings_, WorkbenchClient * clie
 			choices.add("Every " + String(msec) + " milliseconds");
 			temp.add(msec);
 		}
-		delayRequestIntervalMsecPropertyComponent = new ChoicePropertyComponent(PTPtree.getPropertyAsValue(Identifiers::PTPDelayRequest, nullptr),
+		delayRequestIntervalMsecPropertyComponent = new ChoicePropertyComponent(PTPtree.getPropertyAsValue(Identifiers::PTPDelayRequestIntervalMsec, nullptr),
 			"Send PDelay_Req",
 			choices,
 			temp);
