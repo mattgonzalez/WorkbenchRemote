@@ -23,6 +23,36 @@ void WorkbenchClient::handleAVTPObject(DynamicObject* avtpPropertyObject)
 		avtpTree.setProperty(Identifiers::ListenerPresentationOffsetMsec, offset, nullptr);
 	}
 
+	if (avtpPropertyObject->hasProperty(Identifiers::PacketRate))
+	{
+		int packetRate = avtpPropertyObject->getProperty(Identifiers::PacketRate);
+		switch (packetRate)
+		{
+		case AVTP::AUDIO_STREAM_PACKET_RATE_CLASS_A:
+		case AVTP::AUDIO_STREAM_PACKET_RATE_CLASS_C:
+			avtpTree.setProperty(Identifiers::PacketRate, packetRate, nullptr);
+			break;
+		}
+	}
+
+	if (avtpPropertyObject->hasProperty(Identifiers::Draft1722a))
+	{
+		int draft1722a = avtpPropertyObject->getProperty(Identifiers::Draft1722a);
+		switch (draft1722a)
+		{
+		case AVTP::PROTOCOL_1722A_DRAFT_6:
+		case AVTP::PROTOCOL_1722A_DRAFT_16:
+			avtpTree.setProperty(Identifiers::Draft1722a, draft1722a, nullptr);
+			break;
+		}
+	}
+	
+	if (avtpPropertyObject->hasProperty(Identifiers::VlanID))
+	{
+		int vlan = (int)avtpPropertyObject->getProperty(Identifiers::VlanID) & 0xffff;
+		avtpTree.setProperty(Identifiers::VlanID, vlan, nullptr);
+	}
+
 	if (avtpPropertyObject->hasProperty(Identifiers::FaultLogging))
 	{
 		DynamicObject* faultLoggingObject = avtpPropertyObject->getProperty(Identifiers::FaultLogging).getDynamicObject();

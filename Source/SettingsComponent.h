@@ -46,6 +46,8 @@ protected:
 
 	LabelPropertyComponent * spdifLockComp;
 
+	ChoicePropertyComponent* streamClassPropertyComponent;
+	ChoicePropertyComponent* draft1722aPropertyComponent;
 	SliderWithUnitsPropertyComponent *talkerTimestampOffsetPropertyComponent;
 	SliderWithUnitsPropertyComponent *listenerTimestampOffsetPropertyComponent;
 	SliderWithUnitsPropertyComponent *timestampTolerancePercentPropertyComponent;

@@ -13,6 +13,7 @@ This source code is considered to be proprietary and confidential information.
 #include "BinaryData.h"
 #include "Identifiers.h"
 #include "PTP.h"
+#include "AVTP.h"
 
 class LabelPropertyComponent : public PropertyComponent
 {
@@ -103,9 +104,37 @@ SettingsComponent::SettingsComponent(Settings* settings_, WorkbenchClient * clie
 		//
 		// AVTP
 		//
+		StringArray choices;
+		Array<var> temp;
 		SliderWithUnitsPropertyComponent *slider;
 		Array<PropertyComponent *> avtp_controls;
 		ValueTree avtpTree(settings->getAVTPTree());
+		ChoicePropertyComponent* comboBox;
+
+		choices.add("Class A: 8,000 packets/second");
+		choices.add("Class C: 750 packets/second");
+		temp.add(AVTP::AUDIO_STREAM_PACKET_RATE_CLASS_A);
+		temp.add(AVTP::AUDIO_STREAM_PACKET_RATE_CLASS_C);
+		comboBox = new ChoicePropertyComponent(avtpTree.getPropertyAsValue(Identifiers::PacketRate, nullptr),
+			"Stream class",
+			choices,
+			temp);
+		comboBox->refresh();
+		avtp_controls.add(comboBox);
+		streamClassPropertyComponent = comboBox;
+
+		choices.clearQuick();
+		temp.clearQuick();
+		choices.add("Draft 6");
+		choices.add("Draft 16");
+		temp.add(AVTP::PROTOCOL_1722A_DRAFT_6);
+		temp.add(AVTP::PROTOCOL_1722A_DRAFT_16);
+		draft1722aPropertyComponent = new ChoicePropertyComponent(avtpTree.getPropertyAsValue(Identifiers::Draft1722a, nullptr),
+			"Protocol 1722a draft version",
+			choices,
+			temp);
+		draft1722aPropertyComponent->refresh();
+		avtp_controls.add(draft1722aPropertyComponent);
 
 		slider = new SliderWithUnitsPropertyComponent(avtpTree.getPropertyAsValue(Identifiers::TalkerPresentationOffsetMsec, nullptr),
 			"Talker presentation offset",
@@ -126,6 +155,14 @@ SettingsComponent::SettingsComponent(Settings* settings_, WorkbenchClient * clie
 			msecString);
 		avtp_controls.add(slider);
 		listenerTimestampOffsetPropertyComponent = slider;
+
+		slider = new SliderWithUnitsPropertyComponent(avtpTree.getPropertyAsValue(Identifiers::VlanID, nullptr),
+			"VLAN ID",
+			0.0,
+			AVTP::MAX_STREAM_VLAN,
+			1.0
+		);
+		avtp_controls.add(slider);
 
 		panel.addSection("AVTP", avtp_controls);
 	}
